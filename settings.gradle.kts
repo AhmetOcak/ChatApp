@@ -21,4 +21,22 @@ dependencyResolutionManagement {
 
 rootProject.name = "ChatApp"
 include(":app")
- 
+include(":core")
+include(":core:common")
+include(":core:data")
+include(":core:datastore")
+include(":core:designsystem")
+include(":core:domain")
+include(":core:model")
+include(":core:network")
+include(":core:ui")
+include(":feature")
+include(":feature:login")
+include(":feature:signup")
+include(":feature:onboarding")
+include(":feature:chats")
+include(":feature:calls")
+include(":feature:stories")
+include(":feature:settings")
+include(":feature:profile")
+include(":feature:chat_box")
