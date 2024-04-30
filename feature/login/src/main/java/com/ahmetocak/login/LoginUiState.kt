@@ -1,6 +1,7 @@
 package com.ahmetocak.login
 
 import android.content.Context
+import com.ahmetocak.model.DialogState
 import com.ahmetocak.model.LoadingState
 
 data class LoginUiState(
@@ -24,9 +25,4 @@ enum class NavigationState {
     None,
     Chats,
     SignUp
-}
-
-enum class DialogState {
-    Show,
-    Hide
 }

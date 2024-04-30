@@ -28,7 +28,9 @@ import com.ahmetocak.designsystem.components.ChatTextButton
 import com.ahmetocak.designsystem.components.auth.AuthEmailOutlinedTextField
 import com.ahmetocak.designsystem.components.auth.AuthPasswordOutlinedTextField
 import com.ahmetocak.designsystem.theme.ChatAppTheme
+import com.ahmetocak.model.DialogState
 import com.ahmetocak.model.LoadingState
+import com.ahmetocak.designsystem.R.drawable as AppResources
 
 @Composable
 internal fun LoginRoute(
@@ -169,7 +171,7 @@ private fun SubmitLoginSection(onEvent: (LoginEvent) -> Unit) {
         }
         ChatImageButton(
             onClick = { onEvent(LoginEvent.OnGoogleClicked(context)) },
-            image = R.drawable.ic_google
+            image = AppResources.ic_google
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
