@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ahmetocak.designsystem.components.ChatAppProgressIndicator
+import com.ahmetocak.designsystem.components.ChatAppGreyProgressIndicator
 import com.ahmetocak.designsystem.components.ChatButton
 import com.ahmetocak.designsystem.components.ChatImageButton
 import com.ahmetocak.designsystem.components.ChatTextButton
@@ -58,7 +58,7 @@ internal fun LoginRoute(
         }
     }
 
-    if (uiState.loadingState is LoadingState.Loading) ChatAppProgressIndicator()
+    if (uiState.loadingState is LoadingState.Loading) ChatAppGreyProgressIndicator()
 
     LoginScreen(
         modifier = modifier,
