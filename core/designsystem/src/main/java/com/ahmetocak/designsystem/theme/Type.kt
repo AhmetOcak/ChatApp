@@ -1,4 +1,4 @@
-package com.ahmetocak.chatapp.ui.theme
+package com.ahmetocak.designsystem.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
