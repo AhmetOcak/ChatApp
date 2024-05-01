@@ -1,9 +1,5 @@
 package com.ahmetocak.model
 
-data class UserChatList(
-    val chatList: List<UserChat>
-)
-
 data class UserChat(
     val id: String,
     val imageUrl: String?,
