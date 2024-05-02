@@ -33,7 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ahmetocak.designsystem.components.AnimatedAsyncImage
+import com.ahmetocak.designsystem.components.AnimatedNetworkImage
 import com.ahmetocak.designsystem.theme.ChatAppTheme
 import com.ahmetocak.model.Story
 import com.ahmetocak.ui.StoryItem
@@ -137,7 +137,7 @@ private fun MyStatus(imageUrl: String?, onClick: () -> Unit) {
     ) {
         Box(modifier = Modifier.size(48.dp), contentAlignment = Alignment.BottomEnd) {
             imageUrl?.let { img ->
-                AnimatedAsyncImage(imageUrl = img)
+                AnimatedNetworkImage(imageUrl = img)
             } ?: run {
                 Image(
                     painter = painterResource(id = AppResources.blank_profile),

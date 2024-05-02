@@ -1,16 +1,15 @@
 package com.ahmetocak.designsystem.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.platform.LocalContext
@@ -19,10 +18,10 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
-import com.ahmetocak.designsystem.R
+import com.ahmetocak.designsystem.R.drawable as AppResources
 
 @Composable
-fun AnimatedAsyncImage(
+fun AnimatedNetworkImage(
     modifier: Modifier = Modifier,
     imageUrl: String
 ) {
@@ -52,9 +51,7 @@ fun AnimatedAsyncImage(
 
         is AsyncImagePainter.State.Success -> {
             Image(
-                modifier = modifier
-                    .clip(CircleShape)
-                    .aspectRatio(1f),
+                modifier = modifier,
                 painter = painter,
                 contentDescription = null,
                 colorFilter = ColorFilter.colorMatrix(matrix)
@@ -62,14 +59,52 @@ fun AnimatedAsyncImage(
         }
 
         is AsyncImagePainter.State.Error -> {
-            Image(
-                painter = painterResource(id = R.drawable.blank_profile),
+            Icon(
+                modifier = modifier,
+                painter = painterResource(id = AppResources.blank_profile),
                 contentDescription = null
             )
         }
 
-        is AsyncImagePainter.State.Empty -> {
-            Box(modifier = modifier.clip(CircleShape))
+        is AsyncImagePainter.State.Empty -> Box(modifier = modifier)
+    }
+}
+
+@Composable
+fun NetworkImage(
+    modifier: Modifier = Modifier,
+    imageUrl: String
+) {
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(imageUrl)
+            .size(Size.ORIGINAL)
+            .allowHardware(false)
+            .crossfade(true)
+            .build()
+    )
+
+    when (painter.state) {
+        is AsyncImagePainter.State.Loading -> Box(modifier = modifier)
+
+        is AsyncImagePainter.State.Success -> {
+            AnimatedVisibility(visible = true) {
+                Image(
+                    modifier = modifier,
+                    painter = painter,
+                    contentDescription = null
+                )
+            }
         }
+
+        is AsyncImagePainter.State.Error -> {
+            Icon(
+                modifier = modifier,
+                painter = painterResource(id = AppResources.blank_profile),
+                contentDescription = null
+            )
+        }
+
+        is AsyncImagePainter.State.Empty -> Box(modifier = modifier)
     }
 }

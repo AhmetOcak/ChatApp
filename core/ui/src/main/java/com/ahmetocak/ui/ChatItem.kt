@@ -34,7 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ahmetocak.designsystem.R.drawable as AppResources
-import com.ahmetocak.designsystem.components.AnimatedAsyncImage
+import com.ahmetocak.designsystem.components.AnimatedNetworkImage
 import com.ahmetocak.designsystem.theme.ChatAppTheme
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -50,7 +50,6 @@ fun ChatItem(
     onLongClick: (String) -> Unit,
     onImageClick: (String) -> Unit
 ) {
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -69,7 +68,7 @@ fun ChatItem(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             imageUrl?.let { url ->
-                AnimatedAsyncImage(
+                AnimatedNetworkImage(
                     imageUrl = url,
                     modifier = Modifier
                         .fillMaxHeight()

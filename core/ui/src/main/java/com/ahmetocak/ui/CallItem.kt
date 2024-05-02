@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ahmetocak.designsystem.R
-import com.ahmetocak.designsystem.components.AnimatedAsyncImage
+import com.ahmetocak.designsystem.components.AnimatedNetworkImage
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -65,7 +65,7 @@ fun CallItem(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             imageUrl?.let { url ->
-                AnimatedAsyncImage(
+                AnimatedNetworkImage(
                     imageUrl = url,
                     modifier = Modifier
                         .fillMaxHeight()

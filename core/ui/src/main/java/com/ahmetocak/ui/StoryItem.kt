@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.ahmetocak.designsystem.components.AnimatedAsyncImage
+import com.ahmetocak.designsystem.components.AnimatedNetworkImage
 import com.ahmetocak.designsystem.R.drawable as AppResources
 
 @Composable
@@ -41,7 +41,7 @@ fun StoryItem(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         storyImageUrl?.let { img ->
-            AnimatedAsyncImage(
+            AnimatedNetworkImage(
                 imageUrl = img,
                 modifier = Modifier
                     .size(48.dp)
