@@ -19,6 +19,9 @@ coilCompose = "2.6.0"
 coil = "2.6.0"
 appcompat = "1.6.1"
 material = "1.11.0"
+pagingRuntime = "3.2.1"
+pagingCompose = "3.2.1"
+constraintLayout = "1.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -52,6 +55,9 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 coil = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "pagingRuntime" }
+androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "pagingCompose" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintLayout" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
