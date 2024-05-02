@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.hilt.android)
+    kotlin("kapt")
 }
 
 android {
@@ -69,7 +70,7 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
-    implementation(libs.hilt.android.compiler)
+    kapt(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
 
     implementation(project(":core:designsystem"))

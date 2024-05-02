@@ -58,6 +58,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    // Constraint Layout
+    implementation(libs.androidx.constraintlayout)
+
     implementation(project(":core:model"))
     implementation(project(":core:designsystem"))
 }
