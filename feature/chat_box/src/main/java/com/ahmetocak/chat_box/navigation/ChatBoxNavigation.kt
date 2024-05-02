@@ -12,8 +12,18 @@ const val CHAT_BOX_ID = "id"
 fun NavController.navigateToChatBox(navOptions: NavOptions) =
     navigate("$CHAT_BOX_ROUTE/$CHAT_BOX_ID")
 
-fun NavGraphBuilder.chatBoxScreen() {
+fun NavGraphBuilder.chatBoxScreen(
+    upPress: () -> Unit,
+    navigateChatDetail: (String) -> Unit,
+    navigateChatDocs: (String) -> Unit,
+    navigateCamera: () -> Unit,
+) {
     composable("$CHAT_BOX_ROUTE/{$CHAT_BOX_ID}") {
-        ChatBoxRoute()
+        ChatBoxRoute(
+            upPress = upPress,
+            navigateCamera = navigateCamera,
+            navigateChatDetail = navigateChatDetail,
+            navigateChatDocs = navigateChatDocs
+        )
     }
 }

@@ -52,7 +52,7 @@ import com.ahmetocak.ui.OngoingChatBubbleItem
 import com.ahmetocak.designsystem.R.drawable as AppResources
 
 @Composable
-fun ChatBoxRoute(
+internal fun ChatBoxRoute(
     modifier: Modifier = Modifier,
     upPress: () -> Unit,
     navigateChatDetail: (String) -> Unit,
