@@ -8,6 +8,9 @@ import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.CameraAlt
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Videocam
 
 object ChatAppIcons {
@@ -27,5 +30,8 @@ object ChatAppIcons {
         val video = Icons.Outlined.Videocam
         val camera = Icons.Outlined.CameraAlt
         val call = Icons.Outlined.Call
+        val edit = Icons.Outlined.Edit
+        val person = Icons.Outlined.Person
+        val info = Icons.Outlined.Info
     }
 }
