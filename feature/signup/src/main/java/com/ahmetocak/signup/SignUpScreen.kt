@@ -1,5 +1,8 @@
 package com.ahmetocak.signup
 
+import android.app.Activity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,21 +18,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ahmetocak.designsystem.components.ChatAppGreyProgressIndicator
 import com.ahmetocak.designsystem.components.ChatAppOutlinedTextField
 import com.ahmetocak.designsystem.components.ChatButton
 import com.ahmetocak.designsystem.components.ChatImageButton
 import com.ahmetocak.designsystem.components.ChatTextButton
 import com.ahmetocak.designsystem.components.auth.AuthEmailOutlinedTextField
 import com.ahmetocak.designsystem.components.auth.AuthPasswordOutlinedTextField
+import com.ahmetocak.model.LoadingState
 import com.ahmetocak.designsystem.R.drawable as AppResources
+import com.ahmetocak.designsystem.R.string as AppStrings
 
 @Composable
 internal fun SignUpRoute(
@@ -59,21 +66,33 @@ internal fun SignUpRoute(
         }
     }
 
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult(),
+        onResult = { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.let { intent ->
+                    viewModel.googleSignIn(intent)
+                }
+            }
+        }
+    )
+
+    if (uiState.loadingState is LoadingState.Loading) ChatAppGreyProgressIndicator()
+
     SignUpScreen(
         modifier = modifier,
         onEvent = onEvent,
         nameValue = uiState.name,
-        isNameFieldError = false,
-        nameFieldLabelText = "Username",
         emailValue = uiState.email,
-        isEmailFieldError = false,
-        emailLabelText = "Email",
         passwordValue = uiState.password,
-        isPasswordFieldError = false,
-        passwordLabelText = "Password",
         confirmPasswordValue = uiState.confirmPassword,
-        isConfirmPasswordError = false,
-        confirmPasswordFieldLabelText = "Confirm Password"
+        onSignInWithGoogleClick = remember {
+            {
+                onEvent(SignUpEvent.OnGoogleClicked { intentSenderRequest ->
+                    launcher.launch(intentSenderRequest)
+                })
+            }
+        }
     )
 }
 
@@ -82,17 +101,10 @@ internal fun SignUpScreen(
     modifier: Modifier,
     onEvent: (SignUpEvent) -> Unit,
     nameValue: String,
-    isNameFieldError: Boolean,
-    nameFieldLabelText: String,
     emailValue: String,
-    isEmailFieldError: Boolean,
-    emailLabelText: String,
     passwordValue: String,
-    isPasswordFieldError: Boolean,
-    passwordLabelText: String,
     confirmPasswordValue: String,
-    isConfirmPasswordError: Boolean,
-    confirmPasswordFieldLabelText: String
+    onSignInWithGoogleClick: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -104,19 +116,11 @@ internal fun SignUpScreen(
         InputSection(
             onEvent = onEvent,
             nameValue = nameValue,
-            isNameFieldError = isNameFieldError,
             emailValue = emailValue,
-            isEmailFieldError = isEmailFieldError,
-            emailLabelText = emailLabelText,
             passwordValue = passwordValue,
-            isPasswordFieldError = isPasswordFieldError,
-            passwordLabelText = passwordLabelText,
             confirmPasswordValue = confirmPasswordValue,
-            isConfirmPasswordError = isConfirmPasswordError,
-            confirmPasswordFieldLabelText = confirmPasswordFieldLabelText,
-            nameFieldLabelText = nameFieldLabelText
         )
-        SubmitSignUpSection(onEvent = onEvent)
+        SubmitSignUpSection(onEvent = onEvent, onSignInWithGoogleClick = onSignInWithGoogleClick)
     }
 }
 
@@ -132,25 +136,16 @@ private fun WelcomeMessage() {
 private fun InputSection(
     onEvent: (SignUpEvent) -> Unit,
     nameValue: String,
-    isNameFieldError: Boolean,
-    nameFieldLabelText: String,
     emailValue: String,
-    isEmailFieldError: Boolean,
-    emailLabelText: String,
     passwordValue: String,
-    isPasswordFieldError: Boolean,
-    passwordLabelText: String,
     confirmPasswordValue: String,
-    isConfirmPasswordError: Boolean,
-    confirmPasswordFieldLabelText: String
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         ChatAppOutlinedTextField(
             value = nameValue,
             onValueChange = { onEvent(SignUpEvent.OnNameChanged(it)) },
-            isError = isNameFieldError,
             label = {
-                Text(text = nameFieldLabelText)
+                Text(text = stringResource(id = AppStrings.username))
             },
             modifier = Modifier.fillMaxWidth(),
             trailingIcon = {
@@ -160,31 +155,29 @@ private fun InputSection(
         AuthEmailOutlinedTextField(
             value = emailValue,
             onValueChange = { onEvent(SignUpEvent.OnEmailChanged(it)) },
-            isError = isEmailFieldError,
-            labelText = emailLabelText,
+            labelText = stringResource(id = AppStrings.email),
             modifier = Modifier.fillMaxWidth()
         )
         AuthPasswordOutlinedTextField(
             value = passwordValue,
             onValueChange = { onEvent(SignUpEvent.OnPasswordChange(it)) },
-            isError = isPasswordFieldError,
-            labelText = passwordLabelText,
+            labelText = stringResource(id = AppStrings.password),
             modifier = Modifier.fillMaxWidth()
         )
         AuthPasswordOutlinedTextField(
             value = confirmPasswordValue,
             onValueChange = { onEvent(SignUpEvent.OnConfirmPasswordChange(it)) },
-            isError = isConfirmPasswordError,
-            labelText = confirmPasswordFieldLabelText,
+            labelText = stringResource(id = AppStrings.confirm_password),
             modifier = Modifier.fillMaxWidth()
         )
     }
 }
 
 @Composable
-private fun SubmitSignUpSection(onEvent: (SignUpEvent) -> Unit) {
-    val context = LocalContext.current
-
+private fun SubmitSignUpSection(
+    onEvent: (SignUpEvent) -> Unit,
+    onSignInWithGoogleClick: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -208,7 +201,7 @@ private fun SubmitSignUpSection(onEvent: (SignUpEvent) -> Unit) {
             HorizontalDivider(modifier = Modifier.weight(1f))
         }
         ChatImageButton(
-            onClick = { onEvent(SignUpEvent.OnGoogleClicked(context)) },
+            onClick = onSignInWithGoogleClick,
             image = AppResources.ic_google
         )
         Row(
@@ -232,16 +225,9 @@ fun SignUpScreenPreview() {
         modifier = Modifier,
         onEvent = {},
         nameValue = "",
-        isNameFieldError = false,
-        nameFieldLabelText = "Username",
         emailValue = "",
-        isEmailFieldError = false,
-        emailLabelText = "Email",
         passwordValue = "",
-        isPasswordFieldError = false,
-        passwordLabelText = "Password",
         confirmPasswordValue = "",
-        isConfirmPasswordError = false,
-        confirmPasswordFieldLabelText = "Confirm Password"
+        onSignInWithGoogleClick = {}
     )
 }

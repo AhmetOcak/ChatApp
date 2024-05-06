@@ -12,7 +12,7 @@ jetbrainsKotlinJvm = "1.9.0"
 lifecycleViewmodelCompose = "2.7.0"
 lifecycleRuntimeCompose = "2.7.0"
 navigationCompose = "2.7.7"
-hiltAndroid = "2.51"
+hiltAndroid = "2.49"
 hiltAndroidCompiler = "2.47"
 hiltNavigationCompose = "1.2.0"
 coilCompose = "2.6.0"
@@ -22,6 +22,10 @@ material = "1.11.0"
 pagingRuntime = "3.2.1"
 pagingCompose = "3.2.1"
 constraintLayout = "1.0.1"
+firebaseBom = "32.8.1"
+googleGms = "4.4.1"
+playServicesAuth = "21.1.0"
+javaxInject = "1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -58,6 +62,12 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "pagingRuntime" }
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "pagingCompose" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintLayout" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
+firebase-storage = { group = "com.google.firebase", name = "firebase-storage" }
+gms-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
+javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "javaxInject" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -65,3 +75,4 @@ jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "k
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleGms" }
