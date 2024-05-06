@@ -1,24 +1,26 @@
 package com.ahmetocak.login
 
-import android.content.Context
-import com.ahmetocak.model.DialogState
+import androidx.activity.result.IntentSenderRequest
 import com.ahmetocak.model.LoadingState
 
 data class LoginUiState(
     val email: String = "",
     val password: String = "",
-    val dialogState: DialogState = DialogState.Hide,
+    val resetEmail: String = "",
+    val showForgotPasswordDialog: Boolean = false,
     val loadingState: LoadingState = LoadingState.Idle
 )
 
-sealed class LoginEvent {
-    data class OnEmailChanged(val email: String) : LoginEvent()
-    data class OnPasswordChanged(val password: String) : LoginEvent()
-    data class OnLoadingStateChanged(val state: LoadingState) : LoginEvent()
-    data class OnGoogleClicked(val context: Context) : LoginEvent()
-    data object OnLoginClicked : LoginEvent()
-    data class OnForgotPasswordClick(val state: DialogState) : LoginEvent()
-    data object OnSignUpClicked : LoginEvent()
+sealed class LoginUiEvent {
+    data class OnEmailChanged(val email: String) : LoginUiEvent()
+    data class OnPasswordChanged(val password: String) : LoginUiEvent()
+    data class OnResetEmailChanged(val resetEmail: String) : LoginUiEvent()
+    data class OnLoadingStateChanged(val state: LoadingState) : LoginUiEvent()
+    data class OnGoogleClicked(val result: (IntentSenderRequest) -> Unit) : LoginUiEvent()
+    data object OnLoginClickedUi : LoginUiEvent()
+    data object OnForgotPasswordClick : LoginUiEvent()
+    data object OnSignUpClicked : LoginUiEvent()
+    data object OnSendPasswordResetMailClick : LoginUiEvent()
 }
 
 enum class NavigationState {

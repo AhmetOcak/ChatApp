@@ -24,7 +24,7 @@ fun AuthEmailOutlinedTextField(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
-    isError: Boolean,
+    isError: Boolean = false,
     labelText: String
 ) {
     OutlinedTextField(
@@ -48,7 +48,7 @@ fun AuthPasswordOutlinedTextField(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
-    isError: Boolean,
+    isError: Boolean = false,
     labelText: String
 ) {
     var visibility by remember { mutableStateOf(false) }

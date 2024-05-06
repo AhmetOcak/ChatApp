@@ -12,7 +12,7 @@ jetbrainsKotlinJvm = "1.9.0"
 lifecycleViewmodelCompose = "2.7.0"
 lifecycleRuntimeCompose = "2.7.0"
 navigationCompose = "2.7.7"
-hiltAndroid = "2.51"
+hiltAndroid = "2.49"
 hiltAndroidCompiler = "2.47"
 hiltNavigationCompose = "1.2.0"
 coilCompose = "2.6.0"
@@ -25,6 +25,7 @@ constraintLayout = "1.0.1"
 firebaseBom = "32.8.1"
 googleGms = "4.4.1"
 playServicesAuth = "21.1.0"
+javaxInject = "1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -66,6 +67,7 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage" }
 gms-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
+javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "javaxInject" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

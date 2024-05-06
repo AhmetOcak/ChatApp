@@ -1,26 +1,37 @@
 package com.ahmetocak.login
 
+import android.app.Activity.RESULT_OK
 import android.content.res.Configuration
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ahmetocak.designsystem.components.ButtonCircularProgressIndicator
+import com.ahmetocak.designsystem.components.ChatAppDialog
 import com.ahmetocak.designsystem.components.ChatAppGreyProgressIndicator
 import com.ahmetocak.designsystem.components.ChatButton
 import com.ahmetocak.designsystem.components.ChatImageButton
@@ -28,9 +39,9 @@ import com.ahmetocak.designsystem.components.ChatTextButton
 import com.ahmetocak.designsystem.components.auth.AuthEmailOutlinedTextField
 import com.ahmetocak.designsystem.components.auth.AuthPasswordOutlinedTextField
 import com.ahmetocak.designsystem.theme.ChatAppTheme
-import com.ahmetocak.model.DialogState
 import com.ahmetocak.model.LoadingState
 import com.ahmetocak.designsystem.R.drawable as AppResources
+import com.ahmetocak.designsystem.R.string as AppStrings
 
 @Composable
 internal fun LoginRoute(
@@ -41,7 +52,7 @@ internal fun LoginRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val onEvent by rememberUpdatedState(
-        newValue = { event: LoginEvent -> viewModel.onEvent(event) }
+        newValue = { event: LoginUiEvent -> viewModel.onEvent(event) }
     )
 
     val navigationState by viewModel.navigationState.collectAsStateWithLifecycle()
@@ -51,25 +62,55 @@ internal fun LoginRoute(
             viewModel.resetNavigation()
         }
 
-        when(navigationState) {
+        when (navigationState) {
             NavigationState.SignUp -> performNavigation(navigateToSignUp)
             NavigationState.Chats -> performNavigation(navigateToChats)
             NavigationState.None -> Unit
         }
     }
 
-    if (uiState.loadingState is LoadingState.Loading) ChatAppGreyProgressIndicator()
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult(),
+        onResult = { result ->
+            if (result.resultCode == RESULT_OK) {
+                result.data?.let { intent ->
+                    viewModel.googleSignIn(intent)
+                }
+            }
+        }
+    )
+
+    if (uiState.loadingState is LoadingState.Loading && !uiState.showForgotPasswordDialog) {
+        ChatAppGreyProgressIndicator()
+    }
 
     LoginScreen(
         modifier = modifier,
         emailValue = uiState.email,
         isEmailFieldError = false,
-        emailFieldLabelText = "Email",
+        emailFieldLabelText = stringResource(id = AppStrings.email),
         passwordValue = uiState.password,
         isPasswordFieldError = false,
-        passwordFieldLabelText = "Password",
-        onEvent = { event -> onEvent(event) }
+        passwordFieldLabelText = stringResource(id = AppStrings.password),
+        onEvent = { event -> onEvent(event) },
+        onSignInWithGoogleClick = remember {
+            {
+                onEvent(LoginUiEvent.OnGoogleClicked { intentSenderRequest ->
+                    launcher.launch(intentSenderRequest)
+                })
+            }
+        }
     )
+
+    if (uiState.showForgotPasswordDialog) {
+        ForgotPasswordDialog(
+            onDismissRequest = viewModel::hideResetPasswordDialog,
+            onSendClick = { onEvent(LoginUiEvent.OnSendPasswordResetMailClick) },
+            isLoading = uiState.loadingState == LoadingState.Loading,
+            emailValue = uiState.resetEmail,
+            onEmailValueChange = { onEvent(LoginUiEvent.OnResetEmailChanged(it)) }
+        )
+    }
 }
 
 @Composable
@@ -81,7 +122,8 @@ internal fun LoginScreen(
     passwordValue: String,
     isPasswordFieldError: Boolean,
     passwordFieldLabelText: String,
-    onEvent: (LoginEvent) -> Unit
+    onEvent: (LoginUiEvent) -> Unit,
+    onSignInWithGoogleClick: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -99,15 +141,21 @@ internal fun LoginScreen(
             passwordFieldLabelText = passwordFieldLabelText,
             onEvent = onEvent
         )
-        SubmitLoginSection(onEvent = onEvent)
+        SubmitLoginSection(onEvent = onEvent, onSignInWithGoogleClick = onSignInWithGoogleClick)
     }
 }
 
 @Composable
 private fun WelcomeMessage() {
     Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Text(text = "Welcome", style = MaterialTheme.typography.displayLarge)
-        Text(text = "Sign in to continue", style = MaterialTheme.typography.displaySmall)
+        Text(
+            text = stringResource(id = AppStrings.welcome),
+            style = MaterialTheme.typography.displayLarge
+        )
+        Text(
+            text = stringResource(id = AppStrings.sign_in_to_continue),
+            style = MaterialTheme.typography.displaySmall
+        )
     }
 }
 
@@ -119,20 +167,20 @@ private fun AuthInputSection(
     passwordValue: String,
     isPasswordFieldError: Boolean,
     passwordFieldLabelText: String,
-    onEvent: (LoginEvent) -> Unit
+    onEvent: (LoginUiEvent) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         AuthEmailOutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = emailValue,
-            onValueChange = { onEvent(LoginEvent.OnEmailChanged(it)) },
+            onValueChange = { onEvent(LoginUiEvent.OnEmailChanged(it)) },
             isError = isEmailFieldError,
             labelText = emailFieldLabelText
         )
         AuthPasswordOutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = passwordValue,
-            onValueChange = { onEvent(LoginEvent.OnPasswordChanged(it)) },
+            onValueChange = { onEvent(LoginUiEvent.OnPasswordChanged(it)) },
             labelText = passwordFieldLabelText,
             isError = isPasswordFieldError
         )
@@ -140,9 +188,10 @@ private fun AuthInputSection(
 }
 
 @Composable
-private fun SubmitLoginSection(onEvent: (LoginEvent) -> Unit) {
-    val context = LocalContext.current
-
+private fun SubmitLoginSection(
+    onEvent: (LoginUiEvent) -> Unit,
+    onSignInWithGoogleClick: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -150,13 +199,13 @@ private fun SubmitLoginSection(onEvent: (LoginEvent) -> Unit) {
     ) {
         ChatButton(
             modifier = Modifier.fillMaxWidth(),
-            onClick = { onEvent(LoginEvent.OnLoginClicked) }
+            onClick = { onEvent(LoginUiEvent.OnLoginClickedUi) }
         ) {
-            Text(text = "LOGIN")
+            Text(text = stringResource(id = AppStrings.login).uppercase())
         }
         ChatTextButton(
-            onClick = { onEvent(LoginEvent.OnForgotPasswordClick(DialogState.Show)) },
-            text = "Forgot Password?"
+            onClick = { onEvent(LoginUiEvent.OnForgotPasswordClick) },
+            text = stringResource(id = AppStrings.forgot_password)
         )
         Row(
             modifier = Modifier
@@ -170,7 +219,7 @@ private fun SubmitLoginSection(onEvent: (LoginEvent) -> Unit) {
             HorizontalDivider(modifier = Modifier.weight(1f))
         }
         ChatImageButton(
-            onClick = { onEvent(LoginEvent.OnGoogleClicked(context)) },
+            onClick = onSignInWithGoogleClick,
             image = AppResources.ic_google
         )
         Row(
@@ -178,8 +227,58 @@ private fun SubmitLoginSection(onEvent: (LoginEvent) -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Text(text = "Don't have an account?")
-            ChatTextButton(onClick = { onEvent(LoginEvent.OnSignUpClicked) }, text = "Sign up")
+            Text(text = stringResource(id = AppStrings.no_account))
+            ChatTextButton(
+                onClick = { onEvent(LoginUiEvent.OnSignUpClicked) },
+                text = stringResource(id = AppStrings.sign_up)
+            )
+        }
+    }
+}
+
+@Composable
+private fun ForgotPasswordDialog(
+    onDismissRequest: () -> Unit,
+    onSendClick: () -> Unit,
+    isLoading: Boolean,
+    emailValue: String,
+    onEmailValueChange: (String) -> Unit
+) {
+    ChatAppDialog(onDismissRequest = onDismissRequest) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = stringResource(id = AppStrings.password_reset),
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+            )
+            Text(text = stringResource(id = AppStrings.password_reset_description))
+            TextField(
+                value = emailValue,
+                onValueChange = onEmailValueChange,
+                label = {
+                    Text(text = stringResource(id = AppStrings.email))
+                }
+            )
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                TextButton(onClick = onDismissRequest) {
+                    Text(text = stringResource(id = AppStrings.cancel))
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                TextButton(
+                    enabled = !isLoading && emailValue.isNotBlank(),
+                    onClick = onSendClick
+                ) {
+                    if (isLoading) {
+                        ButtonCircularProgressIndicator()
+                    } else {
+                        Text(text = stringResource(id = AppStrings.send))
+                    }
+                }
+            }
         }
     }
 }
@@ -199,7 +298,8 @@ fun LoginScreenPreview() {
             passwordValue = "",
             isPasswordFieldError = false,
             passwordFieldLabelText = "Password",
-            onEvent = { _ -> }
+            onEvent = { _ -> },
+            onSignInWithGoogleClick = {}
         )
     }
 }

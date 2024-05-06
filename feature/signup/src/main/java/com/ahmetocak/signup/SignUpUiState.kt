@@ -1,6 +1,6 @@
 package com.ahmetocak.signup
 
-import android.content.Context
+import androidx.activity.result.IntentSenderRequest
 import com.ahmetocak.model.LoadingState
 
 data class SignUpUiState(
@@ -17,7 +17,7 @@ sealed class SignUpEvent {
     data class OnPasswordChange(val value: String) : SignUpEvent()
     data class OnConfirmPasswordChange(val value: String) : SignUpEvent()
     data class OnLoadingStateChange(val state: LoadingState) : SignUpEvent()
-    data class OnGoogleClicked(val context: Context) : SignUpEvent()
+    data class OnGoogleClicked(val result: (IntentSenderRequest) -> Unit) : SignUpEvent()
     data object OnNavigateUpClicked : SignUpEvent()
     data object OnSignUpClick : SignUpEvent()
     data object OnAlreadyHaveAccountClick : SignUpEvent()

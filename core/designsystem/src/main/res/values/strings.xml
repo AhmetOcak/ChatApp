@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="unknown_error">Something went wrong! Please try again later</string>
+    <string name="email_error">Please enter a valid email.</string>
+    <string name="password_error">Please enter a valid password.</string>
+    <string name="name_error">Please enter a valid name.</string>
+    <string name="confirm_password_error">Passwords don\'t match. Please confirm your password.</string>
+    <string name="cancel">Cancel</string>
+    <string name="send">Send</string>
+    <string name="password_reset_description">To reset your password, enter the email address you use to sign in to app.</string>
+    <string name="password_reset">Password Reset</string>
+    <string name="sign_up">Sign up</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="no_account">Don\'t have an account?</string>
+    <string name="password_reset_mail_sent">Password reset mail has been sent. Please check your email box.</string>
+    <string name="welcome">Welcome</string>
+    <string name="sign_in_to_continue">Sign in to continue</string>
+    <string name="username">Username</string>
+    <string name="confirm_password">Confirm Password</string>
+</resources>

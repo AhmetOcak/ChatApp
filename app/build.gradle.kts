@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.hilt.android)
+    alias(libs.plugins.google.services)
     kotlin("kapt")
 }
 
@@ -71,11 +72,12 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
+    kapt(libs.hilt.android.compiler)
 
     implementation(project(":feature:login"))
     implementation(project(":feature:chat_box"))
+    implementation(project(":feature:signup"))
 
     implementation(project(":core:designsystem"))
 }
