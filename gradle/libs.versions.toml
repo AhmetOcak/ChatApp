@@ -19,6 +19,7 @@ coilCompose = "2.6.0"
 coil = "2.6.0"
 appcompat = "1.6.1"
 material = "1.11.0"
+okhttp = "4.12.0"
 pagingRuntime = "3.2.1"
 pagingCompose = "3.2.1"
 constraintLayout = "1.0.1"
@@ -26,6 +27,8 @@ firebaseBom = "32.8.1"
 googleGms = "4.4.1"
 playServicesAuth = "21.1.0"
 javaxInject = "1"
+serialization = "1.9.0"
+kotlinxSerilization = "1.6.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -68,6 +71,8 @@ firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage" }
 gms-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
 javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "javaxInject" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp",version.ref = "okhttp" }
+kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerilization" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -76,3 +81,4 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleGms" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serialization" }
