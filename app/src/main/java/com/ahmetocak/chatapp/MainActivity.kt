@@ -16,7 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.ahmetocak.chat_box.navigation.CHAT_BOX_ROUTE
 import com.ahmetocak.chat_box.navigation.chatBoxScreen
 import com.ahmetocak.designsystem.theme.ChatAppTheme
-import com.ahmetocak.network.chat.ChatService
+import com.ahmetocak.network.api.chat.ChatService
 import com.ahmetocak.network.model.NetworkMessage
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

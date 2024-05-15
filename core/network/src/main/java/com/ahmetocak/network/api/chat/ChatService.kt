@@ -1,4 +1,4 @@
-package com.ahmetocak.network.chat
+package com.ahmetocak.network.api.chat
 
 import com.ahmetocak.network.model.NetworkMessage
 

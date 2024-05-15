@@ -1,4 +1,4 @@
-package com.ahmetocak.network.chat
+package com.ahmetocak.network.api.chat
 
 import android.util.Log
 import com.ahmetocak.common.MessageManager
