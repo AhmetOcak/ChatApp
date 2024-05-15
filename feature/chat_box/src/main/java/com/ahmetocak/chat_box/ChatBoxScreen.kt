@@ -100,7 +100,7 @@ internal fun ChatBoxRoute(
     ) { paddingValues ->
         ChatBoxScreen(
             modifier = Modifier.padding(paddingValues),
-            messageList = PreviewMessageList
+            messageList = uiState.chat
         )
     }
 }
@@ -108,7 +108,7 @@ internal fun ChatBoxRoute(
 @Composable
 internal fun ChatBoxScreen(modifier: Modifier = Modifier, messageList: List<Message>) {
     // TODO: This is for a test. Remove when you integrate the business data
-    val myId = "bob456"
+    val myId = "1"
 
     LazyColumn(
         modifier = modifier
@@ -117,7 +117,7 @@ internal fun ChatBoxScreen(modifier: Modifier = Modifier, messageList: List<Mess
         contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
-        itemsIndexed(messageList) { index, chat ->
+        itemsIndexed(messageList, key = { index, _ -> index }) { index, chat ->
             val isConsecutiveMessage = index > 0 && messageList[index - 1].authorId == chat.authorId
 
             if (!isConsecutiveMessage) {
@@ -126,7 +126,7 @@ internal fun ChatBoxScreen(modifier: Modifier = Modifier, messageList: List<Mess
 
             if (chat.isComingFromMe(myId)) {
                 OngoingChatBubbleItem(
-                    author = chat.author,
+                    author = chat.authorName,
                     message = chat.message,
                     time = chat.time,
                     seenByList = listOf(null, null),
@@ -134,7 +134,7 @@ internal fun ChatBoxScreen(modifier: Modifier = Modifier, messageList: List<Mess
                 )
             } else {
                 ComingChatBubbleItem(
-                    author = chat.author,
+                    author = chat.authorName,
                     message = chat.message,
                     time = chat.time,
                     authorImgUrl = chat.authorImage,
@@ -262,7 +262,7 @@ private fun ChatBoxBottomBar(messageValue: String, onEvent: (ChatBoxUiEvent) -> 
         }
         IconButton(
             onClick = {
-                if (messageValue.isNotBlank()) {
+                if (messageValue.isBlank()) {
                     onEvent(ChatBoxUiEvent.OnMicrophonePress)
                 } else {
                     onEvent(ChatBoxUiEvent.OnSendMessageClick)

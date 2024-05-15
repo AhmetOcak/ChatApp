@@ -1,7 +1,11 @@
 package com.ahmetocak.common.ext
 
+import android.util.Log
 import android.util.Patterns
 import com.ahmetocak.common.UiText
+import java.time.LocalDateTime
+import java.time.Period
+import java.time.format.DateTimeFormatter
 import com.ahmetocak.designsystem.R.string as AppStrings
 
 fun String.isValidEmail(): Boolean {
@@ -25,5 +29,36 @@ fun Exception?.failureMessage(): UiText {
         UiText.DynamicString(message)
     } ?: run {
         UiText.StringResource(AppStrings.unknown_error)
+    }
+}
+
+fun getCurrentDate(): String {
+    val currentDate = LocalDateTime.now()
+    val formatter = DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")
+    return currentDate.format(formatter)
+}
+
+fun String.showMessageSendTime(): String {
+    try {
+        val formatter = DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")
+        val currentD = LocalDateTime.now().format(formatter)
+        val messageD = this
+
+        val currentDate = LocalDateTime.parse(currentD, formatter).toLocalDate()
+        val messageDate = LocalDateTime.parse(messageD, formatter).toLocalDate()
+
+        val year = Period.between(currentDate, messageDate).years
+        val month = Period.between(currentDate, messageDate).months
+        val days = Period.between(currentDate, messageDate).days
+
+        return if (year != 0 || month != 0 || days != 0) {
+            messageD
+        } else {
+            val hourMinFormatter = DateTimeFormatter.ofPattern("HH:mm")
+            return LocalDateTime.parse(messageD, formatter).format(hourMinFormatter)
+        }
+    } catch (e: Exception) {
+        Log.d("showMessageSendTime", e.stackTraceToString())
+        return ""
     }
 }

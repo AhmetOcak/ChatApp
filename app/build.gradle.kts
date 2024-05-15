@@ -75,9 +75,13 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     kapt(libs.hilt.android.compiler)
 
+    // Okhttp
+    implementation(libs.okhttp)
+
     implementation(project(":feature:login"))
     implementation(project(":feature:chat_box"))
     implementation(project(":feature:signup"))
 
     implementation(project(":core:designsystem"))
+    implementation(project(":core:network"))
 }

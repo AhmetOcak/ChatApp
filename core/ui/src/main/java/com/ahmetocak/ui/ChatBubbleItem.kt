@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -145,16 +146,16 @@ private fun BubbleSkeleton(
         Text(
             modifier = Modifier.constrainAs(messageText) {
                 top.linkTo(if (!isAuthorSame) authorText.bottom else parent.top, margin = 4.dp)
-                start.linkTo(parent.start, margin = 8.dp)
-            },
+                start.linkTo(parent.start)
+            }.padding(horizontal = 8.dp),
             text = message,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Start
         )
 
         Text(
             modifier = Modifier.constrainAs(dateText) {
                 top.linkTo(messageText.bottom, margin = 2.dp)
-                start.linkTo(messageText.end, margin = 16.dp)
                 end.linkTo(parent.end, margin = 8.dp)
             },
             text = messageDate,
@@ -186,7 +187,7 @@ fun PreviewComingChatBalloonItem() {
         ChatAppTheme {
             ComingChatBubbleItem(
                 author = "Darth Vader",
-                message = "This is a test message.",
+                message = "This is a test messsdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaage.",
                 time = "13:18",
                 authorImgUrl = null,
                 isAuthorSame = false

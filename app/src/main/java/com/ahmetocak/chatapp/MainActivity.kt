@@ -10,13 +10,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.ahmetocak.chat_box.navigation.CHAT_BOX_ROUTE
+import com.ahmetocak.chat_box.navigation.chatBoxScreen
 import com.ahmetocak.designsystem.theme.ChatAppTheme
+import com.ahmetocak.network.chat.ChatService
+import com.ahmetocak.network.model.NetworkMessage
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             ChatAppTheme {
                 // A surface container using the 'background' color from the theme
@@ -24,7 +34,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    NavHost(navController = rememberNavController(), startDestination = "$CHAT_BOX_ROUTE/{1}") {
+                        chatBoxScreen({}, {}, {}, {})
+                    }
                 }
             }
         }

@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.kotlinSerialization)
+    kotlin("kapt")
 }
 
 android {
@@ -35,7 +37,17 @@ android {
 dependencies {
 
     implementation(libs.androidx.core.ktx)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+
+    // Okhttp
+    implementation(libs.okhttp)
+
+    // Kotlin Serialization
+    implementation(libs.kotlinx.serialization)
+
+    implementation(project(":core:common"))
 }
