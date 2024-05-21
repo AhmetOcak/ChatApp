@@ -49,5 +49,13 @@ dependencies {
     // Kotlin Serialization
     implementation(libs.kotlinx.serialization)
 
+    // Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
+    // Firebase Storage
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.storage)
+
     implementation(project(":core:common"))
 }

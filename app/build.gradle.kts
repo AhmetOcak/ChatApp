@@ -78,9 +78,13 @@ dependencies {
     // Okhttp
     implementation(libs.okhttp)
 
+    // Coil
+    implementation(libs.coil)
+
     implementation(project(":feature:login"))
     implementation(project(":feature:chat_box"))
     implementation(project(":feature:signup"))
+    implementation(project(":feature:profile"))
 
     implementation(project(":core:designsystem"))
     implementation(project(":core:network"))

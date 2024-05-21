@@ -1,14 +1,14 @@
-package com.ahmetocak.domain.usecase.auth
+package com.ahmetocak.domain.usecase.user.remote
 
 import com.ahmetocak.authentication.client.FirebaseEmailPasswordClient
 import com.ahmetocak.common.UiText
 import com.ahmetocak.common.ext.failureMessage
 import javax.inject.Inject
 
-class UpdateUsernameUseCase @Inject constructor(private val firebaseEmailPasswordClient: FirebaseEmailPasswordClient) {
+class DeleteAccountFromFirebaseUseCase @Inject constructor(private val firebaseEmailPasswordClient: FirebaseEmailPasswordClient) {
 
-    operator fun invoke(name: String, onSuccess: () -> Unit, onFailure: (UiText) -> Unit) {
-        firebaseEmailPasswordClient.updateUsername(name)?.addOnCompleteListener { task ->
+    operator fun invoke(onSuccess: () -> Unit, onFailure: (UiText) -> Unit) {
+        firebaseEmailPasswordClient.deleteAccount()?.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 onSuccess()
             } else {

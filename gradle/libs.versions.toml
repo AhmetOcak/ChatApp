@@ -29,6 +29,11 @@ playServicesAuth = "21.1.0"
 javaxInject = "1"
 serialization = "1.9.0"
 kotlinxSerilization = "1.6.3"
+retrofit = "2.9.0"
+converterGson = "2.9.0"
+roomCompiler = "2.6.1"
+roomKtx = "2.6.1"
+roomRuntime = "2.6.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -73,6 +78,11 @@ gms-auth = { group = "com.google.android.gms", name = "play-services-auth", vers
 javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "javaxInject" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp",version.ref = "okhttp" }
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerilization" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "converterGson" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

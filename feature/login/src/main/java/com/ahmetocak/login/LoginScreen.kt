@@ -7,16 +7,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,14 +21,12 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ahmetocak.designsystem.components.ButtonCircularProgressIndicator
-import com.ahmetocak.designsystem.components.ChatAppDialog
 import com.ahmetocak.designsystem.components.ChatAppGreyProgressIndicator
+import com.ahmetocak.designsystem.components.ChatAppSubmitValueDialog
 import com.ahmetocak.designsystem.components.ChatButton
 import com.ahmetocak.designsystem.components.ChatImageButton
 import com.ahmetocak.designsystem.components.ChatTextButton
@@ -103,12 +97,15 @@ internal fun LoginRoute(
     )
 
     if (uiState.showForgotPasswordDialog) {
-        ForgotPasswordDialog(
+        ChatAppSubmitValueDialog(
             onDismissRequest = viewModel::hideResetPasswordDialog,
-            onSendClick = { onEvent(LoginUiEvent.OnSendPasswordResetMailClick) },
-            isLoading = uiState.loadingState == LoadingState.Loading,
-            emailValue = uiState.resetEmail,
-            onEmailValueChange = { onEvent(LoginUiEvent.OnResetEmailChanged(it)) }
+            onSubmitClick = { onEvent(LoginUiEvent.OnSendPasswordResetMailClick) },
+            onValueChange = { onEvent(LoginUiEvent.OnResetEmailChanged(it)) },
+            title = stringResource(id = AppStrings.password_reset),
+            description = stringResource(id = AppStrings.password_reset_description),
+            submitText = stringResource(id = AppStrings.send),
+            value = uiState.resetEmail,
+            isLoading = uiState.loadingState == LoadingState.Loading
         )
     }
 }
@@ -232,53 +229,6 @@ private fun SubmitLoginSection(
                 onClick = { onEvent(LoginUiEvent.OnSignUpClicked) },
                 text = stringResource(id = AppStrings.sign_up)
             )
-        }
-    }
-}
-
-@Composable
-private fun ForgotPasswordDialog(
-    onDismissRequest: () -> Unit,
-    onSendClick: () -> Unit,
-    isLoading: Boolean,
-    emailValue: String,
-    onEmailValueChange: (String) -> Unit
-) {
-    ChatAppDialog(onDismissRequest = onDismissRequest) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text(
-                text = stringResource(id = AppStrings.password_reset),
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-            )
-            Text(text = stringResource(id = AppStrings.password_reset_description))
-            TextField(
-                value = emailValue,
-                onValueChange = onEmailValueChange,
-                label = {
-                    Text(text = stringResource(id = AppStrings.email))
-                }
-            )
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                TextButton(onClick = onDismissRequest) {
-                    Text(text = stringResource(id = AppStrings.cancel))
-                }
-                Spacer(modifier = Modifier.width(16.dp))
-                TextButton(
-                    enabled = !isLoading && emailValue.isNotBlank(),
-                    onClick = onSendClick
-                ) {
-                    if (isLoading) {
-                        ButtonCircularProgressIndicator()
-                    } else {
-                        Text(text = stringResource(id = AppStrings.send))
-                    }
-                }
-            }
         }
     }
 }
