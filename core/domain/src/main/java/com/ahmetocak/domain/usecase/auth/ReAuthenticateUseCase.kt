@@ -21,23 +21,10 @@ class ReAuthenticateUseCase @Inject constructor(
         val signInProvider = FirebaseAuth.getInstance().getAccessToken(false).result.signInProvider
 
         if (signInProvider == GoogleAuthProvider.PROVIDER_ID) {
-            googleAuthClient.reAuthenticate().addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val account = task.result
-                    val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-
-                    FirebaseAuth.getInstance().currentUser?.reauthenticate(credential)
-                        ?.addOnCompleteListener { reAuthTask ->
-                            if (reAuthTask.isSuccessful) {
-                                onSuccess()
-                            } else {
-                                onFailure(reAuthTask.exception.failureMessage())
-                            }
-                        }
-                } else {
-                    onFailure(task.exception.failureMessage())
-                }
-            }
+            googleAuthClient.reAuthenticate(
+                onSuccess = onSuccess,
+                onFailure = { onFailure(it.failureMessage()) }
+            )
         } else {
             firebaseAuthClient.reAuthenticate(email, password)?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {

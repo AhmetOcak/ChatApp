@@ -42,6 +42,12 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 
+    // Firebase Storage
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.storage)
+
     implementation(project(":core:network"))
     implementation(project(":core:model"))
+    implementation(project(":core:common"))
+    implementation(project(":core:database"))
 }

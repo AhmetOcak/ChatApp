@@ -73,6 +73,12 @@ dependencies {
     kapt(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
 
+    // Firebase Auth
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+
     implementation(project(":core:designsystem"))
     implementation(project(":core:model"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:common"))
 }

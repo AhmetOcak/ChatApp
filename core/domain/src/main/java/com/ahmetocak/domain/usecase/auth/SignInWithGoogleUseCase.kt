@@ -5,9 +5,15 @@ import androidx.activity.result.IntentSenderRequest
 import com.ahmetocak.authentication.client.GoogleSignInClient
 import com.ahmetocak.common.UiText
 import com.ahmetocak.common.ext.failureMessage
+import com.ahmetocak.domain.usecase.user.local.AddUserToCacheUseCase
+import com.ahmetocak.domain.usecase.user.remote.CreateUserUseCase
 import javax.inject.Inject
 
-class SignInWithGoogleUseCase @Inject constructor(private val googleSignInClient: GoogleSignInClient) {
+class SignInWithGoogleUseCase @Inject constructor(
+    private val googleSignInClient: GoogleSignInClient,
+    private val addUserToCacheUseCase: AddUserToCacheUseCase,
+    private val createUserUseCase: CreateUserUseCase
+) {
 
     fun startSignInIntent(
         onFailure: (UiText) -> Unit,
@@ -33,7 +39,18 @@ class SignInWithGoogleUseCase @Inject constructor(private val googleSignInClient
     ) {
         googleSignInClient.signInWithIntent(intent).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                onSuccess()
+                val result = task.result.user
+
+                createUserUseCase(
+                    email = result?.email!!,
+                    username = result.email!!,
+                    profilePicUrl = result.photoUrl.toString(),
+                    onSuccess = { user ->
+                        addUserToCacheUseCase(user)
+                        onSuccess()
+                    },
+                    onFailure = onFailure
+                )
             } else {
                 onFailure(task.exception.failureMessage())
             }

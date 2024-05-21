@@ -3,25 +3,34 @@ package com.ahmetocak.domain.usecase.auth
 import com.ahmetocak.authentication.client.FirebaseEmailPasswordClient
 import com.ahmetocak.common.UiText
 import com.ahmetocak.common.ext.failureMessage
+import com.ahmetocak.domain.usecase.user.local.AddUserToCacheUseCase
+import com.ahmetocak.domain.usecase.user.remote.CreateUserUseCase
 import javax.inject.Inject
 
 class SignUpUseCase @Inject constructor(
     private val firebaseEmailPasswordClient: FirebaseEmailPasswordClient,
-    private val updateUsernameUseCase: UpdateUsernameUseCase
+    private val addUserToCacheUseCase: AddUserToCacheUseCase,
+    private val createUserUseCase: CreateUserUseCase
 ) {
 
     operator fun invoke(
-        name: String,
+        username: String,
         email: String,
         password: String,
+        profilePicUrl: String?,
         onSuccess: () -> Unit,
         onFailure: (UiText) -> Unit
     ) {
         firebaseEmailPasswordClient.signUp(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                updateUsernameUseCase(
-                    name = name,
-                    onSuccess = onSuccess,
+                createUserUseCase(
+                    email = email,
+                    username = username,
+                    profilePicUrl = profilePicUrl,
+                    onSuccess = { user ->
+                        addUserToCacheUseCase(user)
+                        onSuccess()
+                    },
                     onFailure = onFailure
                 )
             } else {

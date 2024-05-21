@@ -45,6 +45,9 @@ dependencies {
     implementation(libs.firebase.storage)
     implementation(libs.gms.auth)
 
+    // Coil
+    implementation(libs.coil)
+
     implementation(project(":core:model"))
     implementation(project(":core:data"))
     implementation(project(":core:common"))

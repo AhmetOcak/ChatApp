@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatBoxViewModel @Inject constructor(
-    private val sendMessageUseCase: SendMessageUseCase
+    private val sendMessageUseCase: SendMessageUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ChatBoxUiState())
@@ -52,7 +52,9 @@ class ChatBoxViewModel @Inject constructor(
             is ChatBoxUiEvent.OnAttachDocClick -> _uiState.update { it.copy(showAttachDocBox = true) }
             is ChatBoxUiEvent.OnCameraClick -> _navigationState.update { NavigationState.Camera }
             is ChatBoxUiEvent.OnMicrophonePress -> _uiState.update { it.copy(activateMicrophone = true) }
-            is ChatBoxUiEvent.OnCallClick -> { /* TODO: Start a call */ }
+            is ChatBoxUiEvent.OnCallClick -> { /* TODO: Start a call */
+            }
+
             is ChatBoxUiEvent.OnBackClick -> _navigationState.update { NavigationState.Back }
             is ChatBoxUiEvent.OnMenuClick -> _uiState.update { it.copy(showDropdownMenu = true) }
             is ChatBoxUiEvent.OnSendMessageClick -> { sendMessage() }

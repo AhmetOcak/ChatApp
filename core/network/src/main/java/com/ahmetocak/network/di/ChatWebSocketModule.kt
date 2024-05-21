@@ -1,8 +1,8 @@
 package com.ahmetocak.network.di
 
-import com.ahmetocak.network.chat.ChatService
-import com.ahmetocak.network.chat.ChatServiceImpl
-import com.ahmetocak.network.chat.WebSocketListener
+import com.ahmetocak.network.api.chat.ChatService
+import com.ahmetocak.network.api.chat.ChatServiceImpl
+import com.ahmetocak.network.api.chat.WebSocketListener
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

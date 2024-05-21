@@ -20,4 +20,7 @@
     <string name="sign_in_to_continue">Sign in to continue</string>
     <string name="username">Username</string>
     <string name="confirm_password">Confirm Password</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="delete_account_desc">Are you sure you want to delete your account ? When you delete your account, all your user information is also deleted. This process is irreversible.</string>
+    <string name="delete">Delete</string>
 </resources>

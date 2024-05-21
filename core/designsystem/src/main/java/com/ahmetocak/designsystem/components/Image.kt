@@ -29,8 +29,8 @@ fun AnimatedNetworkImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(imageUrl)
             .size(Size.ORIGINAL)
-            .allowHardware(false)
-            .crossfade(true)
+            .memoryCacheKey(imageUrl)
+            .diskCacheKey(imageUrl)
             .build()
     )
 
@@ -79,8 +79,8 @@ fun NetworkImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(imageUrl)
             .size(Size.ORIGINAL)
-            .allowHardware(false)
-            .crossfade(true)
+            .memoryCacheKey(imageUrl)
+            .diskCacheKey(imageUrl)
             .build()
     )
 

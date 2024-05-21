@@ -1,5 +1,8 @@
 package com.ahmetocak.profile
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,9 +15,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -25,17 +31,15 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,17 +47,24 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmetocak.designsystem.components.AnimatedNetworkImage
 import com.ahmetocak.designsystem.components.ChatAppIconButton
+import com.ahmetocak.designsystem.components.ChatAppModalBottomSheet
 import com.ahmetocak.designsystem.components.ChatAppScaffold
+import com.ahmetocak.designsystem.components.ChatAppSubmitDialog
+import com.ahmetocak.designsystem.components.ChatAppSubmitValueDialog
 import com.ahmetocak.designsystem.icons.ChatAppIcons
 import com.ahmetocak.designsystem.theme.ChatAppTheme
+import com.ahmetocak.model.LoadingState
+import com.google.firebase.auth.GoogleAuthProvider
 import com.ahmetocak.designsystem.R.drawable as AppResources
+import com.ahmetocak.designsystem.R.string as AppStrings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ProfileRoute(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
-    upPress: () -> Unit
+    upPress: () -> Unit,
+    onNavigateLogin: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val onEvent by rememberUpdatedState(
@@ -69,7 +80,58 @@ internal fun ProfileRoute(
 
         when (navigationState) {
             NavigationState.Back -> performNavigation { upPress() }
+            NavigationState.Login -> performNavigation { onNavigateLogin() }
             NavigationState.None -> Unit
+        }
+    }
+
+    val pickMediaLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) {
+            onEvent(ProfileUiEvent.OnUploadImageClick(uri))
+        }
+    }
+
+    if (uiState.showUpdateUserNameSheet) {
+        ChatAppModalBottomSheet(
+            onDismissRequest = { onEvent(ProfileUiEvent.OnDismissUpdateUsernameSheet) },
+            value = uiState.value,
+            onValueChange = { onEvent(ProfileUiEvent.OnValueChange(it)) },
+            onCancelClick = { onEvent(ProfileUiEvent.OnDismissUpdateUsernameSheet) },
+            onSubmitClick = { onEvent(ProfileUiEvent.OnUpdateUserNameClick) },
+            isLoading = uiState.loadingState == LoadingState.Loading
+        )
+    }
+
+    if (uiState.showDeleteAccountDialog) {
+        when (viewModel.signInProvider) {
+            GoogleAuthProvider.PROVIDER_ID -> {
+                ChatAppSubmitDialog(
+                    onDismissRequest = { onEvent(ProfileUiEvent.OnDismissDeleteAccountDialog) },
+                    onSubmitClick = { onEvent(ProfileUiEvent.OnDeleteAccountClick) },
+                    title = stringResource(id = AppStrings.delete_account),
+                    description = stringResource(id = AppStrings.delete_account_desc),
+                    submitText = stringResource(id = AppStrings.delete)
+                )
+            }
+
+            else -> {
+                ChatAppSubmitValueDialog(
+                    onDismissRequest = { onEvent(ProfileUiEvent.OnDismissDeleteAccountDialog) },
+                    onSubmitClick = { onEvent(ProfileUiEvent.OnDeleteAccountClick) },
+                    title = stringResource(id = AppStrings.delete_account),
+                    description = stringResource(id = AppStrings.delete_account_desc),
+                    submitText = stringResource(id = AppStrings.delete),
+                    textFieldLabel = {
+                        Text(text = stringResource(id = AppStrings.password))
+                    },
+                    value = uiState.value,
+                    onValueChange = { onEvent(ProfileUiEvent.OnValueChange(it)) },
+                    isLoading = uiState.deleteAccountState == LoadingState.Loading,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                )
+            }
         }
     }
 
@@ -83,6 +145,16 @@ internal fun ProfileRoute(
                         onClick = { onEvent(ProfileUiEvent.OnBackClick) },
                         imageVector = ChatAppIcons.Default.arrowBack
                     )
+                },
+                actions = {
+                    ChatAppIconButton(
+                        onClick = { onEvent(ProfileUiEvent.OnStartDeleteAccountDialogClick) },
+                        imageVector = ChatAppIcons.Filled.delete
+                    )
+                    ChatAppIconButton(
+                        onClick = { onEvent(ProfileUiEvent.OnLogOutClick) },
+                        imageVector = ChatAppIcons.Default.logout
+                    )
                 }
             )
         }
@@ -91,7 +163,14 @@ internal fun ProfileRoute(
             modifier = modifier.padding(paddingValues),
             userImageUrl = uiState.userImageUrl,
             username = uiState.username,
-            email = uiState.userEmail
+            email = uiState.userEmail,
+            onEvent = onEvent,
+            onPickImageClick = {
+                pickMediaLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+            },
+            isImageUploading = uiState.imageUploadingState == LoadingState.Loading
         )
     }
 }
@@ -101,7 +180,10 @@ internal fun ProfileScreen(
     modifier: Modifier = Modifier,
     userImageUrl: String?,
     username: String,
-    email: String
+    email: String,
+    onEvent: (ProfileUiEvent) -> Unit,
+    onPickImageClick: () -> Unit,
+    isImageUploading: Boolean
 ) {
     Column(
         modifier = modifier
@@ -110,30 +192,21 @@ internal fun ProfileScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(16.dp))
-        EditableUserProfileImage(imageUrl = userImageUrl)
+        EditableUserProfileImage(
+            imageUrl = userImageUrl,
+            onPickImageClick = onPickImageClick,
+            isImageUploading = isImageUploading
+        )
         Spacer(modifier = Modifier.height(32.dp))
-        UserDetailItem(
-            title = "Username",
+        UserNameSection(
             information = username,
-            icon = ChatAppIcons.Outlined.person,
-            onClick = {}
-        )
-        UserDetailItem(
-            title = "Email",
-            information = email,
-            icon = ChatAppIcons.Outlined.person,
-            onClick = {}
-        )
+            onClick = { onEvent(ProfileUiEvent.OnShowUpdateUsernameSheet) })
+        UserEmailSection(information = email)
     }
 }
 
 @Composable
-private fun UserDetailItem(
-    title: String,
-    information: String,
-    icon: ImageVector,
-    onClick: () -> Unit
-) {
+private fun UserNameSection(information: String, onClick: () -> Unit) {
     Card(
         onClick = onClick,
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
@@ -143,17 +216,24 @@ private fun UserDetailItem(
                 .fillMaxWidth()
                 .padding(vertical = 16.dp, horizontal = 32.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Icon(imageVector = icon, contentDescription = null, modifier = Modifier.weight(1f))
-            Column(modifier = Modifier.weight(5f), horizontalAlignment = Alignment.Start) {
-                Text(text = title, style = MaterialTheme.typography.titleSmall)
-                Text(text = information, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = ChatAppIcons.Filled.person,
+                    contentDescription = null
+                )
+                Column(horizontalAlignment = Alignment.Start) {
+                    Text(text = "Username", style = MaterialTheme.typography.titleSmall)
+                    Text(text = information, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
             }
             Icon(
                 imageVector = ChatAppIcons.Outlined.edit,
                 contentDescription = null,
-                modifier = Modifier.weight(1f),
                 tint = MaterialTheme.colorScheme.primary
             )
         }
@@ -161,35 +241,66 @@ private fun UserDetailItem(
 }
 
 @Composable
-private fun EditableUserProfileImage(imageUrl: String?) {
+private fun UserEmailSection(information: String) {
+    Card(colors = CardDefaults.cardColors(containerColor = Color.Transparent)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp, horizontal = 32.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = ChatAppIcons.Filled.email,
+                contentDescription = null
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Column {
+                Text(text = "Email", style = MaterialTheme.typography.titleSmall)
+                Text(text = information, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
+        }
+    }
+}
+
+@Composable
+private fun EditableUserProfileImage(
+    imageUrl: String?,
+    onPickImageClick: () -> Unit,
+    isImageUploading: Boolean
+) {
     val size = (LocalConfiguration.current.screenWidthDp / 2.5f).dp
 
     Box(
         modifier = Modifier
             .size(size)
-            .clickable(onClick = {  })
+            .clickable(onClick = { }),
+        contentAlignment = Alignment.Center
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(CircleShape)
-        ) {
-            imageUrl?.let { url ->
-                AnimatedNetworkImage(imageUrl = url, modifier = Modifier.fillMaxSize())
-            } ?: run {
-                Image(
-                    painter = painterResource(id = AppResources.blank_profile),
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize()
+        if (isImageUploading) {
+            CircularProgressIndicator()
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(CircleShape)
+            ) {
+                imageUrl?.let { url ->
+                    AnimatedNetworkImage(imageUrl = url, modifier = Modifier.fillMaxSize())
+                } ?: run {
+                    Image(
+                        painter = painterResource(id = AppResources.blank_profile),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            }
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd) {
+                ChatAppIconButton(
+                    onClick = onPickImageClick,
+                    imageVector = ChatAppIcons.Outlined.camera,
+                    colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.primary)
                 )
             }
-        }
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd) {
-            ChatAppIconButton(
-                onClick = { /*TODO*/ },
-                imageVector = ChatAppIcons.Outlined.camera,
-                colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.primary)
-            )
         }
     }
 }
@@ -203,6 +314,9 @@ fun PreviewProfileScreen() {
                 userImageUrl = null,
                 username = "Ahmet Ocak",
                 email = "ocak6139@gmail.com",
+                onEvent = {},
+                onPickImageClick = {},
+                isImageUploading = false
             )
         }
     }

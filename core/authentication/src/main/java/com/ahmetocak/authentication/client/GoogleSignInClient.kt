@@ -6,10 +6,10 @@ import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInResult
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -33,14 +33,29 @@ class GoogleSignInClient @Inject constructor(
         return Firebase.auth.signInWithCredential(googleAuthCredential)
     }
 
-    fun reAuthenticate(): Task<GoogleSignInAccount> {
+    fun reAuthenticate(onSuccess: () -> Unit, onFailure: (Exception?) -> Unit) {
         val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(WEB_CLIENT_ID)
             .build()
 
         val googleClient = GoogleSignIn.getClient(context, googleSignInOptions)
 
-        return googleClient.silentSignIn()
+        googleClient.silentSignIn().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val account = task.result
+                val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+
+                FirebaseAuth.getInstance().currentUser?.reauthenticate(credential)
+                    ?.addOnCompleteListener { reAuthTask ->
+                        if (reAuthTask.isSuccessful) {
+                            onSuccess()
+                        } else {
+                            onFailure(reAuthTask.exception)
+                        }
+
+                    }
+            }
+        }
     }
 
     private fun signInRequest() = BeginSignInRequest.builder()

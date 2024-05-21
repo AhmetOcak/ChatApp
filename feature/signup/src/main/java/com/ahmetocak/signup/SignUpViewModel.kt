@@ -48,7 +48,7 @@ class SignUpViewModel @Inject constructor(
             is SignUpEvent.OnConfirmPasswordChange -> _uiState.update { it.copy(confirmPassword = event.value) }
             is SignUpEvent.OnLoadingStateChange -> _uiState.update { it.copy(loadingState = event.state) }
             SignUpEvent.OnNavigateUpClicked -> _navigationState.update { NavigationState.NavigateUp }
-            SignUpEvent.OnSignUpClick -> signUp()
+            SignUpEvent.OnSignUpClick -> { signUp() }
             is SignUpEvent.OnGoogleClicked -> startGoogleSignInIntent(event.result)
             SignUpEvent.OnAlreadyHaveAccountClick -> _navigationState.update { NavigationState.Login }
         }
@@ -60,9 +60,10 @@ class SignUpViewModel @Inject constructor(
 
             viewModelScope.launch(ioDispatcher) {
                 signUpUseCase(
-                    name = name,
+                    username = name,
                     email = email,
                     password = password,
+                    profilePicUrl = null,
                     onSuccess = {
                         _uiState.update { it.copy(loadingState = LoadingState.Idle) }
                         _navigationState.update { NavigationState.Chats }
