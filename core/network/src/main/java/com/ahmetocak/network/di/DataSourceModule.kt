@@ -1,8 +1,10 @@
 package com.ahmetocak.network.di
 
-import com.ahmetocak.network.api.KtorUserApi
+import com.ahmetocak.network.api.KtorChatApi
 import com.ahmetocak.network.datasource.firebase.storage.StorageRemoteDataSource
 import com.ahmetocak.network.datasource.firebase.storage.StorageRemoteDataSourceImpl
+import com.ahmetocak.network.datasource.ktor_friend.FriendRemoteDataSource
+import com.ahmetocak.network.datasource.ktor_friend.FriendRemoteDataSourceImpl
 import com.ahmetocak.network.datasource.ktor_user.UserRemoteDataSource
 import com.ahmetocak.network.datasource.ktor_user.UserRemoteDataSourceImpl
 import com.google.firebase.storage.FirebaseStorage
@@ -18,7 +20,7 @@ object DataSourceModule {
 
     @Singleton
     @Provides
-    fun provideKtorUserDataSource(api: KtorUserApi): UserRemoteDataSource {
+    fun provideKtorUserDataSource(api: KtorChatApi): UserRemoteDataSource {
         return UserRemoteDataSourceImpl(api)
     }
 
@@ -26,5 +28,11 @@ object DataSourceModule {
     @Provides
     fun provideStorageRemoteDataSource(storage: FirebaseStorage): StorageRemoteDataSource {
         return StorageRemoteDataSourceImpl(storage)
+    }
+
+    @Singleton
+    @Provides
+    fun provideFriendRemoteDataSource(api: KtorChatApi): FriendRemoteDataSource {
+        return FriendRemoteDataSourceImpl(api)
     }
 }

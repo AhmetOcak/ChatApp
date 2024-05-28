@@ -1,7 +1,7 @@
 package com.ahmetocak.network.di
 
 import com.ahmetocak.network.helper.BASE_URL
-import com.ahmetocak.network.api.KtorUserApi
+import com.ahmetocak.network.api.KtorChatApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,15 +12,15 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object KtorUserApiModule {
+object KtorApiModule {
 
     @Singleton
     @Provides
-    fun provideKtorUserApi(): KtorUserApi {
+    fun provideKtorUserApi(): KtorChatApi {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(KtorUserApi::class.java)
+            .create(KtorChatApi::class.java)
     }
 }

@@ -3,7 +3,7 @@ package com.ahmetocak.data.mapper
 import com.ahmetocak.model.Message
 import com.ahmetocak.network.model.NetworkMessage
 
-fun NetworkMessage.toMessage(): Message {
+internal fun NetworkMessage.toMessage(): Message {
     return Message(
         authorId = senderId,
         authorName = senderName,
@@ -13,7 +13,7 @@ fun NetworkMessage.toMessage(): Message {
     )
 }
 
-fun Message.toNetworkMessage(receiverId: String): NetworkMessage {
+internal fun Message.toNetworkMessage(receiverId: String): NetworkMessage {
     return NetworkMessage(
         senderId = authorId,
         senderName = authorName,

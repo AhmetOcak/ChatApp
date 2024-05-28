@@ -1,12 +1,12 @@
 package com.ahmetocak.network.datasource.ktor_user
 
 import com.ahmetocak.common.Response
-import com.ahmetocak.network.api.KtorUserApi
+import com.ahmetocak.network.api.KtorChatApi
 import com.ahmetocak.network.helper.apiCall
 import com.ahmetocak.network.model.NetworkUser
 import javax.inject.Inject
 
-class UserRemoteDataSourceImpl @Inject constructor(private val api: KtorUserApi): UserRemoteDataSource {
+class UserRemoteDataSourceImpl @Inject constructor(private val api: KtorChatApi): UserRemoteDataSource {
     override suspend fun create(
         email: String,
         username: String,
