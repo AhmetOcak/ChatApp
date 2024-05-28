@@ -1,27 +1,33 @@
 package com.ahmetocak.chats
 
+import com.ahmetocak.model.Friend
 import com.ahmetocak.model.LoadingState
-import com.ahmetocak.model.UserChat
 
 data class ChatsUiState(
-    val chatList: List<UserChat> = emptyList(),
-    val chatImageClickState: ChatImageClickState = ChatImageClickState.Idle,
-    val loadingState: LoadingState = LoadingState.Loading
+    val personValue: String = "",
+    val friendList: List<Friend> = emptyList(),
+    val screenState: ScreenState = ScreenState.Chats,
+    val loadingState: LoadingState = LoadingState.Idle,
+    val addNewPersonLoadingState: LoadingState = LoadingState.Idle
 )
 
 sealed class ChatsUiEvent {
-    data class OnChatItemClick(val id: String): ChatsUiEvent()
+    data class OnChatItemClick(val id: Int): ChatsUiEvent()
     data class OnLoadingStateChange(val state: LoadingState): ChatsUiEvent()
-    data object OnImageClick : ChatsUiEvent()
+    data object OnCreateContactClick : ChatsUiEvent()
+    data object OpenAddPersonScreenClick : ChatsUiEvent()
+    data object OnBackClick : ChatsUiEvent()
+    data class OnPersonValueChanged(val value: String) : ChatsUiEvent()
+    data object AddNewPersonClick : ChatsUiEvent()
 }
 
 sealed class NavigationState {
     data object None : NavigationState()
-    data class ChatBox(val id: String) : NavigationState()
+    data class ChatBox(val id: Int) : NavigationState()
 }
 
-sealed class ChatImageClickState {
-    data object Idle : ChatImageClickState()
-    data object ShowMiniChatMenu : ChatImageClickState()
-    data object ShowFullScreenImage : ChatImageClickState()
+sealed class ScreenState {
+    data object Chats : ScreenState()
+    data object CreateChatRoomOrAddPerson : ScreenState()
+    data object AddPerson : ScreenState()
 }

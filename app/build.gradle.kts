@@ -85,6 +85,7 @@ dependencies {
     implementation(project(":feature:chat_box"))
     implementation(project(":feature:signup"))
     implementation(project(":feature:profile"))
+    implementation(project(":feature:chats"))
 
     implementation(project(":core:designsystem"))
     implementation(project(":core:network"))

@@ -12,3 +12,12 @@ internal object KtorUserEndpoints {
         const val USER_EMAIL = "userEmail"
     }
 }
+
+internal object KtorFriendEndPoints {
+    const val GET = "/friend/getFriends/{${Paths.USER_EMAIL}}"
+    const val POST = "/friend/create"
+
+    internal object Paths {
+        const val USER_EMAIL = "userEmail"
+    }
+}

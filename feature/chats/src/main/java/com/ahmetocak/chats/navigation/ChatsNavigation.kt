@@ -10,11 +10,8 @@ const val CHATS_ROUTE = "chats_route"
 
 fun NavController.navigateChats(navOptions: NavOptions) = navigate(CHATS_ROUTE, navOptions)
 
-fun NavGraphBuilder.chatsScreen(
-    onNavigateToChatBox: (String) -> Unit,
-    onChatLongClick: (String) -> Unit
-) {
+fun NavGraphBuilder.chatsScreen(onNavigateToChatBox: (Int) -> Unit) {
     composable(CHATS_ROUTE) {
-        ChatsRoute(onNavigateToChatBox = onNavigateToChatBox, onChatLongClick = onChatLongClick)
+        ChatsRoute(onNavigateToChatBox = onNavigateToChatBox)
     }
 }
