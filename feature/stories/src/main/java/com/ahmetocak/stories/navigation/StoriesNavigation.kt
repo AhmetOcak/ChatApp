@@ -10,8 +10,8 @@ const val STORIES_ROUTE = "stories_route"
 
 fun NavController.navigateToStories(navOptions: NavOptions) = navigate(STORIES_ROUTE, navOptions)
 
-fun NavGraphBuilder.storiesScreen(navigateToUserDetail: (String) -> Unit) {
+fun NavGraphBuilder.storiesScreen(onNavigateToUserDetail: (String) -> Unit) {
     composable(STORIES_ROUTE) {
-        StoriesRoute(navigateToUserDetail = navigateToUserDetail)
+        StoriesRoute(onNavigateToUserDetail = onNavigateToUserDetail)
     }
 }
