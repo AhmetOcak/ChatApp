@@ -41,7 +41,7 @@ import com.ahmetocak.designsystem.R.drawable as AppResources
 
 @Composable
 internal fun StoriesRoute(
-    navigateToUserDetail: (String) -> Unit,
+    onNavigateToUserDetail: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: StoriesViewModel = hiltViewModel()
 ) {
@@ -58,7 +58,7 @@ internal fun StoriesRoute(
         }
 
         when (val state = navigationState) {
-            is NavigationState.UserDetail -> performNavigation { navigateToUserDetail(state.id) }
+            is NavigationState.UserDetail -> performNavigation { onNavigateToUserDetail(state.id) }
             is NavigationState.None -> Unit
         }
     }

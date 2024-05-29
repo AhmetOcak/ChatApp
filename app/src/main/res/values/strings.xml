@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ChatApp</string>
+    <string name="chats">Chats</string>
+    <string name="stories">Stories</string>
+    <string name="calls">Calls</string>
+    <string name="settings">Settings</string>
 </resources>
