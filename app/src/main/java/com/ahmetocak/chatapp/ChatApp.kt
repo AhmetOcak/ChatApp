@@ -1,6 +1,5 @@
 package com.ahmetocak.chatapp
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,7 +28,6 @@ import com.ahmetocak.common.SnackbarManager
 import com.ahmetocak.designsystem.theme.ChatAppTheme
 import kotlinx.coroutines.CoroutineScope
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ChatApp(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -54,8 +52,11 @@ fun ChatApp(
                         onNavigateToDestination = appState::navigateToTopLevelDestination
                     )
                 }
-            ) {
+            ) { paddingValues ->
                 ChatAppNavHost(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
                     navController = appState.navController,
                     startDestination = appState.startDestination
                 )

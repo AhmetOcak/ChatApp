@@ -1,6 +1,7 @@
 package com.ahmetocak.chatapp.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
@@ -17,10 +18,12 @@ import com.ahmetocak.user_detail.navigation.userDetailScreen
 
 @Composable
 fun ChatAppNavHost(
+    modifier: Modifier = Modifier,
     navController: NavHostController,
     startDestination: String
 ) {
     NavHost(
+        modifier = modifier,
         navController = navController,
         startDestination = startDestination
     ) {
