@@ -1,12 +1,23 @@
 package com.ahmetocak.chat_box
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
+import com.ahmetocak.chat_box.navigation.CHAT_BOX_ID
+import com.ahmetocak.chat_box.navigation.FRIEND_EMAIL
+import com.ahmetocak.chat_box.navigation.FRIEND_PROF_PIC_URL
+import com.ahmetocak.chat_box.navigation.FRIEND_USERNAME
 import com.ahmetocak.common.MessageManager
-import com.ahmetocak.common.ext.getCurrentDate
+import com.ahmetocak.common.Response
+import com.ahmetocak.common.SnackbarManager
+import com.ahmetocak.domain.usecase.chat.AddMessageUseCase
+import com.ahmetocak.domain.usecase.chat.GetMessagesUseCase
 import com.ahmetocak.domain.usecase.chat.SendMessageUseCase
+import com.ahmetocak.domain.usecase.user.local.ObserveUserInCacheUseCase
 import com.ahmetocak.model.Message
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,6 +29,11 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatBoxViewModel @Inject constructor(
     private val sendMessageUseCase: SendMessageUseCase,
+    private val addMessageUseCase: AddMessageUseCase,
+    private val getMessagesUseCase: GetMessagesUseCase,
+    private val observeUserInCacheUseCase: ObserveUserInCacheUseCase,
+    private val dispatcher: CoroutineDispatcher,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ChatBoxUiState())
@@ -26,15 +42,24 @@ class ChatBoxViewModel @Inject constructor(
     private val _navigationState = MutableStateFlow<NavigationState>(NavigationState.None)
     val navigationState = _navigationState.asStateFlow()
 
-    private val messageValue get() = _uiState.value.messageValue
-
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            MessageManager.messages.collect { messageText ->
-                if (messageText != null) {
-                    addMessageToChatList(Json.decodeFromString<Message>(messageText))
-                }
-            }
+        observeMessages()
+        observeUser()
+
+        val chatBoxId = savedStateHandle.get<String>(CHAT_BOX_ID)
+        val friendEmail = savedStateHandle.get<String>(FRIEND_EMAIL)
+        val friendUsername = savedStateHandle.get<String>(FRIEND_USERNAME)
+        val friendProfilePicUrl = savedStateHandle.get<String?>(FRIEND_PROF_PIC_URL)
+
+        _uiState.update {
+            it.copy(
+                title = friendUsername ?: friendEmail ?: "",
+                imageUrl = friendProfilePicUrl,
+                messageList = getMessagesUseCase(
+                    userEmail = _uiState.value.currentUser?.email ?: "",
+                    friendEmail = friendEmail ?: ""
+                ).cachedIn(viewModelScope)
+            )
         }
     }
 
@@ -52,8 +77,7 @@ class ChatBoxViewModel @Inject constructor(
             is ChatBoxUiEvent.OnAttachDocClick -> _uiState.update { it.copy(showAttachDocBox = true) }
             is ChatBoxUiEvent.OnCameraClick -> _navigationState.update { NavigationState.Camera }
             is ChatBoxUiEvent.OnMicrophonePress -> _uiState.update { it.copy(activateMicrophone = true) }
-            is ChatBoxUiEvent.OnCallClick -> { /* TODO: Start a call */
-            }
+            is ChatBoxUiEvent.OnCallClick -> { /* TODO: Start a call */ }
 
             is ChatBoxUiEvent.OnBackClick -> _navigationState.update { NavigationState.Back }
             is ChatBoxUiEvent.OnMenuClick -> _uiState.update { it.copy(showDropdownMenu = true) }
@@ -61,28 +85,47 @@ class ChatBoxViewModel @Inject constructor(
         }
     }
 
-    private fun sendMessage() {
-        val message = Message(
-            authorId = "1",
-            authorImage = "https://fastly.picsum.photos/id/367/200/200.jpg?hmac=6NmiWxiENMBIeAXEfu9fN20uigiBudgYzqHfz-eXZYk",
-            authorName = "Ahmet Ocak",
-            message = messageValue,
-            time = getCurrentDate()
-        )
-
-        sendMessageUseCase(message = message, receiverId = "2")
-        addMessageToChatList(message)
-
-        _uiState.update {
-            it.copy(messageValue = "")
+    private fun observeMessages() {
+        viewModelScope.launch(Dispatchers.IO) {
+            MessageManager.messages.collect { messageText ->
+                if (messageText != null) {
+                    val message = Json.decodeFromString<Message>(messageText)
+                    when (val response = addMessageUseCase(message = message)) {
+                        is Response.Success -> {}
+                        is Response.Error -> SnackbarManager.showMessage(response.errorMessage)
+                    }
+                }
+            }
         }
     }
 
-    private fun addMessageToChatList(message: Message) {
-        val chat = _uiState.value.chat.toMutableList()
-        chat.add(message)
+    private fun observeUser() {
+        viewModelScope.launch(dispatcher) {
+            when (val response = observeUserInCacheUseCase()) {
+                is Response.Success -> {
+                    response.data.collect { user ->
+                        if (user == null) return@collect
+                        _uiState.update { it.copy(currentUser = user) }
+                    }
+                }
+
+                is Response.Error -> SnackbarManager.showMessage(response.errorMessage)
+            }
+        }
+    }
+
+    private fun sendMessage() {
+        sendMessageUseCase(
+            message = Message(
+                senderEmail = _uiState.value.currentUser?.email ?: "",
+                receiverEmail = _uiState.value.title,
+                messageText = _uiState.value.messageValue,
+                senderImgUrl = _uiState.value.currentUser?.profilePicUrl,
+                senderUsername = _uiState.value.currentUser?.username ?: ""
+            )
+        )
         _uiState.update {
-            it.copy(chat = chat)
+            it.copy(messageValue = "")
         }
     }
 

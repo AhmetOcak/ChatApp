@@ -57,5 +57,8 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.storage)
 
+    // Paging 3
+    implementation(libs.androidx.paging.runtime)
+
     implementation(project(":core:common"))
 }

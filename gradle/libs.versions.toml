@@ -27,6 +27,7 @@ firebaseBom = "32.8.1"
 googleGms = "4.4.1"
 playServicesAuth = "21.1.0"
 javaxInject = "1"
+roomPaging = "2.6.1"
 serialization = "1.9.0"
 kotlinxSerilization = "1.6.3"
 retrofit = "2.9.0"
@@ -37,6 +38,7 @@ roomRuntime = "2.6.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "roomPaging" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

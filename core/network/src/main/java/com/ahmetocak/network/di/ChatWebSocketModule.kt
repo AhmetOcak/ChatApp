@@ -21,7 +21,7 @@ object ChatWebSocketModule {
     fun provideWebSocket(): WebSocket {
         return OkHttpClient().newWebSocket(
             Request.Builder()
-                .url("ws://10.0.2.2:8080/chat/1")
+                .url("ws://10.0.2.2:8080/chat/test@gmail.com")
                 .build(),
             WebSocketListener()
         )

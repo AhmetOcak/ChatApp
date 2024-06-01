@@ -1,16 +1,21 @@
 package com.ahmetocak.chat_box
 
+import androidx.paging.PagingData
 import com.ahmetocak.model.Message
+import com.ahmetocak.model.User
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 data class ChatBoxUiState(
     val messageValue: String = "",
-    val chat: List<Message> = emptyList(),
+    val messageList: Flow<PagingData<Message>> = emptyFlow(),
     val members: String = "",
     val title: String = "",
     val showDropdownMenu: Boolean = false,
     val imageUrl: String? = null,
     val showAttachDocBox: Boolean = false,
-    val activateMicrophone: Boolean = false
+    val activateMicrophone: Boolean = false,
+    val currentUser: User? = null
 )
 
 sealed class ChatBoxUiEvent {

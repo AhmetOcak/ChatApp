@@ -7,7 +7,7 @@ import com.ahmetocak.settings.navigation.settingsScreen
 import com.ahmetocak.stories.navigation.storiesScreen
 
 fun NavGraphBuilder.topLevelDestinationsGraph(
-    onNavigateToChatBox: (Int) -> Unit,
+    onNavigateToChatBox: (Int, String, String, String?) -> Unit,
     onNavigateToUserDetail: (String) -> Unit,
     onNavigateCallInfo: (String) -> Unit
 ) {

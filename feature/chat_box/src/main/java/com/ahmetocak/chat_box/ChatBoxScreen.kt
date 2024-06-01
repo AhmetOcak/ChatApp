@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +29,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,15 +37,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.ahmetocak.common.ext.showMessageTime
 import com.ahmetocak.designsystem.components.AnimatedNetworkImage
 import com.ahmetocak.designsystem.components.ChatAppIconButton
 import com.ahmetocak.designsystem.components.ChatAppScaffold
 import com.ahmetocak.designsystem.icons.ChatAppIcons
-import com.ahmetocak.designsystem.theme.ChatAppTheme
 import com.ahmetocak.model.Message
 import com.ahmetocak.ui.ComingChatBubbleItem
 import com.ahmetocak.ui.OngoingChatBubbleItem
@@ -81,6 +82,8 @@ internal fun ChatBoxRoute(
         }
     }
 
+    val messageList = uiState.messageList.collectAsLazyPagingItems()
+
     ChatAppScaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -100,46 +103,43 @@ internal fun ChatBoxRoute(
     ) { paddingValues ->
         ChatBoxScreen(
             modifier = Modifier.padding(paddingValues),
-            messageList = uiState.chat
+            messageList = messageList,
+            currentUserEmail = uiState.currentUser?.email ?: ""
         )
     }
 }
 
 @Composable
-internal fun ChatBoxScreen(modifier: Modifier = Modifier, messageList: List<Message>) {
-    // TODO: This is for a test. Remove when you integrate the business data
-    val myId = "1"
-
+internal fun ChatBoxScreen(
+    modifier: Modifier = Modifier,
+    messageList: LazyPagingItems<Message>,
+    currentUserEmail: String
+) {
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 8.dp),
         contentPadding = PaddingValues(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(2.dp)
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+        reverseLayout = true
     ) {
-        itemsIndexed(messageList, key = { index, _ -> index }) { index, chat ->
-            val isConsecutiveMessage = index > 0 && messageList[index - 1].authorId == chat.authorId
-
-            if (!isConsecutiveMessage) {
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
-            if (chat.isComingFromMe(myId)) {
-                OngoingChatBubbleItem(
-                    author = chat.authorName,
-                    message = chat.message,
-                    time = chat.time,
-                    seenByList = listOf(null, null),
-                    isAuthorSame = isConsecutiveMessage
-                )
-            } else {
-                ComingChatBubbleItem(
-                    author = chat.authorName,
-                    message = chat.message,
-                    time = chat.time,
-                    authorImgUrl = chat.authorImage,
-                    isAuthorSame = isConsecutiveMessage
-                )
+        items(messageList.itemCount) { index ->
+            messageList[index]?.let { message ->
+                if (message.isComingFromMe(currentUserEmail)) {
+                    OngoingChatBubbleItem(
+                        author = message.senderUsername,
+                        message = message.messageText,
+                        time = message.sentAt.showMessageTime()
+                    )
+                } else {
+                    ComingChatBubbleItem(
+                        author = message.senderUsername,
+                        message = message.messageText,
+                        time = message.sentAt.showMessageTime(),
+                        authorImgUrl = message.senderImgUrl
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }
@@ -176,15 +176,15 @@ private fun ChatBoxTopBar(
         },
         actions = {
             ChatAppIconButton(
-                onClick = { onEvent(ChatBoxUiEvent.OnCameraClick) },
+                onClick = remember { { onEvent(ChatBoxUiEvent.OnCameraClick) } },
                 imageVector = ChatAppIcons.Outlined.camera
             )
             ChatAppIconButton(
-                onClick = { onEvent(ChatBoxUiEvent.OnCallClick) },
+                onClick = remember { { onEvent(ChatBoxUiEvent.OnCallClick) } },
                 imageVector = ChatAppIcons.Outlined.call
             )
             ChatAppIconButton(
-                onClick = { onEvent(ChatBoxUiEvent.OnMenuClick) },
+                onClick = remember { { onEvent(ChatBoxUiEvent.OnMenuClick) } },
                 imageVector = ChatAppIcons.Filled.moreVert
             )
         },
@@ -234,17 +234,17 @@ private fun ChatBoxBottomBar(messageValue: String, onEvent: (ChatBoxUiEvent) -> 
                 TextField(
                     modifier = Modifier.fillMaxSize(),
                     value = messageValue,
-                    onValueChange = { onEvent(ChatBoxUiEvent.OnMessageValueChange(it)) },
+                    onValueChange = remember { { onEvent(ChatBoxUiEvent.OnMessageValueChange(it)) } },
                     singleLine = true,
                     trailingIcon = {
                         Row {
                             ChatAppIconButton(
-                                onClick = { onEvent(ChatBoxUiEvent.OnAttachDocClick) },
+                                onClick = remember { { onEvent(ChatBoxUiEvent.OnAttachDocClick) } },
                                 imageVector = ChatAppIcons.Filled.attach,
                             )
                             AnimatedVisibility(visible = messageValue.isBlank()) {
                                 ChatAppIconButton(
-                                    onClick = { onEvent(ChatBoxUiEvent.OnCameraClick) },
+                                    onClick = remember { { onEvent(ChatBoxUiEvent.OnCameraClick) } },
                                     imageVector = ChatAppIcons.Outlined.camera
                                 )
                             }
@@ -294,61 +294,3 @@ private fun ChatBoxBottomBar(messageValue: String, onEvent: (ChatBoxUiEvent) -> 
 }
 
 private val BottomBarHeight = 56.dp
-
-
-private val AliceImgUrl =
-    "https://fastly.picsum.photos/id/170/200/200.jpg?hmac=2Xh3j3MMZE07_G7UDPgPRm557LRHzyFrkyeWRXdhdvU"
-private val BobImgUrl =
-    "https://fastly.picsum.photos/id/110/200/200.jpg?hmac=aekmsQTsPRt4hCd1khMC5QVihAaBeTigUCpcDBzhXlY"
-private val PreviewMessageList = listOf(
-    Message("alice123", "Alice", AliceImgUrl, "Hello Bob, how are you?", "10:00"),
-    Message("alice123", "Alice", AliceImgUrl, "I'm fine, thank you.", "10:05"),
-    Message("bob456", "Bob", BobImgUrl, "Hi Alice, I'm good, how about you?", "10:10"),
-    Message("alice123", "Alice", AliceImgUrl, "What are you doing?", "10:15"),
-    Message("bob456", "Bob", BobImgUrl, "I'm just reading a book. You?", "10:20"),
-    Message("bob456", "Bob", BobImgUrl, "Only reading a book. You?", "10:25"),
-    Message("alice123", "Alice", AliceImgUrl, "I'm watching a movie.", "10:30"),
-    Message("bob456", "Bob", BobImgUrl, "Enjoy your movie!", "10:35"),
-    Message("alice123", "Alice", AliceImgUrl, "Thank you.", "10:40"),
-    Message("bob456", "Bob", BobImgUrl, "You're welcome.", "10:45"),
-    Message("bob456", "Bob", BobImgUrl, "See you next time, goodbye!", "10:50"),
-    Message("alice123", "Alice", AliceImgUrl, "Goodbye.", "10:55"),
-    Message("alice123", "Alice", AliceImgUrl, "See you later.", "11:00"),
-    Message("bob456", "Bob", BobImgUrl, "Later!", "11:05")
-)
-
-
-@Preview
-@Composable
-fun ChatBoxPreview() {
-    Surface {
-        ChatAppTheme {
-            ChatBoxScreen(messageList = PreviewMessageList)
-        }
-    }
-}
-
-@Preview
-@Composable
-fun ChatBoxTopBarPreview() {
-    Surface {
-        ChatAppTheme {
-            ChatBoxTopBar(
-                chatBoxTitle = "Title",
-                members = "member1, member2, member3, member4, member5",
-                imageUrl = null,
-                onEvent = {}
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-fun ChatBoxBottomBarPreview() {
-    Surface {
-        ChatAppTheme {
-            ChatBoxBottomBar(messageValue = "", onEvent = {})
-        }
-    }
-}

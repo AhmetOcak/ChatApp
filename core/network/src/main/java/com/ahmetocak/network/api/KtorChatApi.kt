@@ -1,9 +1,11 @@
 package com.ahmetocak.network.api
 
 import com.ahmetocak.network.helper.KtorFriendEndPoints
+import com.ahmetocak.network.helper.KtorMessagesEndPoints
 import com.ahmetocak.network.helper.KtorUserEndpoints
 import com.ahmetocak.network.model.NetworkFriend
 import com.ahmetocak.network.model.NetworkUser
+import com.ahmetocak.network.model.PaginatedNetworkMessage
 import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.POST
@@ -51,4 +53,11 @@ interface KtorChatApi {
         @Field("currentUserEmail") userEmail: String,
         @Field("friendEmail") friendEmail: String
     ): NetworkFriend
+
+    @GET(KtorMessagesEndPoints.GET)
+    suspend fun getMessages(
+        @Path(KtorMessagesEndPoints.Paths.USER_EMAIL) userEmail: String,
+        @Path(KtorMessagesEndPoints.Paths.FRIEND_EMAIL) friendEmail: String,
+        @Path(KtorMessagesEndPoints.Paths.PAGE) page: Int
+    ): PaginatedNetworkMessage
 }

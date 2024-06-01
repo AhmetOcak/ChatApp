@@ -46,6 +46,12 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.storage)
 
+    // Paging 3
+    implementation(libs.androidx.paging.runtime)
+
+    // Room
+    implementation(libs.androidx.room.ktx)
+
     implementation(project(":core:network"))
     implementation(project(":core:model"))
     implementation(project(":core:common"))

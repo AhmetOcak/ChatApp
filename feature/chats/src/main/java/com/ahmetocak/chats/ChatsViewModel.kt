@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmetocak.common.Response
 import com.ahmetocak.common.SnackbarManager
+import com.ahmetocak.common.ext.encodeForSaveNav
 import com.ahmetocak.domain.usecase.friend.CreateFriendUseCase
 import com.ahmetocak.domain.usecase.friend.ObserveFriendsUseCase
 import com.ahmetocak.domain.usecase.user.local.ObserveUserInCacheUseCase
@@ -43,7 +44,12 @@ class ChatsViewModel @Inject constructor(
         when (event) {
             is ChatsUiEvent.OnLoadingStateChange -> _uiState.update { it.copy(loadingState = event.state) }
             is ChatsUiEvent.OnChatItemClick -> _navigationState.update {
-                NavigationState.ChatBox(event.id)
+                NavigationState.ChatBox(
+                    event.id,
+                    event.friendEmail,
+                    event.friendUsername,
+                    event.friendProfPicUrl.encodeForSaveNav()
+                )
             }
 
             is ChatsUiEvent.OnCreateContactClick -> _uiState.update {

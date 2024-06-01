@@ -11,12 +11,15 @@ data class FriendEntity(
     @ColumnInfo("id")
     val id: Int,
 
-    @ColumnInfo("userEmail")
+    @ColumnInfo("user_email")
     val userEmail: String,
 
-    @ColumnInfo("friendEmail")
+    @ColumnInfo("friend_email")
     val friendEmail: String,
 
-    @ColumnInfo("friendProfilePicUrl")
+    @ColumnInfo("friend_username")
+    val friendUsername: String,
+
+    @ColumnInfo("friend_profile_pic_url")
     val friendProfilePicUrl: String?
 )

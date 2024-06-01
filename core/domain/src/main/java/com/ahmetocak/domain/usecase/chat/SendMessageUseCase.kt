@@ -6,6 +6,5 @@ import javax.inject.Inject
 
 class SendMessageUseCase @Inject constructor(private val chatRepository: ChatRepository) {
 
-    operator fun invoke(message: Message, receiverId: String) =
-        chatRepository.sendMessage(message, receiverId)
+    operator fun invoke(message: Message) = chatRepository.sendMessage(message)
 }

@@ -2,13 +2,10 @@ package com.ahmetocak.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -41,40 +38,24 @@ fun ComingChatBubbleItem(
     author: String,
     message: String,
     time: String,
-    authorImgUrl: String?,
-    isAuthorSame: Boolean
+    authorImgUrl: String?
 ) {
-    if (isAuthorSame) {
+    Column {
+        AuthorImage(authorImgUrl = authorImgUrl)
         Card(
             modifier = Modifier.padding(start = AuthorImgHeight),
-            shape = RoundedCornerShape(size = 48f)
+            shape = RoundedCornerShape(
+                topStart = 0f,
+                topEnd = 48f,
+                bottomStart = 48f,
+                bottomEnd = 48f
+            )
         ) {
             BubbleSkeleton(
                 author = author,
                 message = message,
-                messageDate = time,
-                isAuthorSame = true
+                messageDate = time
             )
-        }
-    } else {
-        Column {
-            AuthorImage(authorImgUrl = authorImgUrl)
-            Card(
-                modifier = Modifier.padding(start = AuthorImgHeight),
-                shape = RoundedCornerShape(
-                    topStart = 0f,
-                    topEnd = 48f,
-                    bottomStart = 48f,
-                    bottomEnd = 48f
-                )
-            ) {
-                BubbleSkeleton(
-                    author = author,
-                    message = message,
-                    messageDate = time,
-                    isAuthorSame = false
-                )
-            }
         }
     }
 }
@@ -83,13 +64,11 @@ fun ComingChatBubbleItem(
 fun OngoingChatBubbleItem(
     author: String,
     message: String,
-    time: String,
-    seenByList: List<String?>,
-    isAuthorSame: Boolean
+    time: String
 ) {
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
         ConstraintLayout {
-            val (chatBubble, seenByImages) = createRefs()
+            val (chatBubble) = createRefs()
 
             Card(
                 modifier = Modifier.constrainAs(chatBubble) {},
@@ -103,20 +82,8 @@ fun OngoingChatBubbleItem(
                 BubbleSkeleton(
                     author = author,
                     message = message,
-                    messageDate = time,
-                    isAuthorSame = isAuthorSame
+                    messageDate = time
                 )
-            }
-            Row(
-                modifier = Modifier.constrainAs(seenByImages) {
-                    top.linkTo(chatBubble.bottom, margin = 1.dp)
-                    end.linkTo(parent.end)
-                }
-            ) {
-                seenByList.forEach { imgUrl ->
-                    AuthorImage(authorImgUrl = imgUrl)
-                    Spacer(modifier = Modifier.width(2.dp))
-                }
             }
         }
     }
@@ -126,26 +93,23 @@ fun OngoingChatBubbleItem(
 private fun BubbleSkeleton(
     author: String,
     message: String,
-    messageDate: String,
-    isAuthorSame: Boolean
+    messageDate: String
 ) {
     ConstraintLayout {
         val (authorText, messageText, dateText) = createRefs()
 
-        if (!isAuthorSame) {
-            Text(
-                modifier = Modifier.constrainAs(authorText) {
-                    top.linkTo(parent.top, margin = 8.dp)
-                    start.linkTo(parent.start, margin = 8.dp)
-                },
-                text = author,
-                style = MaterialTheme.typography.titleMedium
-            )
-        }
+        Text(
+            modifier = Modifier.constrainAs(authorText) {
+                top.linkTo(parent.top, margin = 8.dp)
+                start.linkTo(parent.start, margin = 8.dp)
+            },
+            text = author,
+            style = MaterialTheme.typography.titleMedium
+        )
 
         Text(
             modifier = Modifier.constrainAs(messageText) {
-                top.linkTo(if (!isAuthorSame) authorText.bottom else parent.top, margin = 4.dp)
+                top.linkTo(authorText.bottom, margin = 4.dp)
                 start.linkTo(parent.start)
             }.padding(horizontal = 8.dp),
             text = message,
@@ -189,8 +153,7 @@ fun PreviewComingChatBalloonItem() {
                 author = "Darth Vader",
                 message = "This is a test messsdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaage.",
                 time = "13:18",
-                authorImgUrl = null,
-                isAuthorSame = false
+                authorImgUrl = null
             )
         }
     }
@@ -205,8 +168,6 @@ fun PreviewOngoingChatBalloonItem() {
                 author = "Ahmet Ocak",
                 message = "This is a test message.",
                 time = "13:17",
-                seenByList = listOf(null, null),
-                isAuthorSame = false
             )
         }
     }

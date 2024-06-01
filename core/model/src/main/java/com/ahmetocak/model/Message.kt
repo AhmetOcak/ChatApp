@@ -1,25 +1,16 @@
 package com.ahmetocak.model
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Message(
-
-    @SerialName("senderId")
-    val authorId: String,
-
-    @SerialName("senderName")
-    val authorName: String,
-
-    @SerialName("senderImage")
-    val authorImage: String?,
-
-    @SerialName("content")
-    val message: String,
-
-    @SerialName("time")
-    val time: String
+    val id: Int = 0,
+    val senderEmail: String,
+    val receiverEmail: String,
+    val messageText: String,
+    val sentAt: String = "",
+    val senderImgUrl: String?,
+    val senderUsername: String
 ) {
-    fun isComingFromMe(authorId: String) = this.authorId == authorId
+    fun isComingFromMe(senderEmail: String) = this.senderEmail == senderEmail
 }
