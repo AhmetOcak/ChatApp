@@ -13,6 +13,7 @@ class AndroidAudioRecorder @Inject constructor(
 ) : AudioRecorder {
 
     private var recorder: MediaRecorder? = null
+    private lateinit var audioFile: File
 
     private fun createMediaRecorder(): MediaRecorder {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -21,11 +22,13 @@ class AndroidAudioRecorder @Inject constructor(
     }
 
     override fun startRecording(userEmail: String) {
+        audioFile = File(context.cacheDir, "$userEmail${LocalDateTime.now()}.mp3")
+
         createMediaRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            setOutputFile(FileOutputStream(File(context.cacheDir, "$userEmail${LocalDateTime.now()}.mp3")).fd)
+            setOutputFile(FileOutputStream(audioFile).fd)
 
             prepare()
             start()
@@ -34,9 +37,10 @@ class AndroidAudioRecorder @Inject constructor(
         }
     }
 
-    override fun stopRecording() {
+    override fun stopRecording(): File {
         recorder?.stop()
         recorder?.reset()
         recorder = null
+        return audioFile
     }
 }

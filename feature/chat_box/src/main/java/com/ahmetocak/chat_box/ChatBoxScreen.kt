@@ -1,6 +1,7 @@
 package com.ahmetocak.chat_box
 
 import android.Manifest
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.RepeatMode
@@ -34,8 +35,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,6 +47,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
@@ -54,7 +58,10 @@ import com.ahmetocak.designsystem.components.ChatAppIconButton
 import com.ahmetocak.designsystem.components.ChatAppScaffold
 import com.ahmetocak.designsystem.icons.ChatAppIcons
 import com.ahmetocak.model.Message
+import com.ahmetocak.model.MessageType
+import com.ahmetocak.ui.ComingChatBubbleAudioItem
 import com.ahmetocak.ui.ComingChatBubbleItem
+import com.ahmetocak.ui.OngoingChatBubbleAudioItem
 import com.ahmetocak.ui.OngoingChatBubbleItem
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -114,7 +121,9 @@ internal fun ChatBoxRoute(
         ChatBoxScreen(
             modifier = Modifier.padding(paddingValues),
             messageList = messageList,
-            currentUserEmail = uiState.currentUser?.email ?: ""
+            currentUserEmail = uiState.currentUser?.email ?: "",
+            onPlayClick = remember { { onEvent(ChatBoxUiEvent.OnPlayAudioClick(it)) }},
+            isAudioPlaying = uiState.audioPlayStatus == AudioPlayStatus.PLAYING
         )
     }
 }
@@ -123,8 +132,12 @@ internal fun ChatBoxRoute(
 internal fun ChatBoxScreen(
     modifier: Modifier = Modifier,
     messageList: LazyPagingItems<Message>,
-    currentUserEmail: String
+    currentUserEmail: String,
+    onPlayClick: (Uri) -> Unit,
+    isAudioPlaying: Boolean
 ) {
+    var selectedIndex by remember { mutableStateOf(-1) }
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -135,21 +148,57 @@ internal fun ChatBoxScreen(
     ) {
         items(messageList.itemCount) { index ->
             messageList[index]?.let { message ->
-                if (message.isComingFromMe(currentUserEmail)) {
-                    OngoingChatBubbleItem(
-                        author = message.senderUsername,
-                        message = message.messageText,
-                        time = message.sentAt.showMessageTime()
-                    )
-                } else {
-                    ComingChatBubbleItem(
-                        author = message.senderUsername,
-                        message = message.messageText,
-                        time = message.sentAt.showMessageTime(),
-                        authorImgUrl = message.senderImgUrl
-                    )
+                when (message.messageType) {
+                    MessageType.TEXT -> {
+                        if (message.isComingFromMe(currentUserEmail)) {
+                            OngoingChatBubbleItem(
+                                author = message.senderUsername,
+                                message = message.messageContent,
+                                time = message.sentAt.showMessageTime()
+                            )
+                        } else {
+                            ComingChatBubbleItem(
+                                author = message.senderUsername,
+                                message = message.messageContent,
+                                time = message.sentAt.showMessageTime(),
+                                authorImgUrl = message.senderImgUrl
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+
+                    MessageType.AUDIO -> {
+                        if (message.isComingFromMe(currentUserEmail)) {
+                            OngoingChatBubbleAudioItem(
+                                author = message.senderUsername,
+                                time = message.sentAt.showMessageTime(),
+                                audioUrl = message.messageContent.toUri(),
+                                isAudioPlaying = isAudioPlaying && selectedIndex == index,
+                                onPlayClick = remember {
+                                    {
+                                        selectedIndex = index
+                                        onPlayClick(it)
+                                    }
+                                }
+                            )
+                        } else {
+                            ComingChatBubbleAudioItem(
+                                author = message.senderUsername,
+                                time = message.sentAt.showMessageTime(),
+                                audioUrl = message.messageContent.toUri(),
+                                authorImgUrl = message.senderImgUrl,
+                                isAudioPlaying = isAudioPlaying && selectedIndex == index,
+                                onPlayClick = remember {
+                                    {
+                                        selectedIndex = index
+                                        onPlayClick(it)
+                                    }
+                                }
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
                 }
-                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }

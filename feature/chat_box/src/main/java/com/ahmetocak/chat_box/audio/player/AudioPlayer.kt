@@ -1,8 +1,8 @@
 package com.ahmetocak.chat_box.audio.player
 
-import java.io.File
-
 interface AudioPlayer {
-    fun play(file: File)
+    fun initializeMediaPlayer(onCompletion: () -> Unit)
+    fun play(audioUrl: String)
     fun stop()
+    fun releaseMediaPlayer()
 }

@@ -1,5 +1,10 @@
 package com.ahmetocak.designsystem.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -24,5 +29,42 @@ fun ChatAppIconButton(
         colors = colors
     ) {
         Icon(imageVector = imageVector, contentDescription = contentDescription)
+    }
+}
+
+@Composable
+fun ChatAppAnimatedIconButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    imageVector: ImageVector,
+    imageVector2: ImageVector,
+    animationCondition: Boolean,
+    contentDescription: String? = null,
+    enabled: Boolean = true,
+    colors: IconButtonColors = IconButtonDefaults.iconButtonColors(),
+    enterAnimation: EnterTransition = scaleIn(),
+    exitAnimation: ExitTransition = scaleOut()
+) {
+    IconButton(
+        modifier = modifier,
+        onClick = onClick,
+        enabled = enabled,
+        colors = colors
+    ) {
+        AnimatedVisibility(
+            visible = animationCondition,
+            enter = enterAnimation,
+            exit = exitAnimation
+        ) {
+            Icon(imageVector = imageVector, contentDescription = contentDescription)
+        }
+
+        AnimatedVisibility(
+            visible = !animationCondition,
+            enter = enterAnimation,
+            exit = exitAnimation
+        ) {
+            Icon(imageVector = imageVector2, contentDescription = contentDescription)
+        }
     }
 }

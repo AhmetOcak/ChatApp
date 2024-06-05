@@ -10,11 +10,12 @@ data class PaginatedNetworkMessage(
 
 @Serializable
 data class NetworkMessage(
-    val id: Int,
+    val id: Int = 0,
     val senderEmail: String,
     val receiverEmail: String,
-    val messageText: String,
-    val sentAt: String,
+    val messageContent: String,
+    val sentAt: String = "",
     val senderImgUrl: String?,
-    val senderUsername: String
+    val senderUsername: String,
+    val messageType: String
 )

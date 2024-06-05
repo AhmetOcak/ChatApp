@@ -24,7 +24,7 @@ internal object AudioModule {
 
     @Singleton
     @Provides
-    fun provideAndroidPlayer(@ApplicationContext context: Context): AudioPlayer {
-        return AndroidAudioPlayer(context)
+    fun provideAndroidPlayer(): AudioPlayer {
+        return AndroidAudioPlayer()
     }
 }

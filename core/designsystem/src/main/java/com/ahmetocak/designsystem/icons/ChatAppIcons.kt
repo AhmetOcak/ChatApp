@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAddAlt1
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.outlined.Bookmarks
@@ -47,6 +48,7 @@ object ChatAppIcons {
         val call = Icons.Filled.Call
         val settings = Icons.Filled.Settings
         val stop = Icons.Filled.Stop
+        val play = Icons.Filled.PlayArrow
     }
 
     object Outlined {

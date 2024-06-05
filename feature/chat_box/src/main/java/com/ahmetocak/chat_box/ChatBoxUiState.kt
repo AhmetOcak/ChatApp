@@ -1,6 +1,7 @@
 package com.ahmetocak.chat_box
 
 import android.content.Context
+import android.net.Uri
 import androidx.paging.PagingData
 import com.ahmetocak.model.Message
 import com.ahmetocak.model.User
@@ -16,7 +17,8 @@ data class ChatBoxUiState(
     val imageUrl: String? = null,
     val showAttachDocBox: Boolean = false,
     val audioRecordStatus: AudioRecordStatus = AudioRecordStatus.IDLE,
-    val currentUser: User? = null
+    val currentUser: User? = null,
+    val audioPlayStatus: AudioPlayStatus = AudioPlayStatus.IDLE
 )
 
 sealed class ChatBoxUiEvent {
@@ -34,6 +36,7 @@ sealed class ChatBoxUiEvent {
     data object OnMenuClick : ChatBoxUiEvent()
     data object OnSendMessageClick : ChatBoxUiEvent()
     data class OnViewChatDocsClick(val id: String) : ChatBoxUiEvent()
+    data class OnPlayAudioClick(val audioUrl: Uri) : ChatBoxUiEvent()
 }
 
 sealed class NavigationState {
@@ -47,4 +50,9 @@ sealed class NavigationState {
 sealed interface AudioRecordStatus {
     data object RECORDING : AudioRecordStatus
     data object IDLE : AudioRecordStatus
+}
+
+sealed interface AudioPlayStatus {
+    data object PLAYING : AudioPlayStatus
+    data object IDLE : AudioPlayStatus
 }

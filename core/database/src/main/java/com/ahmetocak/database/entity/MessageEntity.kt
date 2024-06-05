@@ -17,8 +17,8 @@ data class MessageEntity(
     @ColumnInfo("receiver_email")
     val receiverEmail: String,
 
-    @ColumnInfo("message_text")
-    val messageText: String,
+    @ColumnInfo("message_content")
+    val messageContent: String,
 
     @ColumnInfo("sent_at")
     val sentAt: String,
@@ -27,5 +27,8 @@ data class MessageEntity(
     val senderImgUrl: String?,
 
     @ColumnInfo("sender_username")
-    val senderUsername: String
+    val senderUsername: String,
+
+    @ColumnInfo("message_type")
+    val messageType: String
 )

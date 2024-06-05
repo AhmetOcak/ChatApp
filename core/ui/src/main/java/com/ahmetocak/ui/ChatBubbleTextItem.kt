@@ -26,7 +26,7 @@ import com.ahmetocak.designsystem.components.NetworkImage
 import com.ahmetocak.designsystem.theme.ChatAppTheme
 import com.ahmetocak.designsystem.R.drawable as AppResources
 
-private val AuthorImgHeight = 16.dp
+internal val AuthorImgHeight = 16.dp
 
 private val imgModifier = Modifier
     .height(AuthorImgHeight)
@@ -129,7 +129,7 @@ private fun BubbleSkeleton(
 }
 
 @Composable
-private fun AuthorImage(authorImgUrl: String?) {
+internal fun AuthorImage(authorImgUrl: String?) {
     authorImgUrl?.let {
         NetworkImage(
             imageUrl = it,

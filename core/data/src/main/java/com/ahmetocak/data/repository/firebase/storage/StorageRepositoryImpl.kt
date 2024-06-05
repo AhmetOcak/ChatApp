@@ -20,4 +20,16 @@ class StorageRepositoryImpl @Inject constructor(
     override fun deleteUserProfileImage(userUid: String): Task<Void> {
         return storageRemoteDataSource.deleteUserProfileImage(userUid)
     }
+
+    override fun uploadAudioFile(
+        audioFileName: String,
+        audioFileUri: Uri,
+        userUid: String
+    ): UploadTask {
+        return storageRemoteDataSource.uploadAudioFile(
+            audioFileName = audioFileName,
+            audioFileUri = audioFileUri,
+            userUid = userUid
+        )
+    }
 }

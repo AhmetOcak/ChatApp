@@ -1,5 +1,6 @@
 package com.ahmetocak.chat_box
 
+import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,8 +17,10 @@ import com.ahmetocak.common.SnackbarManager
 import com.ahmetocak.domain.usecase.chat.AddMessageUseCase
 import com.ahmetocak.domain.usecase.chat.GetMessagesUseCase
 import com.ahmetocak.domain.usecase.chat.SendMessageUseCase
+import com.ahmetocak.domain.usecase.firebase.storage.UploadAudioFileUseCase
 import com.ahmetocak.domain.usecase.user.local.ObserveUserInCacheUseCase
 import com.ahmetocak.model.Message
+import com.ahmetocak.model.MessageType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -37,6 +40,7 @@ class ChatBoxViewModel @Inject constructor(
     private val dispatcher: CoroutineDispatcher,
     private val audioRecorder: AudioRecorder,
     private val audioPlayer: AudioPlayer,
+    private val uploadAudioFileUseCase: UploadAudioFileUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -65,6 +69,12 @@ class ChatBoxViewModel @Inject constructor(
                 ).cachedIn(viewModelScope)
             )
         }
+
+        audioPlayer.initializeMediaPlayer(onCompletion = {
+            _uiState.update {
+                it.copy(audioPlayStatus = AudioPlayStatus.IDLE)
+            }
+        })
     }
 
     fun onEvent(event: ChatBoxUiEvent) {
@@ -98,7 +108,21 @@ class ChatBoxViewModel @Inject constructor(
                             _uiState.update {
                                 it.copy(audioRecordStatus = AudioRecordStatus.IDLE)
                             }
-                            audioRecorder.stopRecording()
+                            val audioFile = audioRecorder.stopRecording()
+
+                            uploadAudioFileUseCase(
+                                audioFileUri = audioFile.toUri(),
+                                audioFileName = audioFile.name,
+                                onSuccess = { audioFileUrl ->
+                                    sendMessage(
+                                        messageType = MessageType.AUDIO,
+                                        messageContent = audioFileUrl.toString()
+                                    )
+                                },
+                                onFailure = {
+                                    SnackbarManager.showMessage(it)
+                                }
+                            )
                         }
                     }
                 }
@@ -109,8 +133,23 @@ class ChatBoxViewModel @Inject constructor(
 
             is ChatBoxUiEvent.OnBackClick -> _navigationState.update { NavigationState.Back }
             is ChatBoxUiEvent.OnMenuClick -> _uiState.update { it.copy(showDropdownMenu = true) }
-            is ChatBoxUiEvent.OnSendMessageClick -> {
-                sendMessage()
+            is ChatBoxUiEvent.OnSendMessageClick -> sendMessage(
+                messageType = MessageType.TEXT,
+                messageContent = _uiState.value.messageValue
+            )
+
+            is ChatBoxUiEvent.OnPlayAudioClick -> {
+                when (_uiState.value.audioPlayStatus) {
+                    AudioPlayStatus.PLAYING -> {
+                        _uiState.update { it.copy(audioPlayStatus = AudioPlayStatus.IDLE) }
+                        audioPlayer.stop()
+                    }
+
+                    AudioPlayStatus.IDLE -> {
+                        _uiState.update { it.copy(audioPlayStatus = AudioPlayStatus.PLAYING) }
+                        audioPlayer.play(event.audioUrl.toString())
+                    }
+                }
             }
         }
     }
@@ -144,14 +183,15 @@ class ChatBoxViewModel @Inject constructor(
         }
     }
 
-    private fun sendMessage() {
+    private fun sendMessage(messageType: MessageType, messageContent: String) {
         sendMessageUseCase(
             message = Message(
                 senderEmail = _uiState.value.currentUser?.email ?: "",
                 receiverEmail = _uiState.value.title,
-                messageText = _uiState.value.messageValue,
+                messageContent = messageContent,
                 senderImgUrl = _uiState.value.currentUser?.profilePicUrl,
-                senderUsername = _uiState.value.currentUser?.username ?: ""
+                senderUsername = _uiState.value.currentUser?.username ?: "",
+                messageType = messageType
             )
         )
         _uiState.update {
@@ -161,5 +201,10 @@ class ChatBoxViewModel @Inject constructor(
 
     fun resetNavigation() {
         _navigationState.update { NavigationState.None }
+    }
+
+    override fun onCleared() {
+        audioPlayer.releaseMediaPlayer()
+        super.onCleared()
     }
 }
