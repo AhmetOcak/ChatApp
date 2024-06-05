@@ -1,13 +1,18 @@
 package com.ahmetocak.chat_box
 
+import android.Manifest
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -50,6 +56,9 @@ import com.ahmetocak.designsystem.icons.ChatAppIcons
 import com.ahmetocak.model.Message
 import com.ahmetocak.ui.ComingChatBubbleItem
 import com.ahmetocak.ui.OngoingChatBubbleItem
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.ahmetocak.designsystem.R.drawable as AppResources
 
 @Composable
@@ -97,7 +106,8 @@ internal fun ChatBoxRoute(
         bottomBar = {
             ChatBoxBottomBar(
                 messageValue = uiState.messageValue,
-                onEvent = onEvent
+                onEvent = onEvent,
+                isAudioRecording = uiState.audioRecordStatus == AudioRecordStatus.RECORDING
             )
         }
     ) { paddingValues ->
@@ -217,8 +227,26 @@ private fun ChatBoxTopBar(
     )
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-private fun ChatBoxBottomBar(messageValue: String, onEvent: (ChatBoxUiEvent) -> Unit) {
+private fun ChatBoxBottomBar(
+    messageValue: String,
+    onEvent: (ChatBoxUiEvent) -> Unit,
+    isAudioRecording: Boolean
+) {
+    val microphonePermissionState = rememberPermissionState(
+        permission = Manifest.permission.RECORD_AUDIO
+    )
+
+    val context = LocalContext.current
+    val infiniteTransition = rememberInfiniteTransition(label = "recording text")
+    val animatedColor by infiniteTransition.animateColor(
+        initialValue = Color(0xFFFF3131),
+        targetValue = Color(0xFFC41E3A),
+        animationSpec = infiniteRepeatable(tween(500), RepeatMode.Reverse),
+        label = "color"
+    )
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -251,26 +279,38 @@ private fun ChatBoxBottomBar(messageValue: String, onEvent: (ChatBoxUiEvent) -> 
                         }
                     },
                     placeholder = {
-                        Text(text = "Message")
+                        Text(
+                            text = if (isAudioRecording) "Recording..." else "Message",
+                            color = if (isAudioRecording) animatedColor else Color.Unspecified
+                        )
                     },
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent
-                    )
+                    ),
+                    enabled = !isAudioRecording
                 )
             }
         }
         IconButton(
             onClick = {
                 if (messageValue.isBlank()) {
-                    onEvent(ChatBoxUiEvent.OnMicrophonePress)
+                    onEvent(
+                        ChatBoxUiEvent.OnMicrophonePress(context = context) {
+                            return@OnMicrophonePress if (microphonePermissionState.status.isGranted) {
+                                true
+                            } else {
+                                microphonePermissionState.launchPermissionRequest()
+                                false
+                            }
+                        }
+                    )
                 } else {
                     onEvent(ChatBoxUiEvent.OnSendMessageClick)
                 }
             },
             modifier = Modifier
                 .weight(1f)
-                .fillMaxHeight()
                 .aspectRatio(1f)
                 .padding(8.dp),
             colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.primary)
@@ -282,9 +322,16 @@ private fun ChatBoxBottomBar(messageValue: String, onEvent: (ChatBoxUiEvent) -> 
                     tint = MaterialTheme.colorScheme.background
                 )
             }
-            AnimatedVisibility(visible = messageValue.isBlank()) {
+            AnimatedVisibility(visible = messageValue.isBlank() && !isAudioRecording) {
                 Icon(
                     imageVector = ChatAppIcons.Filled.microphone,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.background
+                )
+            }
+            AnimatedVisibility(visible = messageValue.isBlank() && isAudioRecording) {
+                Icon(
+                    imageVector = ChatAppIcons.Filled.stop,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.background
                 )

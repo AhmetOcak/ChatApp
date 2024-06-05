@@ -4,10 +4,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
+import com.ahmetocak.chat_box.audio.player.AudioPlayer
 import com.ahmetocak.chat_box.navigation.CHAT_BOX_ID
 import com.ahmetocak.chat_box.navigation.FRIEND_EMAIL
 import com.ahmetocak.chat_box.navigation.FRIEND_PROF_PIC_URL
 import com.ahmetocak.chat_box.navigation.FRIEND_USERNAME
+import com.ahmetocak.chat_box.audio.recorder.AudioRecorder
 import com.ahmetocak.common.MessageManager
 import com.ahmetocak.common.Response
 import com.ahmetocak.common.SnackbarManager
@@ -33,6 +35,8 @@ class ChatBoxViewModel @Inject constructor(
     private val getMessagesUseCase: GetMessagesUseCase,
     private val observeUserInCacheUseCase: ObserveUserInCacheUseCase,
     private val dispatcher: CoroutineDispatcher,
+    private val audioRecorder: AudioRecorder,
+    private val audioPlayer: AudioPlayer,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -76,12 +80,38 @@ class ChatBoxViewModel @Inject constructor(
 
             is ChatBoxUiEvent.OnAttachDocClick -> _uiState.update { it.copy(showAttachDocBox = true) }
             is ChatBoxUiEvent.OnCameraClick -> _navigationState.update { NavigationState.Camera }
-            is ChatBoxUiEvent.OnMicrophonePress -> _uiState.update { it.copy(activateMicrophone = true) }
-            is ChatBoxUiEvent.OnCallClick -> { /* TODO: Start a call */ }
+            is ChatBoxUiEvent.OnMicrophonePress -> {
+                if (event.permission()) {
+                    when (_uiState.value.audioRecordStatus) {
+                        AudioRecordStatus.IDLE -> {
+                            _uiState.update {
+                                it.copy(audioRecordStatus = AudioRecordStatus.RECORDING)
+                            }
+                            _uiState.value.currentUser?.email?.let { email ->
+                                audioRecorder.startRecording(
+                                    userEmail = email
+                                )
+                            }
+                        }
+
+                        AudioRecordStatus.RECORDING -> {
+                            _uiState.update {
+                                it.copy(audioRecordStatus = AudioRecordStatus.IDLE)
+                            }
+                            audioRecorder.stopRecording()
+                        }
+                    }
+                }
+            }
+
+            is ChatBoxUiEvent.OnCallClick -> { /* TODO: Start a call */
+            }
 
             is ChatBoxUiEvent.OnBackClick -> _navigationState.update { NavigationState.Back }
             is ChatBoxUiEvent.OnMenuClick -> _uiState.update { it.copy(showDropdownMenu = true) }
-            is ChatBoxUiEvent.OnSendMessageClick -> { sendMessage() }
+            is ChatBoxUiEvent.OnSendMessageClick -> {
+                sendMessage()
+            }
         }
     }
 

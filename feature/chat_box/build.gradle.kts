@@ -80,6 +80,9 @@ dependencies {
     // Kotlin Serialization
     implementation(libs.kotlinx.serialization)
 
+    // Accompanist Permissions
+    implementation(libs.accompanist.permissions)
+
     implementation(project(":core:designsystem"))
     implementation(project(":core:model"))
     implementation(project(":core:ui"))

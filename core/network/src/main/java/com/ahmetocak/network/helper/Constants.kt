@@ -1,6 +1,6 @@
 package com.ahmetocak.network.helper
 
-internal const val BASE_URL = "http://10.0.2.2:8080"
+internal const val BASE_URL = "http://192.168.1.6:8080"
 
 internal object KtorUserEndpoints {
     const val GET = "/user/getUser/{${Paths.USER_EMAIL}}"
