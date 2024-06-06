@@ -8,6 +8,7 @@ import javax.inject.Inject
 
 private const val PROFILE_IMAGES_DIR = "user_profile_images"
 private const val AUDIO_FILES_DIR = "user_audio_files"
+private const val IMAGE_FILES_DIR = "user_image_files"
 
 class StorageRemoteDataSourceImpl @Inject constructor(
     storage: FirebaseStorage
@@ -37,5 +38,14 @@ class StorageRemoteDataSourceImpl @Inject constructor(
     ): UploadTask {
         val audioFileRef = storageRef.child("$AUDIO_FILES_DIR/$userUid/$audioFileName")
         return audioFileRef.putFile(audioFileUri)
+    }
+
+    override fun uploadImageFile(
+        imageFileName: String,
+        imageFileUri: Uri,
+        userUid: String
+    ): UploadTask {
+        val imageFileRef = storageRef.child("$IMAGE_FILES_DIR/$userUid/$imageFileName")
+        return imageFileRef.putFile(imageFileUri)
     }
 }

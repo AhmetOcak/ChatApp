@@ -11,11 +11,14 @@ import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAddAlt1
+import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Stop
@@ -49,6 +52,9 @@ object ChatAppIcons {
         val settings = Icons.Filled.Settings
         val stop = Icons.Filled.Stop
         val play = Icons.Filled.PlayArrow
+        val gallery = Icons.Filled.PhotoLibrary
+        val document = Icons.Filled.Description
+        val location = Icons.Filled.LocationOn
     }
 
     object Outlined {

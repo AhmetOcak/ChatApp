@@ -18,6 +18,7 @@ import com.ahmetocak.domain.usecase.chat.AddMessageUseCase
 import com.ahmetocak.domain.usecase.chat.GetMessagesUseCase
 import com.ahmetocak.domain.usecase.chat.SendMessageUseCase
 import com.ahmetocak.domain.usecase.firebase.storage.UploadAudioFileUseCase
+import com.ahmetocak.domain.usecase.firebase.storage.UploadImageFileUseCase
 import com.ahmetocak.domain.usecase.user.local.ObserveUserInCacheUseCase
 import com.ahmetocak.model.Message
 import com.ahmetocak.model.MessageType
@@ -29,6 +30,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,6 +43,7 @@ class ChatBoxViewModel @Inject constructor(
     private val audioRecorder: AudioRecorder,
     private val audioPlayer: AudioPlayer,
     private val uploadAudioFileUseCase: UploadAudioFileUseCase,
+    private val uploadImageFileUseCase: UploadImageFileUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -88,7 +91,10 @@ class ChatBoxViewModel @Inject constructor(
                 NavigationState.ChatDocuments(event.id)
             }
 
-            is ChatBoxUiEvent.OnAttachDocClick -> _uiState.update { it.copy(showAttachDocBox = true) }
+            is ChatBoxUiEvent.OnAttachMenuClick -> _uiState.update {
+                it.copy(showAttachMenu = !_uiState.value.showAttachMenu)
+            }
+
             is ChatBoxUiEvent.OnCameraClick -> _navigationState.update { NavigationState.Camera }
             is ChatBoxUiEvent.OnMicrophonePress -> {
                 if (event.permission()) {
@@ -134,7 +140,7 @@ class ChatBoxViewModel @Inject constructor(
             is ChatBoxUiEvent.OnBackClick -> _navigationState.update { NavigationState.Back }
             is ChatBoxUiEvent.OnMenuClick -> _uiState.update { it.copy(showDropdownMenu = true) }
             is ChatBoxUiEvent.OnSendMessageClick -> sendMessage(
-                messageType = MessageType.TEXT,
+                messageType = event.messageType,
                 messageContent = _uiState.value.messageValue
             )
 
@@ -150,6 +156,23 @@ class ChatBoxViewModel @Inject constructor(
                         audioPlayer.play(event.audioUrl.toString())
                     }
                 }
+            }
+
+            is ChatBoxUiEvent.OnSendImageClick -> {
+                uploadImageFileUseCase(
+                    imageFileName = "${_uiState.value.currentUser?.email}${LocalDateTime.now()}",
+                    imageFileUri = event.imageUri,
+                    onSuccess = {
+                        sendMessage(
+                            messageType = MessageType.IMAGE,
+                            messageContent = it.toString()
+                        )
+                    },
+                    onFailure = {
+                        SnackbarManager.showMessage(it)
+                    }
+                )
+                _uiState.update { it.copy(showAttachMenu = false) }
             }
         }
     }
@@ -202,6 +225,8 @@ class ChatBoxViewModel @Inject constructor(
     fun resetNavigation() {
         _navigationState.update { NavigationState.None }
     }
+
+    fun resetAttachMenu() = _uiState.update { it.copy(showAttachMenu = false) }
 
     override fun onCleared() {
         audioPlayer.releaseMediaPlayer()

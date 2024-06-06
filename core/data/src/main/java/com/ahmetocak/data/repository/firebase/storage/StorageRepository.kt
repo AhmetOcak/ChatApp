@@ -10,4 +10,5 @@ interface StorageRepository {
     fun getUserProfileImage(userUid: String): Task<Uri>
     fun deleteUserProfileImage(userUid: String): Task<Void>
     fun uploadAudioFile(audioFileName: String, audioFileUri: Uri, userUid: String): UploadTask
+    fun uploadImageFile(imageFileName: String, imageFileUri: Uri, userUid: String): UploadTask
 }

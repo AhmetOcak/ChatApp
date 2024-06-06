@@ -105,7 +105,7 @@ private fun AudioBubbleSkeleton(
             modifier = Modifier.constrainAs(authorText) {
                 top.linkTo(parent.top, margin = 8.dp)
                 start.linkTo(parent.start, margin = 8.dp)
-            },
+            }.padding(end = 32.dp),
             text = author,
             style = MaterialTheme.typography.titleMedium
         )

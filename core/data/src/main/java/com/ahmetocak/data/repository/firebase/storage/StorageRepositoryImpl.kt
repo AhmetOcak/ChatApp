@@ -32,4 +32,16 @@ class StorageRepositoryImpl @Inject constructor(
             userUid = userUid
         )
     }
+
+    override fun uploadImageFile(
+        imageFileName: String,
+        imageFileUri: Uri,
+        userUid: String
+    ): UploadTask {
+        return storageRemoteDataSource.uploadImageFile(
+            imageFileName = imageFileName,
+            imageFileUri = imageFileUri,
+            userUid = userUid
+        )
+    }
 }
