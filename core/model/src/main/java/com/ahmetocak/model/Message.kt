@@ -19,5 +19,6 @@ data class Message(
 enum class MessageType {
     TEXT,
     AUDIO,
-    IMAGE
+    IMAGE,
+    DOC
 }

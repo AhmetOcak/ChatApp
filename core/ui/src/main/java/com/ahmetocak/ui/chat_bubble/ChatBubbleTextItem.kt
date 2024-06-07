@@ -1,4 +1,4 @@
-package com.ahmetocak.ui
+package com.ahmetocak.ui.chat_bubble
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

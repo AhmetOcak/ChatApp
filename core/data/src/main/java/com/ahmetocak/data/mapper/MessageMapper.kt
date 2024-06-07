@@ -65,6 +65,7 @@ private fun String.toMessageType(): MessageType {
         MessageType.TEXT.name -> MessageType.TEXT
         MessageType.AUDIO.name -> MessageType.AUDIO
         MessageType.IMAGE.name -> MessageType.IMAGE
+        MessageType.DOC.name -> MessageType.DOC
         else -> throw IllegalArgumentException("Wrong message type $this")
     }
 }

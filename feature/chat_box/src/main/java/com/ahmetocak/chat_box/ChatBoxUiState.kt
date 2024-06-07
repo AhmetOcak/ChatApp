@@ -39,6 +39,7 @@ sealed class ChatBoxUiEvent {
     data class OnViewChatDocsClick(val id: String) : ChatBoxUiEvent()
     data class OnPlayAudioClick(val audioUrl: Uri) : ChatBoxUiEvent()
     data class OnSendImageClick(val imageUri: Uri) : ChatBoxUiEvent()
+    data class OnSendDocClick(val docUri: Uri) : ChatBoxUiEvent()
 }
 
 sealed class NavigationState {

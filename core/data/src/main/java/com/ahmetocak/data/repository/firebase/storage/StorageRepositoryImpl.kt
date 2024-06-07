@@ -44,4 +44,12 @@ class StorageRepositoryImpl @Inject constructor(
             userUid = userUid
         )
     }
+
+    override fun uploadDocFile(docFileName: String, docFileUri: Uri, userUid: String): UploadTask {
+        return storageRemoteDataSource.uploadDocFile(
+            docFileName = docFileName,
+            docFileUri = docFileUri,
+            userUid = userUid
+        )
+    }
 }

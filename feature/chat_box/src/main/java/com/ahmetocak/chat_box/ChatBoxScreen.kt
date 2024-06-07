@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
@@ -43,12 +44,14 @@ import com.ahmetocak.designsystem.components.ChatAppScaffold
 import com.ahmetocak.designsystem.icons.ChatAppIcons
 import com.ahmetocak.model.Message
 import com.ahmetocak.model.MessageType
-import com.ahmetocak.ui.ComingChatBubbleAudioItem
-import com.ahmetocak.ui.ComingChatBubbleImageItem
-import com.ahmetocak.ui.ComingChatBubbleItem
-import com.ahmetocak.ui.OngoingChatBubbleAudioItem
-import com.ahmetocak.ui.OngoingChatBubbleImageItem
-import com.ahmetocak.ui.OngoingChatBubbleItem
+import com.ahmetocak.ui.chat_bubble.ComingChatBubbleAudioItem
+import com.ahmetocak.ui.chat_bubble.ComingChatBubbleImageItem
+import com.ahmetocak.ui.chat_bubble.ComingChatBubbleItem
+import com.ahmetocak.ui.chat_bubble.ComingChatBubblePdfItem
+import com.ahmetocak.ui.chat_bubble.OngoingChatBubbleAudioItem
+import com.ahmetocak.ui.chat_bubble.OngoingChatBubbleImageItem
+import com.ahmetocak.ui.chat_bubble.OngoingChatBubbleItem
+import com.ahmetocak.ui.chat_bubble.OngoingChatBubblePdfItem
 
 @Composable
 internal fun ChatBoxRoute(
@@ -61,9 +64,7 @@ internal fun ChatBoxRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val onEvent by rememberUpdatedState(newValue = { event: ChatBoxUiEvent ->
-        viewModel.onEvent(
-            event
-        )
+        viewModel.onEvent(event)
     })
 
     val navigationState by viewModel.navigationState.collectAsStateWithLifecycle()
@@ -92,6 +93,14 @@ internal fun ChatBoxRoute(
             viewModel.resetAttachMenu()
         }
 
+        val pickFileLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent()
+        ) { uri ->
+            if (uri != null) {
+                onEvent(ChatBoxUiEvent.OnSendDocClick(uri))
+            }
+        }
+
         AttachSection(
             onAttachItemClick = { type ->
                 when (type) {
@@ -101,7 +110,7 @@ internal fun ChatBoxRoute(
                         )
                     }
 
-                    AttachType.DOCUMENT -> {}
+                    AttachType.DOCUMENT -> pickFileLauncher.launch("application/pdf")
                     AttachType.LOCATION -> {}
                 }
             }
@@ -143,6 +152,7 @@ internal fun ChatBoxScreen(
     isAudioPlaying: Boolean
 ) {
     var selectedIndex by remember { mutableIntStateOf(-1) }
+    val context = LocalContext.current
 
     LazyColumn(
         modifier = modifier
@@ -214,6 +224,26 @@ internal fun ChatBoxScreen(
                                 time = message.sentAt.showMessageTime(),
                                 imageUrl = message.messageContent,
                                 authorImgUrl = message.senderImgUrl
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+
+                    MessageType.DOC -> {
+                        if (message.isComingFromMe(currentUserEmail)) {
+                            OngoingChatBubblePdfItem(
+                                author = message.senderUsername,
+                                time = message.sentAt.showMessageTime(),
+                                pdfUrl = message.messageContent,
+                                onClick = remember { { viewPdf(context = context, uri = it) } }
+                            )
+                        } else {
+                            ComingChatBubblePdfItem(
+                                author = message.senderUsername,
+                                time = message.sentAt.showMessageTime(),
+                                pdfUrl = message.messageContent,
+                                authorImgUrl = message.senderImgUrl,
+                                onClick = remember { { viewPdf(context = context, uri = it) } }
                             )
                         }
                         Spacer(modifier = Modifier.height(8.dp))

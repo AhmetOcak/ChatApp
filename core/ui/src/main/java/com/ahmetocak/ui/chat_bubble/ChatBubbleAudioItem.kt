@@ -1,4 +1,4 @@
-package com.ahmetocak.ui
+package com.ahmetocak.ui.chat_bubble
 
 import android.net.Uri
 import androidx.compose.animation.animateColor

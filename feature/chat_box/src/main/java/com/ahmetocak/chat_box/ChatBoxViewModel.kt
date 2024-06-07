@@ -18,6 +18,7 @@ import com.ahmetocak.domain.usecase.chat.AddMessageUseCase
 import com.ahmetocak.domain.usecase.chat.GetMessagesUseCase
 import com.ahmetocak.domain.usecase.chat.SendMessageUseCase
 import com.ahmetocak.domain.usecase.firebase.storage.UploadAudioFileUseCase
+import com.ahmetocak.domain.usecase.firebase.storage.UploadDocFileUseCase
 import com.ahmetocak.domain.usecase.firebase.storage.UploadImageFileUseCase
 import com.ahmetocak.domain.usecase.user.local.ObserveUserInCacheUseCase
 import com.ahmetocak.model.Message
@@ -44,6 +45,7 @@ class ChatBoxViewModel @Inject constructor(
     private val audioPlayer: AudioPlayer,
     private val uploadAudioFileUseCase: UploadAudioFileUseCase,
     private val uploadImageFileUseCase: UploadImageFileUseCase,
+    private val uploadDocFileUseCase: UploadDocFileUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -165,6 +167,23 @@ class ChatBoxViewModel @Inject constructor(
                     onSuccess = {
                         sendMessage(
                             messageType = MessageType.IMAGE,
+                            messageContent = it.toString()
+                        )
+                    },
+                    onFailure = {
+                        SnackbarManager.showMessage(it)
+                    }
+                )
+                _uiState.update { it.copy(showAttachMenu = false) }
+            }
+
+            is ChatBoxUiEvent.OnSendDocClick -> {
+                uploadDocFileUseCase(
+                    docFileName = "${_uiState.value.currentUser?.email}${LocalDateTime.now()}",
+                    docFileUri = event.docUri,
+                    onSuccess = {
+                        sendMessage(
+                            messageType = MessageType.DOC,
                             messageContent = it.toString()
                         )
                     },
