@@ -4,6 +4,9 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -44,14 +47,10 @@ import com.ahmetocak.designsystem.components.ChatAppScaffold
 import com.ahmetocak.designsystem.icons.ChatAppIcons
 import com.ahmetocak.model.Message
 import com.ahmetocak.model.MessageType
-import com.ahmetocak.ui.chat_bubble.ComingChatBubbleAudioItem
-import com.ahmetocak.ui.chat_bubble.ComingChatBubbleImageItem
-import com.ahmetocak.ui.chat_bubble.ComingChatBubbleItem
-import com.ahmetocak.ui.chat_bubble.ComingChatBubblePdfItem
-import com.ahmetocak.ui.chat_bubble.OngoingChatBubbleAudioItem
-import com.ahmetocak.ui.chat_bubble.OngoingChatBubbleImageItem
-import com.ahmetocak.ui.chat_bubble.OngoingChatBubbleItem
-import com.ahmetocak.ui.chat_bubble.OngoingChatBubblePdfItem
+import com.ahmetocak.ui.chat_bubble.ChatBubbleAudioItem
+import com.ahmetocak.ui.chat_bubble.ChatBubbleImageItem
+import com.ahmetocak.ui.chat_bubble.ChatBubblePdfItem
+import com.ahmetocak.ui.chat_bubble.ChatBubbleTextItem
 
 @Composable
 internal fun ChatBoxRoute(
@@ -83,7 +82,12 @@ internal fun ChatBoxRoute(
         }
     }
 
-    if (uiState.showAttachMenu) {
+    AnimatedVisibility(
+        modifier = Modifier.zIndex(10f),
+        visible = uiState.showAttachMenu,
+        enter = slideInVertically(initialOffsetY = { it / 2 }),
+        exit = slideOutVertically(targetOffsetY = { it / 4 })
+    ) {
         val pickMediaLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia()
         ) { uri ->
@@ -166,86 +170,54 @@ internal fun ChatBoxScreen(
             messageList[index]?.let { message ->
                 when (message.messageType) {
                     MessageType.TEXT -> {
-                        if (message.isComingFromMe(currentUserEmail)) {
-                            OngoingChatBubbleItem(
-                                author = message.senderUsername,
-                                message = message.messageContent,
-                                time = message.sentAt.showMessageTime()
-                            )
-                        } else {
-                            ComingChatBubbleItem(
-                                author = message.senderUsername,
-                                message = message.messageContent,
-                                time = message.sentAt.showMessageTime(),
-                                authorImgUrl = message.senderImgUrl
-                            )
-                        }
+                        ChatBubbleTextItem(
+                            author = message.senderUsername,
+                            message = message.messageContent,
+                            time = message.sentAt.showMessageTime(),
+                            authorImgUrl = message.senderImgUrl,
+                            isComingFromMe = message.isComingFromMe(currentUserEmail)
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
                     }
 
                     MessageType.AUDIO -> {
-                        if (message.isComingFromMe(currentUserEmail)) {
-                            OngoingChatBubbleAudioItem(author = message.senderUsername,
-                                time = message.sentAt.showMessageTime(),
-                                audioUrl = message.messageContent.toUri(),
-                                isAudioPlaying = isAudioPlaying && selectedIndex == index,
-                                onPlayClick = remember {
-                                    {
-                                        selectedIndex = index
-                                        onPlayClick(it)
-                                    }
-                                })
-                        } else {
-                            ComingChatBubbleAudioItem(author = message.senderUsername,
-                                time = message.sentAt.showMessageTime(),
-                                audioUrl = message.messageContent.toUri(),
-                                authorImgUrl = message.senderImgUrl,
-                                isAudioPlaying = isAudioPlaying && selectedIndex == index,
-                                onPlayClick = remember {
-                                    {
-                                        selectedIndex = index
-                                        onPlayClick(it)
-                                    }
-                                })
-                        }
+                        ChatBubbleAudioItem(
+                            author = message.senderUsername,
+                            time = message.sentAt.showMessageTime(),
+                            audioUrl = message.messageContent.toUri(),
+                            authorImgUrl = message.senderImgUrl,
+                            isAudioPlaying = isAudioPlaying && selectedIndex == index,
+                            onPlayClick = remember {
+                                {
+                                    selectedIndex = index
+                                    onPlayClick(it)
+                                }
+                            },
+                            isComingFromMe = message.isComingFromMe(currentUserEmail)
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
                     }
 
                     MessageType.IMAGE -> {
-                        if (message.isComingFromMe(currentUserEmail)) {
-                            OngoingChatBubbleImageItem(
-                                author = message.senderUsername,
-                                time = message.sentAt.showMessageTime(),
-                                imageUrl = message.messageContent,
-                            )
-                        } else {
-                            ComingChatBubbleImageItem(
-                                author = message.senderUsername,
-                                time = message.sentAt.showMessageTime(),
-                                imageUrl = message.messageContent,
-                                authorImgUrl = message.senderImgUrl
-                            )
-                        }
+                        ChatBubbleImageItem(
+                            author = message.senderUsername,
+                            imageUrl = message.messageContent,
+                            time = message.sentAt.showMessageTime(),
+                            authorImgUrl = message.senderImgUrl,
+                            isComingFromMe = message.isComingFromMe(currentUserEmail)
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
                     }
 
                     MessageType.DOC -> {
-                        if (message.isComingFromMe(currentUserEmail)) {
-                            OngoingChatBubblePdfItem(
-                                author = message.senderUsername,
-                                time = message.sentAt.showMessageTime(),
-                                pdfUrl = message.messageContent,
-                                onClick = remember { { viewPdf(context = context, uri = it) } }
-                            )
-                        } else {
-                            ComingChatBubblePdfItem(
-                                author = message.senderUsername,
-                                time = message.sentAt.showMessageTime(),
-                                pdfUrl = message.messageContent,
-                                authorImgUrl = message.senderImgUrl,
-                                onClick = remember { { viewPdf(context = context, uri = it) } }
-                            )
-                        }
+                        ChatBubblePdfItem(
+                            author = message.senderUsername,
+                            pdfUrl = message.messageContent,
+                            time = message.sentAt.showMessageTime(),
+                            authorImgUrl = message.senderImgUrl,
+                            onClick = remember { { viewPdf(context = context, uri = it) } },
+                            isComingFromMe = message.isComingFromMe(currentUserEmail)
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
@@ -257,9 +229,8 @@ internal fun ChatBoxScreen(
 @Composable
 private fun AttachSection(onAttachItemClick: (AttachType) -> Unit) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .zIndex(10f), contentAlignment = Alignment.BottomCenter
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomCenter
     ) {
         ElevatedCard(
             modifier = Modifier

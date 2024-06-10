@@ -61,6 +61,9 @@ dependencies {
     // Constraint Layout
     implementation(libs.androidx.constraintlayout)
 
+    // Lottie Compose
+    implementation(libs.lottie.compose)
+
     implementation(project(":core:model"))
     implementation(project(":core:designsystem"))
 }

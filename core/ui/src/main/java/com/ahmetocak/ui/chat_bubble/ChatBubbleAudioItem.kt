@@ -1,20 +1,15 @@
 package com.ahmetocak.ui.chat_bubble
 
 import android.net.Uri
-import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,13 +19,54 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
 import com.ahmetocak.designsystem.components.ChatAppAnimatedIconButton
 import com.ahmetocak.designsystem.icons.ChatAppIcons
+import com.ahmetocak.ui.R
+import com.airbnb.lottie.LottieProperty
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.compose.rememberLottieDynamicProperties
+import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 
 @Composable
-fun ComingChatBubbleAudioItem(
+fun ChatBubbleAudioItem(
+    author: String,
+    time: String,
+    audioUrl: Uri,
+    authorImgUrl: String?,
+    isAudioPlaying: Boolean,
+    onPlayClick: (Uri) -> Unit,
+    isComingFromMe: Boolean
+) {
+    if (isComingFromMe) {
+        OngoingChatBubbleAudioItem(
+            author = author,
+            time = time,
+            audioUrl = audioUrl,
+            isAudioPlaying = isAudioPlaying,
+            onPlayClick = onPlayClick
+        )
+    } else {
+        ComingChatBubbleAudioItem(
+            author = author,
+            time = time,
+            audioUrl = audioUrl,
+            authorImgUrl = authorImgUrl,
+            isAudioPlaying = isAudioPlaying,
+            onPlayClick = onPlayClick
+        )
+    }
+}
+
+@Composable
+private fun ComingChatBubbleAudioItem(
     author: String,
     time: String,
     audioUrl: Uri,
@@ -60,7 +96,7 @@ fun ComingChatBubbleAudioItem(
 }
 
 @Composable
-fun OngoingChatBubbleAudioItem(
+private fun OngoingChatBubbleAudioItem(
     author: String,
     time: String,
     audioUrl: Uri,
@@ -98,16 +134,18 @@ private fun AudioBubbleSkeleton(
     isAudioPlaying: Boolean,
     onPlayClick: () -> Unit
 ) {
-    ConstraintLayout {
-        val (authorText, dateText, playBtn, lineAnim) = createRefs()
+    ConstraintLayout(modifier = Modifier.width(IntrinsicSize.Max)) {
+        val (authorText, dateText, playBtn, lottieAnim) = createRefs()
 
         Text(
-            modifier = Modifier.constrainAs(authorText) {
-                top.linkTo(parent.top, margin = 8.dp)
-                start.linkTo(parent.start, margin = 8.dp)
-            }.padding(end = 32.dp),
+            modifier = Modifier
+                .constrainAs(authorText) {
+                    top.linkTo(parent.top, margin = 8.dp)
+                    start.linkTo(parent.start, margin = 8.dp)
+                }
+                .padding(end = 32.dp),
             text = author,
-            style = MaterialTheme.typography.titleMedium
+            style = authorTextStyle
         )
 
         ChatAppAnimatedIconButton(
@@ -122,20 +160,18 @@ private fun AudioBubbleSkeleton(
             animationCondition = !isAudioPlaying
         )
 
-        if (isAudioPlaying) {
-            ElectricLine(
-                modifier = Modifier
-                    .width(96.dp)
-                    .constrainAs(lineAnim) {
-                        top.linkTo(playBtn.top)
-                        bottom.linkTo(playBtn.bottom)
-                        start.linkTo(playBtn.end, margin = 4.dp)
-                        end.linkTo(parent.end, margin = 8.dp)
-                    }
-            )
-        } else {
-            HorizontalDivider(modifier = Modifier.width(96.dp))
-        }
+        LottieAudioWaveAnimation(
+            modifier = Modifier
+                .constrainAs(lottieAnim) {
+                    top.linkTo(authorText.bottom, margin = 8.dp)
+                    bottom.linkTo(dateText.top, margin = 8.dp)
+                    start.linkTo(playBtn.end, margin = 32.dp)
+                    end.linkTo(parent.end, margin = 32.dp)
+                }
+                .requiredHeight(32.dp)
+                .padding(horizontal = 32.dp),
+            isAudioPlaying = isAudioPlaying
+        )
 
         Text(
             modifier = Modifier.constrainAs(dateText) {
@@ -144,27 +180,44 @@ private fun AudioBubbleSkeleton(
                 end.linkTo(parent.end, margin = 8.dp)
             },
             text = messageDate,
-            style = MaterialTheme.typography.bodyMedium
+            style = dateTextStyle
         )
     }
 }
 
 @Composable
-private fun ElectricLine(modifier: Modifier) {
-    val transition = rememberInfiniteTransition(label = "playing")
-    val color by transition.animateColor(
-        initialValue = Color(0xFF04D9FF),
-        targetValue = Color(0xFF02788D),
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 500, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "colorAnimation"
+private fun LottieAudioWaveAnimation(modifier: Modifier, isAudioPlaying: Boolean) {
+    val disabledDynamicProperties = rememberLottieDynamicProperties(
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR_FILTER,
+            value = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+                Color.Gray.hashCode(),
+                BlendModeCompat.SRC_ATOP
+            ),
+            keyPath = arrayOf("**")
+        )
+    )
+    val enabledDynamicProperties = rememberLottieDynamicProperties(
+        rememberLottieDynamicProperty(
+            property = LottieProperty.COLOR_FILTER,
+            value = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+                MaterialTheme.colorScheme.primary.hashCode(),
+                BlendModeCompat.SRC_ATOP
+            ),
+            keyPath = arrayOf("**")
+        )
     )
 
-    HorizontalDivider(
+    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.audio_wave_anim))
+
+
+    LottieAnimation(
         modifier = modifier,
-        color = color,
-        thickness = 2.dp
+        composition = composition,
+        dynamicProperties = if (isAudioPlaying) enabledDynamicProperties else disabledDynamicProperties,
+        iterations = LottieConstants.IterateForever,
+        isPlaying = isAudioPlaying,
+        alignment = Alignment.Center,
+        contentScale = ContentScale.FillWidth
     )
 }

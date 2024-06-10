@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,8 +18,29 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.ahmetocak.designsystem.components.NetworkImage
 
+
 @Composable
-fun ComingChatBubbleImageItem(
+fun ChatBubbleImageItem(
+    author: String,
+    imageUrl: String,
+    time: String,
+    authorImgUrl: String?,
+    isComingFromMe: Boolean
+) {
+    if (isComingFromMe) {
+        OngoingChatBubbleImageItem(author = author, imageUrl = imageUrl, time = time)
+    } else {
+        ComingChatBubbleImageItem(
+            author = author,
+            imageUrl = imageUrl,
+            time = time,
+            authorImgUrl = authorImgUrl
+        )
+    }
+}
+
+@Composable
+private fun ComingChatBubbleImageItem(
     author: String,
     imageUrl: String,
     time: String,
@@ -47,7 +67,7 @@ fun ComingChatBubbleImageItem(
 }
 
 @Composable
-fun OngoingChatBubbleImageItem(
+private fun OngoingChatBubbleImageItem(
     author: String,
     imageUrl: String,
     time: String
@@ -87,7 +107,7 @@ private fun BubbleSkeleton(
                 .padding(start = 8.dp, end = 32.dp)
                 .padding(vertical = 8.dp),
             text = author,
-            style = MaterialTheme.typography.titleMedium
+            style = authorTextStyle
         )
         NetworkImage(
             modifier = Modifier
@@ -99,9 +119,10 @@ private fun BubbleSkeleton(
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 4.dp, horizontal = 8.dp),
+                .padding(vertical = 4.dp)
+                .padding(start = 32.dp, end = 8.dp),
             text = messageDate,
-            style = MaterialTheme.typography.bodyMedium,
+            style = dateTextStyle,
             textAlign = TextAlign.End
         )
     }

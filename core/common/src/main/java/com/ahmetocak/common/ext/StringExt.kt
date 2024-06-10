@@ -45,13 +45,22 @@ fun String.showMessageTime(): String {
         val difference = ChronoUnit.DAYS.between(messageDate, currentDate)
 
         if (difference >= 1) {
-            "${messageDate.hour}:${messageDate.minute} ${messageDate.year}-${messageDate.month}-${messageDate.dayOfMonth}"
+            "${messageDate.hour.fixedTime()}:${messageDate.minute.fixedTime()} " +
+                    "${messageDate.dayOfMonth.fixedTime()}-${messageDate.month.value.fixedTime()}-${messageDate.year.fixedTime()}"
         } else {
             "${messageDate.hour}:${messageDate.minute}"
         }
     } catch (e: Exception) {
         Log.d("showMessageTime", e.stackTraceToString())
         ""
+    }
+}
+
+fun Int.fixedTime(): String {
+    return if (this < 10) {
+        "0$this"
+    } else {
+        this.toString()
     }
 }
 

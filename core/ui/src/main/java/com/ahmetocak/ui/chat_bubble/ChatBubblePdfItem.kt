@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,7 +35,29 @@ import com.ahmetocak.ui.chat_bubble.doc_manager.downloadDocumentToPermanentStora
 import com.ahmetocak.ui.chat_bubble.doc_manager.renderPdfToBitmap
 
 @Composable
-fun ComingChatBubblePdfItem(
+fun ChatBubblePdfItem(
+    author: String,
+    pdfUrl: String,
+    time: String,
+    authorImgUrl: String?,
+    onClick: (Uri) -> Unit,
+    isComingFromMe: Boolean
+) {
+    if (isComingFromMe) {
+        OngoingChatBubblePdfItem(author = author, pdfUrl = pdfUrl, time = time, onClick = onClick)
+    } else {
+        ComingChatBubblePdfItem(
+            author = author,
+            pdfUrl = pdfUrl,
+            time = time,
+            authorImgUrl = authorImgUrl,
+            onClick = onClick
+        )
+    }
+}
+
+@Composable
+private fun ComingChatBubblePdfItem(
     author: String,
     pdfUrl: String,
     time: String,
@@ -65,7 +86,7 @@ fun ComingChatBubblePdfItem(
 }
 
 @Composable
-fun OngoingChatBubblePdfItem(
+private fun OngoingChatBubblePdfItem(
     author: String,
     pdfUrl: String,
     time: String,
@@ -124,7 +145,7 @@ private fun BubbleSkeleton(
                 .padding(start = 8.dp, end = 32.dp)
                 .padding(vertical = 8.dp),
             text = author,
-            style = MaterialTheme.typography.titleMedium
+            style = authorTextStyle
         )
         bitmap?.let {
             Box(modifier = Modifier.clip(RoundedCornerShape(5))) {
@@ -142,9 +163,10 @@ private fun BubbleSkeleton(
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 4.dp, horizontal = 8.dp),
+                .padding(vertical = 4.dp)
+                .padding(start = 32.dp, end = 8.dp),
             text = messageDate,
-            style = MaterialTheme.typography.bodyMedium,
+            style = dateTextStyle,
             textAlign = TextAlign.End
         )
     }
