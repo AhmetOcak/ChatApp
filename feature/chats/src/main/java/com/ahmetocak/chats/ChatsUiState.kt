@@ -12,8 +12,14 @@ data class ChatsUiState(
 )
 
 sealed class ChatsUiEvent {
-    data class OnChatItemClick(val id: Int): ChatsUiEvent()
-    data class OnLoadingStateChange(val state: LoadingState): ChatsUiEvent()
+    data class OnChatItemClick(
+        val id: Int,
+        val friendEmail: String,
+        val friendUsername: String ,
+        val friendProfPicUrl: String?
+    ) : ChatsUiEvent()
+
+    data class OnLoadingStateChange(val state: LoadingState) : ChatsUiEvent()
     data object OnCreateContactClick : ChatsUiEvent()
     data object OpenAddPersonScreenClick : ChatsUiEvent()
     data object OnBackClick : ChatsUiEvent()
@@ -23,7 +29,12 @@ sealed class ChatsUiEvent {
 
 sealed class NavigationState {
     data object None : NavigationState()
-    data class ChatBox(val id: Int) : NavigationState()
+    data class ChatBox(
+        val id: Int,
+        val friendEmail: String,
+        val friendUsername: String,
+        val friendProfPicUrl: String?
+    ) : NavigationState()
 }
 
 sealed class ScreenState {

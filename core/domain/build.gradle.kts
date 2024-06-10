@@ -48,6 +48,9 @@ dependencies {
     // Coil
     implementation(libs.coil)
 
+    // Paging 3
+    implementation(libs.androidx.paging.runtime)
+
     implementation(project(":core:model"))
     implementation(project(":core:data"))
     implementation(project(":core:common"))

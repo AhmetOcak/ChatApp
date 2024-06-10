@@ -9,7 +9,8 @@ internal fun NetworkFriend.toFriend(): Friend {
         id = id,
         currentUserEmail = userEmail,
         friendEmail = friendEmail,
-        friendProfilePicUrl = friendProfilePicUrl
+        friendProfilePicUrl = friendProfilePicUrl,
+        friendUsername = friendUsername
     )
 }
 
@@ -22,7 +23,8 @@ internal fun Friend.toFriendEntity(): FriendEntity {
         id = id,
         userEmail = currentUserEmail,
         friendEmail = friendEmail,
-        friendProfilePicUrl = friendProfilePicUrl
+        friendProfilePicUrl = friendProfilePicUrl,
+        friendUsername = friendUsername
     )
 }
 
@@ -31,7 +33,8 @@ internal fun FriendEntity.toFriend(): Friend {
         id = id,
         currentUserEmail = userEmail,
         friendEmail = friendEmail,
-        friendProfilePicUrl = friendProfilePicUrl
+        friendProfilePicUrl = friendProfilePicUrl,
+        friendUsername = friendUsername
     )
 }
 

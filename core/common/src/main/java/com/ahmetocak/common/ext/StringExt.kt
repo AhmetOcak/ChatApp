@@ -3,9 +3,10 @@ package com.ahmetocak.common.ext
 import android.util.Log
 import android.util.Patterns
 import com.ahmetocak.common.UiText
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.time.LocalDateTime
-import java.time.Period
-import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import com.ahmetocak.designsystem.R.string as AppStrings
 
 fun String.isValidEmail(): Boolean {
@@ -32,33 +33,58 @@ fun Exception?.failureMessage(): UiText {
     }
 }
 
-fun getCurrentDate(): String {
-    val currentDate = LocalDateTime.now()
-    val formatter = DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")
-    return currentDate.format(formatter)
+fun String?.encodeForSaveNav(): String? = if (this == null) null else URLEncoder.encode(
+    this,
+    StandardCharsets.UTF_8.toString()
+)
+
+fun String.showMessageTime(): String {
+    return try {
+        val currentDate = LocalDateTime.now()
+        val messageDate = LocalDateTime.parse(this)
+        val difference = ChronoUnit.DAYS.between(messageDate, currentDate)
+
+        if (difference >= 1) {
+            "${messageDate.hour.fixedTime()}:${messageDate.minute.fixedTime()} " +
+                    "${messageDate.dayOfMonth.fixedTime()}-${messageDate.month.value.fixedTime()}-${messageDate.year.fixedTime()}"
+        } else {
+            "${messageDate.hour}:${messageDate.minute}"
+        }
+    } catch (e: Exception) {
+        Log.d("showMessageTime", e.stackTraceToString())
+        ""
+    }
 }
 
-fun String.showMessageSendTime(): String {
+fun Int.fixedTime(): String {
+    return if (this < 10) {
+        "0$this"
+    } else {
+        this.toString()
+    }
+}
+
+/*
+fun OffsetDateTime.showMessageSendTime(): String {
     try {
-        val formatter = DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")
-        val currentD = LocalDateTime.now().format(formatter)
-        val messageD = this
+        val currentDate = LocalDateTime.now()
+        val difference = ChronoUnit.DAYS.between(this, currentDate)
 
-        val currentDate = LocalDateTime.parse(currentD, formatter).toLocalDate()
-        val messageDate = LocalDateTime.parse(messageD, formatter).toLocalDate()
-
-        val year = Period.between(currentDate, messageDate).years
-        val month = Period.between(currentDate, messageDate).months
-        val days = Period.between(currentDate, messageDate).days
-
-        return if (year != 0 || month != 0 || days != 0) {
-            messageD
+        return if (difference > 1) {
+            this.format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy"))
         } else {
-            val hourMinFormatter = DateTimeFormatter.ofPattern("HH:mm")
-            return LocalDateTime.parse(messageD, formatter).format(hourMinFormatter)
+            this.format(DateTimeFormatter.ofPattern("HH:mm"))
         }
     } catch (e: Exception) {
         Log.d("showMessageSendTime", e.stackTraceToString())
         return ""
     }
 }
+
+fun String.toOffsetDateTime(): OffsetDateTime {
+    val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+    val dateTime = LocalDateTime.parse(this, formatter)
+    return OffsetDateTime.of(dateTime, ZoneOffset.UTC)
+}
+
+ */

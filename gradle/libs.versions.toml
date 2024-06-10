@@ -1,4 +1,5 @@
 [versions]
+accompanistPermissions = "0.34.0"
 agp = "8.3.2"
 kotlin = "1.9.0"
 coreKtx = "1.13.0"
@@ -11,6 +12,7 @@ composeBom = "2024.04.01"
 jetbrainsKotlinJvm = "1.9.0"
 lifecycleViewmodelCompose = "2.7.0"
 lifecycleRuntimeCompose = "2.7.0"
+lottieCompose = "6.4.1"
 navigationCompose = "2.7.7"
 hiltAndroid = "2.49"
 hiltAndroidCompiler = "2.47"
@@ -27,6 +29,7 @@ firebaseBom = "32.8.1"
 googleGms = "4.4.1"
 playServicesAuth = "21.1.0"
 javaxInject = "1"
+roomPaging = "2.6.1"
 serialization = "1.9.0"
 kotlinxSerilization = "1.6.3"
 retrofit = "2.9.0"
@@ -36,7 +39,9 @@ roomKtx = "2.6.1"
 roomRuntime = "2.6.1"
 
 [libraries]
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "roomPaging" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -66,6 +71,7 @@ hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-com
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
 coil = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieCompose" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "pagingRuntime" }
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "pagingCompose" }

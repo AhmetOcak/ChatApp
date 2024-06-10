@@ -1,6 +1,8 @@
 package com.ahmetocak.database.di
 
 import com.ahmetocak.database.dao.FriendDao
+import com.ahmetocak.database.dao.MessageDao
+import com.ahmetocak.database.dao.RemoteKeyDao
 import com.ahmetocak.database.dao.UserDao
 import com.ahmetocak.database.db.UserDatabase
 import dagger.Module
@@ -23,5 +25,17 @@ object DaoModule {
     @Provides
     fun provideFriendDao(userDatabase: UserDatabase): FriendDao {
         return userDatabase.friendDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideMessageDao(userDatabase: UserDatabase): MessageDao {
+        return userDatabase.messageDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideRemoteKeyDao(userDatabase: UserDatabase): RemoteKeyDao {
+        return userDatabase.remoteKeyDao()
     }
 }

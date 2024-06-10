@@ -73,12 +73,15 @@ dependencies {
     kapt(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
 
-    // Paging
+    // Paging 3
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
 
     // Kotlin Serialization
     implementation(libs.kotlinx.serialization)
+
+    // Accompanist Permissions
+    implementation(libs.accompanist.permissions)
 
     implementation(project(":core:designsystem"))
     implementation(project(":core:model"))

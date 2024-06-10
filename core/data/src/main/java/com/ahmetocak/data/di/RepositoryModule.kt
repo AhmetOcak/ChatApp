@@ -9,7 +9,10 @@ import com.ahmetocak.data.repository.friend.FriendRepositoryImpl
 import com.ahmetocak.data.repository.user.UserRepository
 import com.ahmetocak.data.repository.user.UserRepositoryImpl
 import com.ahmetocak.database.datasource.friend.FriendLocalDataSource
+import com.ahmetocak.database.datasource.message.MessageLocalDataSource
 import com.ahmetocak.database.datasource.user.UserLocalDataSource
+import com.ahmetocak.database.db.UserDatabase
+import com.ahmetocak.network.api.KtorChatApi
 import com.ahmetocak.network.api.chat.ChatService
 import com.ahmetocak.network.datasource.firebase.storage.StorageRemoteDataSource
 import com.ahmetocak.network.datasource.ktor_friend.FriendRemoteDataSource
@@ -26,8 +29,13 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideChatRepository(chatService: ChatService): ChatRepository {
-        return ChatRepositoryImpl(chatService)
+    fun provideChatRepository(
+        chatService: ChatService,
+        api: KtorChatApi,
+        db: UserDatabase,
+        messageLocalDataSource: MessageLocalDataSource
+    ): ChatRepository {
+        return ChatRepositoryImpl(chatService, api, db, messageLocalDataSource)
     }
 
     @Singleton
