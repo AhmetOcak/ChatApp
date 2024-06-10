@@ -86,20 +86,22 @@ private fun RowScope.BottomBarActionButton(
     val context = LocalContext.current
 
     IconButton(
-        onClick = {
-            if (messageValue.isBlank()) {
-                onEvent(
-                    ChatBoxUiEvent.OnMicrophonePress(context = context) {
-                        return@OnMicrophonePress if (microphonePermissionState.status.isGranted) {
-                            true
-                        } else {
-                            microphonePermissionState.launchPermissionRequest()
-                            false
+        onClick = remember {
+            {
+                if (messageValue.isBlank()) {
+                    onEvent(
+                        ChatBoxUiEvent.OnMicrophonePress(context = context) {
+                            return@OnMicrophonePress if (microphonePermissionState.status.isGranted) {
+                                true
+                            } else {
+                                microphonePermissionState.launchPermissionRequest()
+                                false
+                            }
                         }
-                    }
-                )
-            } else {
-                onEvent(ChatBoxUiEvent.OnSendMessageClick(messageType = MessageType.TEXT))
+                    )
+                } else {
+                    onEvent(ChatBoxUiEvent.OnSendMessageClick(messageType = MessageType.TEXT))
+                }
             }
         },
         modifier = Modifier

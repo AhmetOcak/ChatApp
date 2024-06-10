@@ -73,7 +73,7 @@ internal fun ChatBoxTopBar(
         },
         navigationIcon = {
             Surface(
-                onClick = { onEvent(ChatBoxUiEvent.OnBackClick) },
+                onClick = remember { { onEvent(ChatBoxUiEvent.OnBackClick) } },
                 shape = RoundedCornerShape(20)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
