@@ -26,6 +26,7 @@ sealed class ChatBoxUiEvent {
     data class OnMessageValueChange(val value: String) : ChatBoxUiEvent()
     data object OnAttachMenuClick : ChatBoxUiEvent()
     data object OnCameraClick : ChatBoxUiEvent()
+
     data class OnMicrophonePress(
         val context: Context,
         val permission: () -> Boolean
@@ -46,7 +47,12 @@ sealed class NavigationState {
     data object None : NavigationState()
     data class ChatDetail(val id: String) : NavigationState()
     data class ChatDocuments(val id: String) : NavigationState()
-    data object Camera : NavigationState()
+    data class Camera(
+        val senderEmail: String,
+        val receiverEmail: String,
+        val senderImgUrl: String?,
+        val senderUsername: String
+    ) : NavigationState()
     data object Back : NavigationState()
 }
 

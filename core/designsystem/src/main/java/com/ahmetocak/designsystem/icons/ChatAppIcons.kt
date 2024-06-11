@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Email
@@ -55,6 +56,7 @@ object ChatAppIcons {
         val gallery = Icons.Filled.PhotoLibrary
         val document = Icons.Filled.Description
         val location = Icons.Filled.LocationOn
+        val capture = Icons.Filled.Circle
     }
 
     object Outlined {

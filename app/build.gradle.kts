@@ -93,6 +93,7 @@ dependencies {
     implementation(project(":feature:chat_docs"))
     implementation(project(":feature:settings"))
     implementation(project(":feature:user_detail"))
+    implementation(project(":feature:camera"))
 
     implementation(project(":core:designsystem"))
     implementation(project(":core:network"))
