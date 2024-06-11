@@ -63,10 +63,6 @@ internal fun ChatBoxTopBar(
                 imageVector = ChatAppIcons.Outlined.camera
             )
             ChatAppIconButton(
-                onClick = remember { { onEvent(ChatBoxUiEvent.OnCallClick) } },
-                imageVector = ChatAppIcons.Outlined.call
-            )
-            ChatAppIconButton(
                 onClick = remember { { onEvent(ChatBoxUiEvent.OnMenuClick) } },
                 imageVector = ChatAppIcons.Filled.moreVert
             )
