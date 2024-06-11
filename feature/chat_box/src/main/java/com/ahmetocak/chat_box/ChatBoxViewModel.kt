@@ -97,7 +97,19 @@ class ChatBoxViewModel @Inject constructor(
                 it.copy(showAttachMenu = !_uiState.value.showAttachMenu)
             }
 
-            is ChatBoxUiEvent.OnCameraClick -> _navigationState.update { NavigationState.Camera }
+            is ChatBoxUiEvent.OnCameraClick -> {
+                _uiState.value.currentUser?.let { user ->
+                    _navigationState.update {
+                        NavigationState.Camera(
+                            senderEmail = user.email,
+                            senderUsername = user.username,
+                            senderImgUrl = user.profilePicUrl,
+                            receiverEmail = _uiState.value.title
+                        )
+                    }
+                }
+            }
+
             is ChatBoxUiEvent.OnMicrophonePress -> {
                 if (event.permission()) {
                     when (_uiState.value.audioRecordStatus) {

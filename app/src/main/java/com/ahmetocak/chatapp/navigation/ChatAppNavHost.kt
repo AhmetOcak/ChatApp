@@ -5,6 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
+import com.ahmetocak.camera.navigation.cameraScreen
+import com.ahmetocak.camera.navigation.navigateToCamera
 import com.ahmetocak.chat_box.navigation.chatBoxScreen
 import com.ahmetocak.chat_box.navigation.navigateToChatBox
 import com.ahmetocak.chats.navigation.navigateToChats
@@ -35,7 +37,7 @@ fun ChatAppNavHost(
         chatBoxScreen(
             upPress = navController::navigateUp,
             navigateChatDetail = {},
-            navigateCamera = {},
+            navigateCamera = navController::navigateToCamera,
             navigateChatDocs = {}
         )
         loginScreen(
@@ -56,5 +58,6 @@ fun ChatAppNavHost(
             upPress = navController::navigateUp,
             onNavigateLogin = navController::navigateToLogin
         )
+        cameraScreen(upPress = navController::navigateUp)
     }
 }

@@ -29,7 +29,7 @@ fun NavGraphBuilder.chatBoxScreen(
     upPress: () -> Unit,
     navigateChatDetail: (String) -> Unit,
     navigateChatDocs: (String) -> Unit,
-    navigateCamera: () -> Unit,
+    navigateCamera: (String, String, String?, String, ) -> Unit,
 ) {
     composable(
         route = "$CHAT_BOX_ROUTE/{$CHAT_BOX_ID}/{$FRIEND_EMAIL}/{$FRIEND_USERNAME}/{${FRIEND_PROF_PIC_URL}}",
