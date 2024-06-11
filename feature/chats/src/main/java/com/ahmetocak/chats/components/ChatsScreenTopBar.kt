@@ -4,6 +4,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import com.ahmetocak.chats.ChatsUiEvent
 import com.ahmetocak.chats.ScreenState
 import com.ahmetocak.designsystem.components.ChatAppIconButton
@@ -28,11 +29,17 @@ internal fun ChatsScreenTopBar(
                 ScreenState.Chats -> {}
                 else -> {
                     ChatAppIconButton(
-                        onClick = { onEvent(ChatsUiEvent.OnBackClick) },
+                        onClick = remember { { onEvent(ChatsUiEvent.OnBackClick) } },
                         imageVector = ChatAppIcons.Default.arrowBack
                     )
                 }
             }
+        },
+        actions = {
+            ChatAppIconButton(
+                onClick = remember { { onEvent(ChatsUiEvent.OnSettingsClick) } },
+                imageVector = ChatAppIcons.Filled.settings
+            )
         }
     )
 }

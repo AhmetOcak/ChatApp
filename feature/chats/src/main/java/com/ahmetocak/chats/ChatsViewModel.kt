@@ -80,6 +80,7 @@ class ChatsViewModel @Inject constructor(
 
             is ChatsUiEvent.OnPersonValueChanged -> _uiState.update { it.copy(personValue = event.value) }
             is ChatsUiEvent.AddNewPersonClick -> addNewPerson()
+            is ChatsUiEvent.OnSettingsClick -> _navigationState.update { NavigationState.Settings }
         }
     }
 

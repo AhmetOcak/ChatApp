@@ -25,6 +25,7 @@ sealed class ChatsUiEvent {
     data object OnBackClick : ChatsUiEvent()
     data class OnPersonValueChanged(val value: String) : ChatsUiEvent()
     data object AddNewPersonClick : ChatsUiEvent()
+    data object OnSettingsClick : ChatsUiEvent()
 }
 
 sealed class NavigationState {
@@ -35,6 +36,7 @@ sealed class NavigationState {
         val friendUsername: String,
         val friendProfPicUrl: String?
     ) : NavigationState()
+    data object Settings : NavigationState()
 }
 
 sealed class ScreenState {

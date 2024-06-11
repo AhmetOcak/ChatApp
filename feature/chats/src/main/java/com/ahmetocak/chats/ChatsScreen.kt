@@ -45,6 +45,7 @@ import com.ahmetocak.ui.ChatItem
 internal fun ChatsRoute(
     onNavigateToChatBox: (Int, String, String, String?) -> Unit,
     modifier: Modifier = Modifier,
+    onNavigateSettings: () -> Unit,
     viewModel: ChatsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -69,6 +70,7 @@ internal fun ChatsRoute(
                 )
             }
 
+            is NavigationState.Settings -> performNavigation { onNavigateSettings() }
             is NavigationState.None -> Unit
         }
     }

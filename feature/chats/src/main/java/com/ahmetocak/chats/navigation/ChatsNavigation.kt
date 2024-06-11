@@ -8,10 +8,17 @@ import com.ahmetocak.chats.ChatsRoute
 
 const val CHATS_ROUTE = "chats_route"
 
-fun NavHostController.navigateToChats(navOptions: NavOptions? = null) = navigate(CHATS_ROUTE, navOptions)
+fun NavHostController.navigateToChats(navOptions: NavOptions? = null) =
+    navigate(CHATS_ROUTE, navOptions)
 
-fun NavGraphBuilder.chatsScreen(onNavigateToChatBox: (Int, String, String, String?) -> Unit) {
+fun NavGraphBuilder.chatsScreen(
+    onNavigateToChatBox: (Int, String, String, String?) -> Unit,
+    onNavigateSettings: () -> Unit
+) {
     composable(CHATS_ROUTE) {
-        ChatsRoute(onNavigateToChatBox = onNavigateToChatBox)
+        ChatsRoute(
+            onNavigateToChatBox = onNavigateToChatBox,
+            onNavigateSettings = onNavigateSettings
+        )
     }
 }
