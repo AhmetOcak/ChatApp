@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class DeleteUserFromCacheUseCase @Inject constructor(
+internal class DeleteUserFromCacheUseCase @Inject constructor(
     private val repository: UserRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {

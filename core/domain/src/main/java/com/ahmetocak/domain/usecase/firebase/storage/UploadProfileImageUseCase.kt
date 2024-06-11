@@ -8,7 +8,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import javax.inject.Inject
 
-class UploadProfileImageUseCase @Inject constructor(private val storageRepository: StorageRepository) {
+internal class UploadProfileImageUseCase @Inject constructor(
+    private val storageRepository: StorageRepository
+) {
 
     operator fun invoke(imageUri: Uri, onSuccess: (Uri) -> Unit, onFailure: (UiText) -> Unit) {
         storageRepository.uploadProfileImage(

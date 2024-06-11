@@ -12,7 +12,7 @@ fun NavHostController.navigateToChats(navOptions: NavOptions? = null) =
     navigate(CHATS_ROUTE, navOptions)
 
 fun NavGraphBuilder.chatsScreen(
-    onNavigateToChatBox: (Int, String, String, String?) -> Unit,
+    onNavigateToChatBox: (String, String, String?) -> Unit,
     onNavigateSettings: () -> Unit
 ) {
     composable(CHATS_ROUTE) {

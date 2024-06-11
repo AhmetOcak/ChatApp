@@ -11,7 +11,7 @@ import com.ahmetocak.domain.usecase.user.remote.CreateUserUseCase
 import javax.inject.Inject
 
 // TODO: Eğer hesap var ise yeniden create user yapma
-class SignInWithGoogleUseCase @Inject constructor(
+class SignInWithGoogleUseCase @Inject internal constructor(
     private val googleSignInClient: GoogleSignInClient,
     private val addUserToCacheUseCase: AddUserToCacheUseCase,
     private val createUserUseCase: CreateUserUseCase,

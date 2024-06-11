@@ -8,7 +8,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import javax.inject.Inject
 
-class ReAuthenticateUseCase @Inject constructor(
+internal class ReAuthenticateUseCase @Inject constructor(
     private val firebaseAuthClient: FirebaseEmailPasswordClient,
     private val googleAuthClient: GoogleSignInClient
 ) {

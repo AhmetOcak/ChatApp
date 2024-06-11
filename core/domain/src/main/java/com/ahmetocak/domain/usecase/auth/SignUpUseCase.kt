@@ -7,7 +7,7 @@ import com.ahmetocak.domain.usecase.user.local.AddUserToCacheUseCase
 import com.ahmetocak.domain.usecase.user.remote.CreateUserUseCase
 import javax.inject.Inject
 
-class SignUpUseCase @Inject constructor(
+class SignUpUseCase @Inject internal constructor(
     private val firebaseEmailPasswordClient: FirebaseEmailPasswordClient,
     private val addUserToCacheUseCase: AddUserToCacheUseCase,
     private val createUserUseCase: CreateUserUseCase

@@ -43,7 +43,7 @@ import com.ahmetocak.ui.ChatItem
 
 @Composable
 internal fun ChatsRoute(
-    onNavigateToChatBox: (Int, String, String, String?) -> Unit,
+    onNavigateToChatBox: (String, String, String?) -> Unit,
     modifier: Modifier = Modifier,
     onNavigateSettings: () -> Unit,
     viewModel: ChatsViewModel = hiltViewModel()
@@ -63,7 +63,6 @@ internal fun ChatsRoute(
         when (val state = navigationState) {
             is NavigationState.ChatBox -> performNavigation {
                 onNavigateToChatBox(
-                    state.id,
                     state.friendEmail,
                     state.friendUsername,
                     state.friendProfPicUrl
@@ -143,7 +142,6 @@ private fun ChatsScreen(
                 onClick = {
                     onEvent(
                         ChatsUiEvent.OnChatItemClick(
-                            chat.id,
                             chat.friendEmail,
                             chat.friendUsername,
                             chat.friendProfilePicUrl

@@ -6,7 +6,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import javax.inject.Inject
 
-class GetUserProfileImageUseCase @Inject constructor(private val repository: StorageRepository) {
+internal class GetUserProfileImageUseCase @Inject constructor(
+    private val repository: StorageRepository
+) {
 
     operator fun invoke(onResult: (Uri?) -> Unit) {
         repository.getUserProfileImage(

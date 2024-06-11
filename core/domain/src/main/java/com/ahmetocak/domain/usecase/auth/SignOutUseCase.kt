@@ -7,7 +7,7 @@ import com.ahmetocak.domain.usecase.utils.clearCoilCache
 import com.ahmetocak.model.User
 import javax.inject.Inject
 
-class SignOutUseCase @Inject constructor(
+class SignOutUseCase @Inject internal constructor(
     private val firebaseEmailPasswordClient: FirebaseEmailPasswordClient,
     private val deleteUserFromCacheUseCase: DeleteUserFromCacheUseCase,
     private val imageLoader: ImageLoader

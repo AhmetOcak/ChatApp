@@ -5,7 +5,9 @@ import com.ahmetocak.common.UiText
 import com.ahmetocak.common.ext.failureMessage
 import javax.inject.Inject
 
-class DeleteAccountFromFirebaseUseCase @Inject constructor(private val firebaseEmailPasswordClient: FirebaseEmailPasswordClient) {
+internal class DeleteAccountFromFirebaseUseCase @Inject constructor(
+    private val firebaseEmailPasswordClient: FirebaseEmailPasswordClient
+) {
 
     operator fun invoke(onSuccess: () -> Unit, onFailure: (UiText) -> Unit) {
         firebaseEmailPasswordClient.deleteAccount()?.addOnCompleteListener { task ->

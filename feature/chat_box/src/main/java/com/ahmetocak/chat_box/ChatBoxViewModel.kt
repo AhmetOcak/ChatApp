@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.ahmetocak.chat_box.audio.player.AudioPlayer
-import com.ahmetocak.chat_box.navigation.CHAT_BOX_ID
 import com.ahmetocak.chat_box.navigation.FRIEND_EMAIL
 import com.ahmetocak.chat_box.navigation.FRIEND_PROF_PIC_URL
 import com.ahmetocak.chat_box.navigation.FRIEND_USERNAME
@@ -59,7 +58,6 @@ class ChatBoxViewModel @Inject constructor(
         observeMessages()
         observeUser()
 
-        val chatBoxId = savedStateHandle.get<String>(CHAT_BOX_ID)
         val friendEmail = savedStateHandle.get<String>(FRIEND_EMAIL)
         val friendUsername = savedStateHandle.get<String>(FRIEND_USERNAME)
         val friendProfilePicUrl = savedStateHandle.get<String?>(FRIEND_PROF_PIC_URL)
