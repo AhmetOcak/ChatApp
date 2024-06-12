@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class UpdateUserInRemoteUseCase @Inject constructor(
+internal class UpdateUserInRemoteUseCase @Inject constructor(
     private val repository: UserRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {

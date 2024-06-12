@@ -52,5 +52,7 @@ class AndroidAudioPlayer @Inject constructor() : AudioPlayer {
         }
     }
 
-    override fun releaseMediaPlayer() = mediaPlayer.release()
+    override fun releaseMediaPlayer() {
+        mediaPlayer.release()
+    }
 }

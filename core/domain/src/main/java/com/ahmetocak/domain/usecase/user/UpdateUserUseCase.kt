@@ -8,7 +8,7 @@ import com.ahmetocak.domain.usecase.user.remote.UpdateUserInRemoteUseCase
 import com.ahmetocak.model.User
 import javax.inject.Inject
 
-class UpdateUserUseCase @Inject constructor(
+class UpdateUserUseCase @Inject internal constructor(
     private val updateUserInCacheUseCase: UpdateUserInCacheUseCase,
     private val updateUserInRemoteUseCase: UpdateUserInRemoteUseCase,
     private val uploadProfileImageUseCase: UploadProfileImageUseCase

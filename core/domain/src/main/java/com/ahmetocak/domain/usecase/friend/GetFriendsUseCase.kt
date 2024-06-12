@@ -8,7 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class GetFriendsUseCase @Inject constructor(
+internal class GetFriendsUseCase @Inject constructor(
     private val friendRepository: FriendRepository,
     private val dispatcher: CoroutineDispatcher
 ) {

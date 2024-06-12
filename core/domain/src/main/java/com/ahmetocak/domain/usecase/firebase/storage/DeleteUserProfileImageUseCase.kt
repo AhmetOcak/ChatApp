@@ -4,7 +4,9 @@ import android.util.Log
 import com.ahmetocak.data.repository.firebase.storage.StorageRepository
 import javax.inject.Inject
 
-class DeleteUserProfileImageUseCase @Inject constructor(private val storageRepository: StorageRepository) {
+internal class DeleteUserProfileImageUseCase @Inject constructor(
+    private val storageRepository: StorageRepository
+) {
 
     operator fun invoke(userUid: String) {
         storageRepository.deleteUserProfileImage(userUid).addOnCompleteListener { task ->

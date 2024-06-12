@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class UpdateUserInCacheUseCase @Inject constructor(
+internal class UpdateUserInCacheUseCase @Inject constructor(
     private val repository: UserRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {

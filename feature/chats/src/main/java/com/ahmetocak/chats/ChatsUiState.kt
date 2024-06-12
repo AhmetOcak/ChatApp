@@ -13,7 +13,6 @@ data class ChatsUiState(
 
 sealed class ChatsUiEvent {
     data class OnChatItemClick(
-        val id: Int,
         val friendEmail: String,
         val friendUsername: String ,
         val friendProfPicUrl: String?
@@ -31,7 +30,6 @@ sealed class ChatsUiEvent {
 sealed class NavigationState {
     data object None : NavigationState()
     data class ChatBox(
-        val id: Int,
         val friendEmail: String,
         val friendUsername: String,
         val friendProfPicUrl: String?

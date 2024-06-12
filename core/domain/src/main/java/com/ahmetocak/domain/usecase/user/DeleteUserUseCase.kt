@@ -13,7 +13,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import javax.inject.Inject
 
-class DeleteUserUseCase @Inject constructor(
+class DeleteUserUseCase @Inject internal constructor(
     private val deleteUserFromCacheUseCase: DeleteUserFromCacheUseCase,
     private val deleteUserFromRemoteUseCase: DeleteUserFromRemoteUseCase,
     private val deleteAccountFromFirebaseUseCase: DeleteAccountFromFirebaseUseCase,
