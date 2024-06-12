@@ -8,14 +8,15 @@ import com.ahmetocak.common.ext.failureMessage
 import com.ahmetocak.domain.usecase.friend.GetFriendsUseCase
 import com.ahmetocak.domain.usecase.user.local.AddUserToCacheUseCase
 import com.ahmetocak.domain.usecase.user.remote.CreateUserUseCase
+import com.ahmetocak.domain.usecase.user.remote.GetUserFromRemoteUseCase
 import javax.inject.Inject
 
-// TODO: Eğer hesap var ise yeniden create user yapma
 class SignInWithGoogleUseCase @Inject internal constructor(
     private val googleSignInClient: GoogleSignInClient,
     private val addUserToCacheUseCase: AddUserToCacheUseCase,
     private val createUserUseCase: CreateUserUseCase,
-    private val getFriendsUseCase: GetFriendsUseCase
+    private val getFriendsUseCase: GetFriendsUseCase,
+    private val getUserFromRemoteUseCase: GetUserFromRemoteUseCase
 ) {
 
     fun startSignInIntent(
@@ -57,7 +58,21 @@ class SignInWithGoogleUseCase @Inject internal constructor(
                             onFailure = onFailure
                         )
                     },
-                    onFailure = onFailure
+                    onFailure = {
+                        getUserFromRemoteUseCase(
+                            userEmail = result.email!!,
+                            onSuccess = { user ->
+                                addUserToCacheUseCase(user)
+
+                                getFriendsUseCase(
+                                    userEmail = result.email!!,
+                                    onSuccess = onSuccess,
+                                    onFailure = onFailure
+                                )
+                            },
+                            onFailure = onFailure
+                        )
+                    }
                 )
             } else {
                 onFailure(task.exception.failureMessage())

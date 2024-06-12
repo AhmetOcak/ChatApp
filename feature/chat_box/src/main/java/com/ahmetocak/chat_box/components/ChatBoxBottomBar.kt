@@ -86,7 +86,7 @@ private fun RowScope.BottomBarActionButton(
     val context = LocalContext.current
 
     IconButton(
-        onClick = remember {
+        onClick = remember(messageValue) {
             {
                 if (messageValue.isBlank()) {
                     onEvent(
