@@ -4,7 +4,6 @@ import coil.ImageLoader
 import com.ahmetocak.authentication.client.FirebaseEmailPasswordClient
 import com.ahmetocak.domain.usecase.user.local.ClearDbUseCase
 import com.ahmetocak.domain.usecase.utils.clearCoilCache
-import com.ahmetocak.model.User
 import javax.inject.Inject
 
 class SignOutUseCase @Inject internal constructor(

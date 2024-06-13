@@ -16,10 +16,12 @@ sealed class SettingUiEvent {
     data object OnDismissDeleteAccountDialog : SettingUiEvent()
     data object OnSignOutClick : SettingUiEvent()
     data class OnPasswordValueChange(val value: String) : SettingUiEvent()
+    data object OnProfileClick : SettingUiEvent()
 }
 
 sealed class NavigationState {
     data object None : NavigationState()
     data object Login : NavigationState()
+    data object Profile : NavigationState()
     data object Back : NavigationState()
 }

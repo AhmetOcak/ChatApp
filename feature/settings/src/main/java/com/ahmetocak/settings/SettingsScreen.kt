@@ -27,8 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmetocak.designsystem.components.ChatAppIconButton
+import com.ahmetocak.designsystem.components.ChatAppSubmitDialog
 import com.ahmetocak.designsystem.components.ChatAppSubmitValueDialog
 import com.ahmetocak.designsystem.icons.ChatAppIcons
+import com.ahmetocak.domain.usecase.auth.SignInProvider
 import com.ahmetocak.settings.components.SettingItem
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,6 +39,7 @@ internal fun SettingsRoute(
     modifier: Modifier = Modifier,
     upPress: () -> Unit,
     onNavigateLogin: () -> Unit,
+    onNavigateToProfile: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -54,6 +57,7 @@ internal fun SettingsRoute(
             NavigationState.None -> {}
             NavigationState.Back -> performNavigation(upPress)
             NavigationState.Login -> performNavigation(onNavigateLogin)
+            NavigationState.Profile -> performNavigation(onNavigateToProfile)
         }
     }
 
@@ -61,7 +65,8 @@ internal fun SettingsRoute(
         DeleteAccountDialog(
             onEvent = onEvent,
             isLoading = uiState.isLoading,
-            passwordValue = uiState.password
+            passwordValue = uiState.password,
+            currentSignInProvider = viewModel.currentSignInProvider
         )
     }
 
@@ -102,6 +107,11 @@ internal fun SettingScreen(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         SettingItem(
+            nameId = Settings.PROFILE.nameId,
+            icon = Settings.PROFILE.icon,
+            onClick = remember { { onEvent(SettingUiEvent.OnProfileClick) } },
+        )
+        SettingItem(
             nameId = Settings.DARK_THEME.nameId,
             icon = Settings.DARK_THEME.icon,
             checked = darkMode,
@@ -133,24 +143,40 @@ internal fun SettingScreen(
 private fun DeleteAccountDialog(
     onEvent: (SettingUiEvent) -> Unit,
     isLoading: Boolean,
-    passwordValue: String
+    passwordValue: String,
+    currentSignInProvider: SignInProvider
 ) {
-    ChatAppSubmitValueDialog(
-        onDismissRequest = remember { { onEvent(SettingUiEvent.OnDismissDeleteAccountDialog) } },
-        onSubmitClick = remember { { onEvent(SettingUiEvent.OnSubmitDeleteAccountClick) } },
-        title = stringResource(id = R.string.delete_account),
-        description = stringResource(id = R.string.delete_account_descr),
-        submitText = stringResource(id = R.string.delete),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        keyboardActions = KeyboardActions(onDone = remember { { onEvent(SettingUiEvent.OnSubmitDeleteAccountClick) } }),
-        value = passwordValue,
-        onValueChange = remember { { onEvent(SettingUiEvent.OnPasswordValueChange(it)) } },
-        isLoading = isLoading,
-        visualTransformation = PasswordVisualTransformation()
-    )
+    when (currentSignInProvider) {
+        SignInProvider.GOOGLE -> {
+            ChatAppSubmitDialog(
+                onDismissRequest = { onEvent(SettingUiEvent.OnDismissDeleteAccountDialog) },
+                onSubmitClick = { onEvent(SettingUiEvent.OnSubmitDeleteAccountClick) },
+                title = stringResource(id = R.string.delete_account),
+                description = stringResource(id = R.string.delete_account_descr),
+                submitText = stringResource(id = R.string.delete)
+            )
+        }
+
+        SignInProvider.EMAIL_PASSWORD -> {
+            ChatAppSubmitValueDialog(
+                onDismissRequest = remember { { onEvent(SettingUiEvent.OnDismissDeleteAccountDialog) } },
+                onSubmitClick = remember { { onEvent(SettingUiEvent.OnSubmitDeleteAccountClick) } },
+                title = stringResource(id = R.string.delete_account),
+                description = stringResource(id = R.string.delete_account_descr),
+                submitText = stringResource(id = R.string.delete),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                keyboardActions = KeyboardActions(onDone = remember { { onEvent(SettingUiEvent.OnSubmitDeleteAccountClick) } }),
+                value = passwordValue,
+                onValueChange = remember { { onEvent(SettingUiEvent.OnPasswordValueChange(it)) } },
+                isLoading = isLoading,
+                visualTransformation = PasswordVisualTransformation()
+            )
+        }
+    }
 }
 
 enum class Settings(val nameId: Int, val icon: ImageVector) {
+    PROFILE(R.string.profile, ChatAppIcons.Filled.account),
     DARK_THEME(R.string.dark_mode, ChatAppIcons.Filled.darkMode),
     DYNAMIC_COLOR(R.string.dynamic_color, ChatAppIcons.Filled.brightnessAuto),
     DELETE_ACCOUNT(R.string.delete_account, ChatAppIcons.Filled.delete),

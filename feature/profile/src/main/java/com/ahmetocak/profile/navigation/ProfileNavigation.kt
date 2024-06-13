@@ -8,10 +8,11 @@ import com.ahmetocak.profile.ProfileRoute
 
 const val PROFILE_ROUTE = "profile_route"
 
-fun NavHostController.navigateToProfileScreen(navOptions: NavOptions? = null) = navigate(PROFILE_ROUTE)
+fun NavHostController.navigateToProfileScreen(navOptions: NavOptions? = null) =
+    navigate(PROFILE_ROUTE, navOptions)
 
-fun NavGraphBuilder.profileScreen(upPress: () -> Unit, onNavigateLogin: () -> Unit) {
+fun NavGraphBuilder.profileScreen(upPress: () -> Unit) {
     composable(PROFILE_ROUTE) {
-        ProfileRoute(upPress = upPress, onNavigateLogin = onNavigateLogin)
+        ProfileRoute(upPress = upPress)
     }
 }

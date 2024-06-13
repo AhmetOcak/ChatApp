@@ -8,6 +8,8 @@ import com.ahmetocak.domain.usecase.app_preferences.GetAppThemeUseCase
 import com.ahmetocak.domain.usecase.app_preferences.GetDynamicColorUseCase
 import com.ahmetocak.domain.usecase.app_preferences.UpdateDarkModeUseCase
 import com.ahmetocak.domain.usecase.app_preferences.UpdateDynamicColorUseCase
+import com.ahmetocak.domain.usecase.auth.GetSignInProviderUseCase
+import com.ahmetocak.domain.usecase.auth.SignInProvider
 import com.ahmetocak.domain.usecase.auth.SignOutUseCase
 import com.ahmetocak.domain.usecase.user.DeleteUserUseCase
 import com.ahmetocak.domain.usecase.user.local.ObserveUserInCacheUseCase
@@ -29,7 +31,8 @@ class SettingsViewModel @Inject constructor(
     private val getAppThemeUseCase: GetAppThemeUseCase,
     private val getDynamicColorUseCase: GetDynamicColorUseCase,
     private val updateDarkModeUseCase: UpdateDarkModeUseCase,
-    private val updateDynamicColorUseCase: UpdateDynamicColorUseCase
+    private val updateDynamicColorUseCase: UpdateDynamicColorUseCase,
+    private val getSignInProviderUseCase: GetSignInProviderUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -39,6 +42,9 @@ class SettingsViewModel @Inject constructor(
     val navigationState = _navigationState.asStateFlow()
 
     private var currentUser: User? = null
+
+    lateinit var currentSignInProvider: SignInProvider
+        private set
 
     init {
         observeAppTheme()
@@ -55,8 +61,11 @@ class SettingsViewModel @Inject constructor(
                 _navigationState.update { NavigationState.Login }
             }
 
-            is SettingUiEvent.OnStartDeleteAccountDialogClick -> _uiState.update {
-                it.copy(showDeleteAccountDialog = true)
+            is SettingUiEvent.OnStartDeleteAccountDialogClick -> {
+                currentSignInProvider = getSignInProviderUseCase()
+                _uiState.update {
+                    it.copy(showDeleteAccountDialog = true)
+                }
             }
 
             is SettingUiEvent.OnDismissDeleteAccountDialog -> _uiState.update {
@@ -67,6 +76,8 @@ class SettingsViewModel @Inject constructor(
             is SettingUiEvent.OnPasswordValueChange -> _uiState.update {
                 it.copy(password = event.value)
             }
+
+            is SettingUiEvent.OnProfileClick -> _navigationState.update { NavigationState.Profile }
         }
     }
 

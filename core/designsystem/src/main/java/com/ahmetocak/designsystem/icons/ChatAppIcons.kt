@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.BrightnessAuto
@@ -21,7 +22,6 @@ import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.Edit
 
@@ -51,6 +51,7 @@ object ChatAppIcons {
         val capture = Icons.Filled.Circle
         val darkMode = Icons.Filled.DarkMode
         val brightnessAuto = Icons.Filled.BrightnessAuto
+        val account = Icons.Filled.AccountBox
     }
 
     object Outlined {
