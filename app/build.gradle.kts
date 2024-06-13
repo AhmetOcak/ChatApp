@@ -81,6 +81,9 @@ dependencies {
     // Coil
     implementation(libs.coil)
 
+    // Lifecycle
+    implementation(libs.androidx.lifecycle.runtime.compose)
+
     implementation(project(":feature:login"))
     implementation(project(":feature:chat_box"))
     implementation(project(":feature:signup"))

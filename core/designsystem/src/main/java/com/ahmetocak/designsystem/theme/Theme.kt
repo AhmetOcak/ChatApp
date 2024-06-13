@@ -84,7 +84,6 @@ fun ChatAppTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    /*
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
@@ -94,9 +93,7 @@ fun ChatAppTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-     */
 
-    val colorScheme = DarkColorScheme
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {

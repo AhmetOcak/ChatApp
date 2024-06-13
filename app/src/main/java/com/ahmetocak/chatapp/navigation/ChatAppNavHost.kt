@@ -34,7 +34,12 @@ fun ChatAppNavHost(
             onNavigateToChatBox = navController::navigateToChatBox,
             onNavigateSettings = navController::navigateToSettings
         )
-        settingsScreen()
+        settingsScreen(
+            upPress = navController::navigateUp,
+            onNavigateLogin = {
+                navController.navigateToLogin(navOptions = navOptions { popUpTo(0) })
+            }
+        )
         chatBoxScreen(
             upPress = navController::navigateUp,
             navigateChatDetail = {},

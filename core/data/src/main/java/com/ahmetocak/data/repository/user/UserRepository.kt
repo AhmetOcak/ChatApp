@@ -22,4 +22,5 @@ interface UserRepository {
     suspend fun observeUserInCache(): Response<Flow<User?>>
     suspend fun deleteUserFromCache(user: User): Response<Unit>
     suspend fun updateUserInCache(user: User): Response<Unit>
+    suspend fun clearAllUserData()
 }

@@ -70,7 +70,7 @@ class ProfileViewModel @Inject constructor(
             is ProfileUiEvent.OnValueChange -> _uiState.update { it.copy(value = event.value) }
             is ProfileUiEvent.OnBackClick -> _navigationState.update { NavigationState.Back }
             is ProfileUiEvent.OnLogOutClick -> {
-                signOutUseCase(currentUser)
+                signOutUseCase()
                 _navigationState.update { NavigationState.Login }
             }
         }

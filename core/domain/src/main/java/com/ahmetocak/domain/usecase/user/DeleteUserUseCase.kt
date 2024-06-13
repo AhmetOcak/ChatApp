@@ -1,30 +1,27 @@
 package com.ahmetocak.domain.usecase.user
 
-import coil.ImageLoader
 import com.ahmetocak.common.UiText
 import com.ahmetocak.domain.usecase.auth.ReAuthenticateUseCase
 import com.ahmetocak.domain.usecase.firebase.storage.DeleteUserProfileImageUseCase
+import com.ahmetocak.domain.usecase.user.local.ClearDbUseCase
 import com.ahmetocak.domain.usecase.user.remote.DeleteAccountFromFirebaseUseCase
-import com.ahmetocak.domain.usecase.user.local.DeleteUserFromCacheUseCase
 import com.ahmetocak.domain.usecase.user.remote.DeleteUserFromRemoteUseCase
-import com.ahmetocak.domain.usecase.utils.clearCoilCache
 import com.ahmetocak.model.User
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import javax.inject.Inject
 
 class DeleteUserUseCase @Inject internal constructor(
-    private val deleteUserFromCacheUseCase: DeleteUserFromCacheUseCase,
     private val deleteUserFromRemoteUseCase: DeleteUserFromRemoteUseCase,
     private val deleteAccountFromFirebaseUseCase: DeleteAccountFromFirebaseUseCase,
     private val deleteUserProfileImageUseCase: DeleteUserProfileImageUseCase,
+    private val clearDbUseCase: ClearDbUseCase,
     private val reAuthenticateUseCase: ReAuthenticateUseCase,
-    private val imageLoader: ImageLoader
 ) {
 
     operator fun invoke(
         user: User,
-        password: String = "",
+        password: String,
         onSuccess: () -> Unit,
         onFailure: (UiText) -> Unit
     ) {
@@ -42,9 +39,8 @@ class DeleteUserUseCase @Inject internal constructor(
                             deleteUserFromRemoteUseCase(
                                 userEmail = user.email,
                                 onSuccess = {
-                                    deleteUserFromCacheUseCase(user)
                                     deleteUserProfileImageUseCase(uid)
-                                    clearCoilCache(imageLoader)
+                                    clearDbUseCase()
                                     onSuccess()
                                 },
                                 onFailure = onFailure

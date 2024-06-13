@@ -1,7 +1,6 @@
 package com.ahmetocak.chatapp
 
 import android.content.Context
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -24,8 +23,8 @@ import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun ChatApp(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = false,
+    darkTheme: Boolean,
+    dynamicColor: Boolean,
     appState: ChatAppState = rememberChatAppState()
 ) {
     ChatAppTheme(darkTheme = darkTheme, dynamicColor = dynamicColor) {
