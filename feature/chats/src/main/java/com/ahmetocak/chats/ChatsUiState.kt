@@ -1,14 +1,15 @@
 package com.ahmetocak.chats
 
+import com.ahmetocak.common.UiText
 import com.ahmetocak.model.Friend
 import com.ahmetocak.model.LoadingState
 
 data class ChatsUiState(
-    val personValue: String = "",
+    val friendValue: String = "",
     val friendList: List<Friend> = emptyList(),
-    val screenState: ScreenState = ScreenState.Chats,
-    val loadingState: LoadingState = LoadingState.Idle,
-    val addNewPersonLoadingState: LoadingState = LoadingState.Idle
+    val showAddFriendBottomSheet: Boolean = false,
+    val addFriendErrorMessage: UiText? = null,
+    val addFriendLoadingState: LoadingState = LoadingState.Idle
 )
 
 sealed class ChatsUiEvent {
@@ -19,12 +20,10 @@ sealed class ChatsUiEvent {
         val friendProfPicUrl: String?
     ) : ChatsUiEvent()
 
-    data class OnLoadingStateChange(val state: LoadingState) : ChatsUiEvent()
-    data object OnCreateContactClick : ChatsUiEvent()
-    data object OpenAddPersonScreenClick : ChatsUiEvent()
-    data object OnBackClick : ChatsUiEvent()
-    data class OnPersonValueChanged(val value: String) : ChatsUiEvent()
-    data object AddNewPersonClick : ChatsUiEvent()
+    data class OnFriendValueChanged(val value: String) : ChatsUiEvent()
+    data object OnShowAddFriendSheetClick : ChatsUiEvent()
+    data object OnDismissAddFriendSheet : ChatsUiEvent()
+    data object OnAddFriendClick : ChatsUiEvent()
     data object OnSettingsClick : ChatsUiEvent()
 }
 
@@ -37,10 +36,4 @@ sealed class NavigationState {
         val friendProfPicUrl: String?
     ) : NavigationState()
     data object Settings : NavigationState()
-}
-
-sealed class ScreenState {
-    data object Chats : ScreenState()
-    data object CreateChatRoomOrAddPerson : ScreenState()
-    data object AddPerson : ScreenState()
 }

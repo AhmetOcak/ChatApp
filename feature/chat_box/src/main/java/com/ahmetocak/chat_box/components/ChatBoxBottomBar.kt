@@ -49,7 +49,7 @@ internal fun ChatBoxBottomBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 2.dp)
+            .padding(start = 8.dp)
             .padding(bottom = 8.dp)
             .height(BottomBarHeight)
     ) {

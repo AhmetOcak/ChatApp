@@ -134,7 +134,6 @@ internal fun ChatBoxRoute(
     ChatAppScaffold(modifier = modifier.fillMaxSize(), topBar = {
         ChatBoxTopBar(
             chatBoxTitle = uiState.title,
-            members = uiState.members,
             imageUrl = uiState.imageUrl,
             onEvent = onEvent
         )

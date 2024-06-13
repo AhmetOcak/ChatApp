@@ -176,7 +176,6 @@ private fun AudioBubbleSkeleton(
         Text(
             modifier = Modifier.constrainAs(dateText) {
                 top.linkTo(playBtn.bottom, margin = 2.dp)
-                start.linkTo(authorText.end, margin = 32.dp)
                 end.linkTo(parent.end, margin = 8.dp)
             },
             text = messageDate,
@@ -209,7 +208,6 @@ private fun LottieAudioWaveAnimation(modifier: Modifier, isAudioPlaying: Boolean
     )
 
     val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.audio_wave_anim))
-
 
     LottieAnimation(
         modifier = modifier,

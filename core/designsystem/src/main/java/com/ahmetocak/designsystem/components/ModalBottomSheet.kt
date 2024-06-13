@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -23,9 +25,16 @@ fun ChatAppModalBottomSheet(
     onDismissRequest: () -> Unit,
     value: String,
     onValueChange: (String) -> Unit,
-    onCancelClick: () -> Unit,
+    onCancelClick: () -> Unit = onDismissRequest,
     onSubmitClick: () -> Unit,
-    isLoading: Boolean = false
+    title: String,
+    labelText: String = "",
+    placeholderText: String = "",
+    leadingIcon: @Composable (() -> Unit)? = null,
+    isLoading: Boolean = false,
+    isError: Boolean = false,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     ModalBottomSheet(onDismissRequest = onDismissRequest) {
         Column(
@@ -37,7 +46,7 @@ fun ChatAppModalBottomSheet(
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "Update Username",
+                text = title,
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Start
             )
@@ -46,9 +55,16 @@ fun ChatAppModalBottomSheet(
                 value = value,
                 onValueChange = onValueChange,
                 label = {
-                    Text(text = "Username")
+                    Text(text = labelText)
                 },
-                singleLine = true
+                placeholder = {
+                    Text(text = placeholderText)
+                },
+                leadingIcon = leadingIcon,
+                singleLine = true,
+                isError = isError,
+                keyboardActions = keyboardActions,
+                keyboardOptions = keyboardOptions
             )
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 TextButton(onClick = onCancelClick) {

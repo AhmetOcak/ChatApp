@@ -3,16 +3,14 @@ package com.ahmetocak.ui.chat_bubble
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.ahmetocak.designsystem.R
 import com.ahmetocak.designsystem.components.NetworkImage
+import com.ahmetocak.ui.BlankUserImage
 
 internal val AuthorImgHeight = 16.dp
 
@@ -29,11 +27,7 @@ internal fun AuthorImage(authorImgUrl: String?) {
             modifier = imgModifier
         )
     } ?: run {
-        Icon(
-            painter = painterResource(id = R.drawable.blank_profile),
-            contentDescription = null,
-            modifier = imgModifier
-        )
+        BlankUserImage(modifier = imgModifier)
     }
 }
 

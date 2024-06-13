@@ -3,8 +3,6 @@ package com.ahmetocak.profile
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,7 +48,7 @@ import com.ahmetocak.designsystem.components.ChatAppScaffold
 import com.ahmetocak.designsystem.icons.ChatAppIcons
 import com.ahmetocak.designsystem.theme.ChatAppTheme
 import com.ahmetocak.model.LoadingState
-import com.ahmetocak.designsystem.R.drawable as AppResources
+import com.ahmetocak.ui.BlankUserImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,10 +85,10 @@ internal fun ProfileRoute(
 
     if (uiState.showUpdateUserNameSheet) {
         ChatAppModalBottomSheet(
+            title = "Update Username",
             onDismissRequest = { onEvent(ProfileUiEvent.OnDismissUpdateUsernameSheet) },
             value = uiState.value,
             onValueChange = { onEvent(ProfileUiEvent.OnValueChange(it)) },
-            onCancelClick = { onEvent(ProfileUiEvent.OnDismissUpdateUsernameSheet) },
             onSubmitClick = { onEvent(ProfileUiEvent.OnUpdateUserNameClick) },
             isLoading = uiState.loadingState == LoadingState.Loading
         )
@@ -187,7 +184,7 @@ private fun UserNameSection(information: String, onClick: () -> Unit) {
                 }
             }
             Icon(
-                imageVector = ChatAppIcons.Outlined.edit,
+                imageVector = ChatAppIcons.Filled.edit,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )
@@ -226,9 +223,7 @@ private fun EditableUserProfileImage(
     val size = (LocalConfiguration.current.screenWidthDp / 2.5f).dp
 
     Box(
-        modifier = Modifier
-            .size(size)
-            .clickable(onClick = { }),
+        modifier = Modifier.size(size),
         contentAlignment = Alignment.Center
     ) {
         if (isImageUploading) {
@@ -242,9 +237,7 @@ private fun EditableUserProfileImage(
                 imageUrl?.let { url ->
                     AnimatedNetworkImage(imageUrl = url, modifier = Modifier.fillMaxSize())
                 } ?: run {
-                    Image(
-                        painter = painterResource(id = AppResources.blank_profile),
-                        contentDescription = null,
+                    BlankUserImage(
                         modifier = Modifier.fillMaxSize().aspectRatio(1f)
                     )
                 }

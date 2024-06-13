@@ -8,7 +8,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.ahmetocak.designsystem.components.FilledChatAppIconButton
@@ -22,8 +21,7 @@ fun AttachItem(onClick: () -> Unit, imageVector: ImageVector, title: String) {
         FilledChatAppIconButton(
             modifier = Modifier.size(56.dp).aspectRatio(1f),
             onClick = onClick,
-            imageVector = imageVector,
-            tint = Color.Black
+            imageVector = imageVector
         )
         Text(text = title)
     }

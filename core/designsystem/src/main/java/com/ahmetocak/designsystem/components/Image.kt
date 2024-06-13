@@ -13,12 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
-import com.ahmetocak.designsystem.R.drawable as AppResources
+import com.ahmetocak.designsystem.icons.ChatAppIcons
 
 @Composable
 fun AnimatedNetworkImage(
@@ -61,7 +60,7 @@ fun AnimatedNetworkImage(
         is AsyncImagePainter.State.Error -> {
             Icon(
                 modifier = modifier,
-                painter = painterResource(id = AppResources.blank_profile),
+                imageVector = ChatAppIcons.Filled.account,
                 contentDescription = null
             )
         }
@@ -100,7 +99,7 @@ fun NetworkImage(
         is AsyncImagePainter.State.Error -> {
             Icon(
                 modifier = modifier,
-                painter = painterResource(id = AppResources.blank_profile),
+                imageVector = ChatAppIcons.Filled.account,
                 contentDescription = null
             )
         }

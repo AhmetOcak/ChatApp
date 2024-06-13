@@ -43,7 +43,7 @@ class CameraViewModel @Inject constructor(
     private var senderUsername: String? = null
 
     init {
-        friendshipId = savedStateHandle.get<Int>(FRIENDSHIP_ID)
+        friendshipId = savedStateHandle.get<String>(FRIENDSHIP_ID)?.toInt()
         senderEmail = savedStateHandle.get<String>(SENDER_EMAIL)
         receiverEmail = savedStateHandle.get<String>(RECEIVER_EMAIL)
         senderImgUrl = savedStateHandle.get<String>(SENDER_IMG_URL)

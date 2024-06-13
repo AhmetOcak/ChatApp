@@ -15,6 +15,7 @@ import com.ahmetocak.common.MessageManager
 import com.ahmetocak.common.Response
 import com.ahmetocak.common.SnackbarManager
 import com.ahmetocak.common.UiText
+import com.ahmetocak.common.ext.encodeForSaveNav
 import com.ahmetocak.designsystem.R.string as AppStrings
 import com.ahmetocak.domain.usecase.chat.AddMessageUseCase
 import com.ahmetocak.domain.usecase.chat.GetMessagesUseCase
@@ -106,7 +107,7 @@ class ChatBoxViewModel @Inject constructor(
                         NavigationState.Camera(
                             senderEmail = user.email,
                             senderUsername = user.username,
-                            senderImgUrl = user.profilePicUrl,
+                            senderImgUrl = user.profilePicUrl.encodeForSaveNav(),
                             receiverEmail = friendEmail!!,
                             friendshipId = friendshipId!!
                         )

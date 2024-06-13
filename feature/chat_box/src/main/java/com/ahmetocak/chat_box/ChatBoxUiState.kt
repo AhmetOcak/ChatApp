@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.emptyFlow
 data class ChatBoxUiState(
     val messageValue: String = "",
     val messageList: Flow<PagingData<Message>> = emptyFlow(),
-    val members: String = "",
     val title: String = "",
     val showDropdownMenu: Boolean = false,
     val imageUrl: String? = null,

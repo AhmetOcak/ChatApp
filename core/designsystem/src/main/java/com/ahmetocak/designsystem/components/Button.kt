@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.ahmetocak.designsystem.components.ChatButtonDefaults.ImageButtonSize
 
 @Composable
-fun ChatButton(
+fun ChatAppButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -40,7 +40,7 @@ fun ChatButton(
 }
 
 @Composable
-fun ChatTextButton(
+fun ChatAppTextButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -53,7 +53,7 @@ fun ChatTextButton(
 }
 
 @Composable
-fun ChatImageButton(
+fun ChatAppImageButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     shape: Shape = CircleShape,

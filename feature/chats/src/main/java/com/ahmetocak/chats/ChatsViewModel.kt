@@ -42,7 +42,6 @@ class ChatsViewModel @Inject constructor(
 
     fun onEvent(event: ChatsUiEvent) {
         when (event) {
-            is ChatsUiEvent.OnLoadingStateChange -> _uiState.update { it.copy(loadingState = event.state) }
             is ChatsUiEvent.OnChatItemClick -> _navigationState.update {
                 NavigationState.ChatBox(
                     event.friendshipId,
@@ -52,53 +51,46 @@ class ChatsViewModel @Inject constructor(
                 )
             }
 
-            is ChatsUiEvent.OnCreateContactClick -> _uiState.update {
-                it.copy(screenState = ScreenState.CreateChatRoomOrAddPerson)
-            }
-
-            is ChatsUiEvent.OpenAddPersonScreenClick -> _uiState.update {
-                it.copy(screenState = ScreenState.AddPerson)
-            }
-
-            is ChatsUiEvent.OnBackClick -> {
-                when (_uiState.value.screenState) {
-                    is ScreenState.CreateChatRoomOrAddPerson -> _uiState.update {
-                        it.copy(screenState = ScreenState.Chats)
-                    }
-
-                    is ScreenState.AddPerson -> _uiState.update {
-                        it.copy(
-                            screenState = ScreenState.CreateChatRoomOrAddPerson,
-                            personValue = ""
-                        )
-                    }
-
-                    // There is no back button in chats screen
-                    else -> {}
-                }
-            }
-
-            is ChatsUiEvent.OnPersonValueChanged -> _uiState.update { it.copy(personValue = event.value) }
-            is ChatsUiEvent.AddNewPersonClick -> addNewPerson()
+            is ChatsUiEvent.OnFriendValueChanged -> _uiState.update { it.copy(friendValue = event.value) }
             is ChatsUiEvent.OnSettingsClick -> _navigationState.update { NavigationState.Settings }
+            is ChatsUiEvent.OnShowAddFriendSheetClick -> _uiState.update {
+                it.copy(showAddFriendBottomSheet = true)
+            }
+
+            is ChatsUiEvent.OnDismissAddFriendSheet -> _uiState.update {
+                it.copy(showAddFriendBottomSheet = false, friendValue = "")
+            }
+
+            is ChatsUiEvent.OnAddFriendClick -> addFriend()
         }
     }
 
-    private fun addNewPerson() {
+    private fun addFriend() {
         viewModelScope.launch(dispatcher) {
-            _uiState.update { it.copy(addNewPersonLoadingState = LoadingState.Loading) }
+            _uiState.update {
+                it.copy(addFriendLoadingState = LoadingState.Loading, addFriendErrorMessage = null)
+            }
 
             createFriendUseCase(
                 userEmail = currentUser.email,
-                friendEmail = _uiState.value.personValue,
+                friendEmail = _uiState.value.friendValue,
                 onSuccess = {
-                    _uiState.update { it.copy(addNewPersonLoadingState = LoadingState.Idle) }
+                    _uiState.update {
+                        it.copy(
+                            addFriendErrorMessage = null,
+                            addFriendLoadingState = LoadingState.Idle,
+                            friendValue = "",
+                            showAddFriendBottomSheet = false
+                        )
+                    }
                 },
                 onFailure = { errorMessage ->
                     _uiState.update {
-                        it.copy(addNewPersonLoadingState = LoadingState.Idle)
+                        it.copy(
+                            addFriendErrorMessage = errorMessage,
+                            addFriendLoadingState = LoadingState.Idle
+                        )
                     }
-                    SnackbarManager.showMessage(errorMessage)
                 }
             )
         }

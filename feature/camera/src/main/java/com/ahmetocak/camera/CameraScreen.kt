@@ -172,7 +172,6 @@ private fun CapturedImageScreen(
                 { if (imgUri != null) onEvent(CameraUiEvent.OnSendImageClick(imgUri)) }
             },
             imageVector = ChatAppIcons.Default.send,
-            tint = Color.Black,
             modifier = Modifier.padding(bottom = 32.dp, end = 16.dp).size(48.dp)
         )
     }

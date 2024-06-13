@@ -43,8 +43,7 @@ fun FilledChatAppIconButton(
     imageVector: ImageVector,
     contentDescription: String? = null,
     enabled: Boolean = true,
-    colors: IconButtonColors = IconButtonDefaults.filledIconButtonColors(),
-    tint: Color = LocalContentColor.current
+    colors: IconButtonColors = IconButtonDefaults.filledIconButtonColors()
 ) {
     FilledIconButton(
         modifier = modifier,
@@ -52,7 +51,7 @@ fun FilledChatAppIconButton(
         enabled = enabled,
         colors = colors
     ) {
-        Icon(imageVector = imageVector, contentDescription = contentDescription, tint = tint)
+        Icon(imageVector = imageVector, contentDescription = contentDescription)
     }
 }
 

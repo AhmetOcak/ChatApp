@@ -27,9 +27,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmetocak.designsystem.components.ChatAppGreyProgressIndicator
 import com.ahmetocak.designsystem.components.ChatAppSubmitValueDialog
-import com.ahmetocak.designsystem.components.ChatButton
-import com.ahmetocak.designsystem.components.ChatImageButton
-import com.ahmetocak.designsystem.components.ChatTextButton
+import com.ahmetocak.designsystem.components.ChatAppButton
+import com.ahmetocak.designsystem.components.ChatAppImageButton
+import com.ahmetocak.designsystem.components.ChatAppTextButton
 import com.ahmetocak.designsystem.components.auth.AuthEmailOutlinedTextField
 import com.ahmetocak.designsystem.components.auth.AuthPasswordOutlinedTextField
 import com.ahmetocak.designsystem.theme.ChatAppTheme
@@ -194,13 +194,13 @@ private fun SubmitLoginSection(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        ChatButton(
+        ChatAppButton(
             modifier = Modifier.fillMaxWidth(),
             onClick = { onEvent(LoginUiEvent.OnLoginClickedUi) }
         ) {
             Text(text = stringResource(id = AppStrings.login).uppercase())
         }
-        ChatTextButton(
+        ChatAppTextButton(
             onClick = { onEvent(LoginUiEvent.OnForgotPasswordClick) },
             text = stringResource(id = AppStrings.forgot_password)
         )
@@ -215,7 +215,7 @@ private fun SubmitLoginSection(
             Text(text = "or")
             HorizontalDivider(modifier = Modifier.weight(1f))
         }
-        ChatImageButton(
+        ChatAppImageButton(
             onClick = onSignInWithGoogleClick,
             image = AppResources.ic_google
         )
@@ -225,7 +225,7 @@ private fun SubmitLoginSection(
             horizontalArrangement = Arrangement.Center
         ) {
             Text(text = stringResource(id = AppStrings.no_account))
-            ChatTextButton(
+            ChatAppTextButton(
                 onClick = { onEvent(LoginUiEvent.OnSignUpClicked) },
                 text = stringResource(id = AppStrings.sign_up)
             )

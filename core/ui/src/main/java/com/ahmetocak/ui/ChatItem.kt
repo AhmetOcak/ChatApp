@@ -1,6 +1,5 @@
 package com.ahmetocak.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -20,13 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ahmetocak.designsystem.components.AnimatedNetworkImage
 import com.ahmetocak.designsystem.theme.ChatAppTheme
-import com.ahmetocak.designsystem.R.drawable as AppResources
 
 @Composable
 fun ChatItem(
@@ -58,9 +55,7 @@ fun ChatItem(
                         .clip(CircleShape)
                 )
             } ?: run {
-                Image(
-                    painter = painterResource(id = AppResources.blank_profile),
-                    contentDescription = null,
+                BlankUserImage(
                     modifier = Modifier
                         .fillMaxHeight()
                         .size(56.dp)

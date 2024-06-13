@@ -31,8 +31,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.core.content.FileProvider
 import com.ahmetocak.ui.chat_bubble.doc_manager.downloadDocumentToPermanentStorage
 import com.ahmetocak.ui.chat_bubble.doc_manager.renderPdfToBitmap
+import java.io.File
 
 @Composable
 fun ChatBubblePdfItem(
@@ -128,7 +130,11 @@ private fun BubbleSkeleton(
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
 
     LaunchedEffect(key1 = pdfUri) {
-        pdfUri = downloadDocumentToPermanentStorage(context, pdfUrl, "$author-$messageDate")
+        val fileName = "$author-$messageDate"
+        val file = File(context.cacheDir, "$fileName.pdf")
+        val fileUri = FileProvider.getUriForFile(context, "com.ahmetocak.chatapp.provider", file)
+
+        pdfUri = fileUri ?: downloadDocumentToPermanentStorage(context, pdfUrl, fileName)
         pdfUri?.let {
             bitmap = renderPdfToBitmap(context, it)
         }
@@ -138,7 +144,7 @@ private fun BubbleSkeleton(
         modifier = Modifier
             .padding(horizontal = 2.dp)
             .width(IntrinsicSize.Max)
-            .clickable(enabled = pdfUri != null, onClick = { pdfUri?.let { onClick(it) } })
+            .clickable(enabled = pdfUri != null, onClick = remember { { pdfUri?.let { onClick(it) } } })
     ) {
         Text(
             modifier = Modifier
