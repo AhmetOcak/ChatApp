@@ -32,7 +32,6 @@ sealed class ChatBoxUiEvent {
         val permission: () -> Boolean
     ) : ChatBoxUiEvent()
 
-    data object OnCallClick : ChatBoxUiEvent()
     data object OnBackClick : ChatBoxUiEvent()
     data class OnChatDetailClick(val id: String) : ChatBoxUiEvent()
     data object OnMenuClick : ChatBoxUiEvent()
@@ -48,6 +47,7 @@ sealed class NavigationState {
     data class ChatDetail(val id: String) : NavigationState()
     data class ChatDocuments(val id: String) : NavigationState()
     data class Camera(
+        val friendshipId: Int,
         val senderEmail: String,
         val receiverEmail: String,
         val senderImgUrl: String?,

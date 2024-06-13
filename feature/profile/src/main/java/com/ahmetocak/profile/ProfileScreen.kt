@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -31,6 +31,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,8 +39,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -49,22 +48,17 @@ import com.ahmetocak.designsystem.components.AnimatedNetworkImage
 import com.ahmetocak.designsystem.components.ChatAppIconButton
 import com.ahmetocak.designsystem.components.ChatAppModalBottomSheet
 import com.ahmetocak.designsystem.components.ChatAppScaffold
-import com.ahmetocak.designsystem.components.ChatAppSubmitDialog
-import com.ahmetocak.designsystem.components.ChatAppSubmitValueDialog
 import com.ahmetocak.designsystem.icons.ChatAppIcons
 import com.ahmetocak.designsystem.theme.ChatAppTheme
 import com.ahmetocak.model.LoadingState
-import com.google.firebase.auth.GoogleAuthProvider
 import com.ahmetocak.designsystem.R.drawable as AppResources
-import com.ahmetocak.designsystem.R.string as AppStrings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ProfileRoute(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
-    upPress: () -> Unit,
-    onNavigateLogin: () -> Unit
+    upPress: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val onEvent by rememberUpdatedState(
@@ -80,7 +74,6 @@ internal fun ProfileRoute(
 
         when (navigationState) {
             NavigationState.Back -> performNavigation { upPress() }
-            NavigationState.Login -> performNavigation { onNavigateLogin() }
             NavigationState.None -> Unit
         }
     }
@@ -104,37 +97,6 @@ internal fun ProfileRoute(
         )
     }
 
-    if (uiState.showDeleteAccountDialog) {
-        when (viewModel.signInProvider) {
-            GoogleAuthProvider.PROVIDER_ID -> {
-                ChatAppSubmitDialog(
-                    onDismissRequest = { onEvent(ProfileUiEvent.OnDismissDeleteAccountDialog) },
-                    onSubmitClick = { onEvent(ProfileUiEvent.OnDeleteAccountClick) },
-                    title = stringResource(id = AppStrings.delete_account),
-                    description = stringResource(id = AppStrings.delete_account_desc),
-                    submitText = stringResource(id = AppStrings.delete)
-                )
-            }
-
-            else -> {
-                ChatAppSubmitValueDialog(
-                    onDismissRequest = { onEvent(ProfileUiEvent.OnDismissDeleteAccountDialog) },
-                    onSubmitClick = { onEvent(ProfileUiEvent.OnDeleteAccountClick) },
-                    title = stringResource(id = AppStrings.delete_account),
-                    description = stringResource(id = AppStrings.delete_account_desc),
-                    submitText = stringResource(id = AppStrings.delete),
-                    textFieldLabel = {
-                        Text(text = stringResource(id = AppStrings.password))
-                    },
-                    value = uiState.value,
-                    onValueChange = { onEvent(ProfileUiEvent.OnValueChange(it)) },
-                    isLoading = uiState.deleteAccountState == LoadingState.Loading,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-                )
-            }
-        }
-    }
-
     ChatAppScaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -144,16 +106,6 @@ internal fun ProfileRoute(
                     ChatAppIconButton(
                         onClick = { onEvent(ProfileUiEvent.OnBackClick) },
                         imageVector = ChatAppIcons.Default.arrowBack
-                    )
-                },
-                actions = {
-                    ChatAppIconButton(
-                        onClick = { onEvent(ProfileUiEvent.OnStartDeleteAccountDialogClick) },
-                        imageVector = ChatAppIcons.Filled.delete
-                    )
-                    ChatAppIconButton(
-                        onClick = { onEvent(ProfileUiEvent.OnLogOutClick) },
-                        imageVector = ChatAppIcons.Default.logout
                     )
                 }
             )
@@ -165,10 +117,12 @@ internal fun ProfileRoute(
             username = uiState.username,
             email = uiState.userEmail,
             onEvent = onEvent,
-            onPickImageClick = {
-                pickMediaLauncher.launch(
-                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                )
+            onPickImageClick = remember {
+                {
+                    pickMediaLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                }
             },
             isImageUploading = uiState.imageUploadingState == LoadingState.Loading
         )
@@ -200,7 +154,8 @@ internal fun ProfileScreen(
         Spacer(modifier = Modifier.height(32.dp))
         UserNameSection(
             information = username,
-            onClick = { onEvent(ProfileUiEvent.OnShowUpdateUsernameSheet) })
+            onClick = remember { { onEvent(ProfileUiEvent.OnShowUpdateUsernameSheet) } }
+        )
         UserEmailSection(information = email)
     }
 }
@@ -290,7 +245,7 @@ private fun EditableUserProfileImage(
                     Image(
                         painter = painterResource(id = AppResources.blank_profile),
                         contentDescription = null,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize().aspectRatio(1f)
                     )
                 }
             }
@@ -312,7 +267,7 @@ fun PreviewProfileScreen() {
         ChatAppTheme {
             ProfileScreen(
                 userImageUrl = null,
-                username = "Ahmet Ocak",
+                username = "Ahmet",
                 email = "ocak6139@gmail.com",
                 onEvent = {},
                 onPickImageClick = {},

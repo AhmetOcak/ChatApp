@@ -23,11 +23,10 @@ internal object KtorFriendEndPoints {
 }
 
 internal object KtorMessagesEndPoints {
-    const val GET = "/messages/getMessages/{${Paths.USER_EMAIL}}/{${Paths.FRIEND_EMAIL}}/{${Paths.PAGE}}"
+    const val GET = "/messages/getMessages/{${Paths.FRIENDSHIP_ID}}/{${Paths.PAGE}}"
 
     internal object Paths {
-        const val USER_EMAIL = "userEmail"
-        const val FRIEND_EMAIL = "friendEmail"
+        const val FRIENDSHIP_ID = "friendshipId"
         const val PAGE = "page"
     }
 }

@@ -12,14 +12,16 @@ const val CHAT_BOX_ROUTE = "chat_box_route"
 const val FRIEND_EMAIL = "friend_email"
 const val FRIEND_USERNAME = "friend_username"
 const val FRIEND_PROF_PIC_URL = "friend_prof_pic_url"
+const val FRIENDSHIP_ID = "friendship_id"
 
 fun NavHostController.navigateToChatBox(
-    friendEmail: String,
-    friendUsername: String,
+    friendshipId: Int,
+    friendEmail: String?,
+    friendUsername: String?,
     friendProfPicUrl: String?,
     navOptions: NavOptions? = null
 ) = navigate(
-    route = "$CHAT_BOX_ROUTE/$friendEmail/$friendUsername/$friendProfPicUrl",
+    route = "$CHAT_BOX_ROUTE/$friendshipId/$friendEmail/$friendUsername/$friendProfPicUrl",
     navOptions = navOptions
 )
 
@@ -27,13 +29,20 @@ fun NavGraphBuilder.chatBoxScreen(
     upPress: () -> Unit,
     navigateChatDetail: (String) -> Unit,
     navigateChatDocs: (String) -> Unit,
-    navigateCamera: (String, String, String?, String, ) -> Unit,
+    navigateCamera: (Int, String, String, String?, String) -> Unit,
 ) {
     composable(
-        route = "$CHAT_BOX_ROUTE/{$FRIEND_EMAIL}/{$FRIEND_USERNAME}/{${FRIEND_PROF_PIC_URL}}",
+        route = "$CHAT_BOX_ROUTE/{$FRIENDSHIP_ID}/{$FRIEND_EMAIL}/{$FRIEND_USERNAME}/{${FRIEND_PROF_PIC_URL}}",
         arguments = listOf(
-            navArgument(FRIEND_EMAIL) { NavType.StringType },
-            navArgument(FRIEND_USERNAME) { NavType.StringType },
+            navArgument(FRIENDSHIP_ID) { type = NavType.IntType },
+            navArgument(FRIEND_EMAIL) {
+                type = NavType.StringType
+                nullable = true
+            },
+            navArgument(FRIEND_USERNAME) {
+                type = NavType.StringType
+                nullable = true
+            },
             navArgument(FRIEND_PROF_PIC_URL) {
                 type = NavType.StringType
                 nullable = true

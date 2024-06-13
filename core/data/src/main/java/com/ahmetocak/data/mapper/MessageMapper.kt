@@ -10,6 +10,7 @@ internal fun List<NetworkMessage>.toListMessageEntity(): List<MessageEntity> {
     return this.map {
         MessageEntity(
             id = it.id,
+            friendshipId = it.friendshipId,
             senderEmail = it.senderEmail,
             receiverEmail = it.receiverEmail,
             messageContent = it.messageContent,
@@ -24,6 +25,7 @@ internal fun List<NetworkMessage>.toListMessageEntity(): List<MessageEntity> {
 internal fun MessageEntity.toMessage(): Message {
     return Message(
         id = id,
+        friendshipId = friendshipId,
         senderEmail = senderEmail,
         receiverEmail = receiverEmail,
         messageContent = messageContent,
@@ -37,6 +39,7 @@ internal fun MessageEntity.toMessage(): Message {
 internal fun Message.toMessageEntity(): MessageEntity {
     return MessageEntity(
         id = id,
+        friendshipId = friendshipId,
         senderEmail = senderEmail,
         receiverEmail = receiverEmail,
         messageContent = messageContent,
@@ -50,6 +53,7 @@ internal fun Message.toMessageEntity(): MessageEntity {
 internal fun Message.toNetworkMessage(): NetworkMessage {
     return NetworkMessage(
         id = id,
+        friendshipId = friendshipId,
         senderEmail = senderEmail,
         receiverEmail = receiverEmail,
         messageContent = messageContent,

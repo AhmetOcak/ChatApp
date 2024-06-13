@@ -11,6 +11,7 @@ data class PaginatedNetworkMessage(
 @Serializable
 data class NetworkMessage(
     val id: Int = 0,
+    val friendshipId: Int,
     val senderEmail: String,
     val receiverEmail: String,
     val messageContent: String,

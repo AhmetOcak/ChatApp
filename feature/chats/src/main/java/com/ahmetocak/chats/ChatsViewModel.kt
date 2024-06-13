@@ -45,6 +45,7 @@ class ChatsViewModel @Inject constructor(
             is ChatsUiEvent.OnLoadingStateChange -> _uiState.update { it.copy(loadingState = event.state) }
             is ChatsUiEvent.OnChatItemClick -> _navigationState.update {
                 NavigationState.ChatBox(
+                    event.friendshipId,
                     event.friendEmail,
                     event.friendUsername,
                     event.friendProfPicUrl.encodeForSaveNav()

@@ -31,15 +31,11 @@ class ChatRepositoryImpl @Inject constructor(
     }
 
     @OptIn(ExperimentalPagingApi::class)
-    override fun getMessages(
-        userEmail: String,
-        friendEmail: String
-    ): Flow<PagingData<Message>> {
+    override fun getMessages(friendshipId: Int): Flow<PagingData<Message>> {
         return Pager(
             config = PagingConfig(pageSize = 20),
             remoteMediator = MessagesRemoteMediator(
-                userEmail = userEmail,
-                friendEmail = friendEmail,
+                friendshipId = friendshipId,
                 api = api,
                 userDb = db
             ),

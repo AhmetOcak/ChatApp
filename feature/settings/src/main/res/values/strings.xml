@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="dynamic_color">Dynamic Color</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="delete_account_descr">Are you sure you want to delete your account ? When you delete your account, all your user information is also deleted. This process is irreversible.</string>
+    <string name="delete">Delete</string>
+    <string name="settings">Settings</string>
+    <string name="profile">Profile</string>
+</resources>

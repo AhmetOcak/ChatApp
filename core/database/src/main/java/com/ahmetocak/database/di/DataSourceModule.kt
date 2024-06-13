@@ -9,6 +9,7 @@ import com.ahmetocak.database.datasource.message.MessageLocalDataSource
 import com.ahmetocak.database.datasource.message.MessageLocalDataSourceImpl
 import com.ahmetocak.database.datasource.user.UserLocalDataSource
 import com.ahmetocak.database.datasource.user.UserLocalDataSourceImpl
+import com.ahmetocak.database.db.UserDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,8 +22,8 @@ object DataSourceModule {
 
     @Singleton
     @Provides
-    fun provideUserLocalDataSource(userDao: UserDao): UserLocalDataSource {
-        return UserLocalDataSourceImpl(userDao)
+    fun provideUserLocalDataSource(userDao: UserDao, db: UserDatabase): UserLocalDataSource {
+        return UserLocalDataSourceImpl(userDao, db)
     }
 
     @Singleton

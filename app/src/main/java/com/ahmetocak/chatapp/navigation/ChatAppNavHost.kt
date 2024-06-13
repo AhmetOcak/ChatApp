@@ -13,6 +13,7 @@ import com.ahmetocak.chats.navigation.chatsScreen
 import com.ahmetocak.chats.navigation.navigateToChats
 import com.ahmetocak.login.navigation.loginScreen
 import com.ahmetocak.login.navigation.navigateToLogin
+import com.ahmetocak.profile.navigation.navigateToProfileScreen
 import com.ahmetocak.profile.navigation.profileScreen
 import com.ahmetocak.settings.navigation.navigateToSettings
 import com.ahmetocak.settings.navigation.settingsScreen
@@ -34,7 +35,13 @@ fun ChatAppNavHost(
             onNavigateToChatBox = navController::navigateToChatBox,
             onNavigateSettings = navController::navigateToSettings
         )
-        settingsScreen()
+        settingsScreen(
+            upPress = navController::navigateUp,
+            onNavigateLogin = {
+                navController.navigateToLogin(navOptions = navOptions { popUpTo(0) })
+            },
+            onNavigateToProfile = navController::navigateToProfileScreen
+        )
         chatBoxScreen(
             upPress = navController::navigateUp,
             navigateChatDetail = {},
@@ -54,10 +61,7 @@ fun ChatAppNavHost(
                 navController.navigateToLogin(navOptions = navOptions { popUpTo(0) })
             }
         )
-        profileScreen(
-            upPress = navController::navigateUp,
-            onNavigateLogin = navController::navigateToLogin
-        )
+        profileScreen(upPress = navController::navigateUp,)
         cameraScreen(upPress = navController::navigateUp)
     }
 }

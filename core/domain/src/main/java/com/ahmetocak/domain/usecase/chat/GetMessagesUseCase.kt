@@ -5,6 +5,5 @@ import javax.inject.Inject
 
 class GetMessagesUseCase @Inject constructor(private val chatRepository: ChatRepository) {
 
-    operator fun invoke(userEmail: String, friendEmail: String) =
-        chatRepository.getMessages(userEmail = userEmail, friendEmail = friendEmail)
+    operator fun invoke(friendshipId: Int) = chatRepository.getMessages(friendshipId = friendshipId)
 }

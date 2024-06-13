@@ -58,7 +58,7 @@ internal fun ChatBoxRoute(
     upPress: () -> Unit,
     navigateChatDetail: (String) -> Unit,
     navigateChatDocs: (String) -> Unit,
-    navigateCamera: (String, String, String?, String, ) -> Unit,
+    navigateCamera: (Int, String, String, String?, String, ) -> Unit,
     viewModel: ChatBoxViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -79,6 +79,7 @@ internal fun ChatBoxRoute(
             is NavigationState.ChatDocuments -> performNavigation { navigateChatDocs(state.id) }
             is NavigationState.Camera -> performNavigation {
                 navigateCamera(
+                    state.friendshipId,
                     state.senderEmail,
                     state.receiverEmail,
                     state.senderImgUrl,
