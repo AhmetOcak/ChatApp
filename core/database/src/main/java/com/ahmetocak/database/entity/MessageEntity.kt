@@ -11,6 +11,9 @@ data class MessageEntity(
     @ColumnInfo("id")
     val id: Int,
 
+    @ColumnInfo("friendship_id")
+    val friendshipId: Int,
+
     @ColumnInfo("sender_email")
     val senderEmail: String,
 

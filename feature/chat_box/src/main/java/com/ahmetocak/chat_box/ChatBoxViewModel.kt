@@ -10,9 +10,12 @@ import com.ahmetocak.chat_box.navigation.FRIEND_EMAIL
 import com.ahmetocak.chat_box.navigation.FRIEND_PROF_PIC_URL
 import com.ahmetocak.chat_box.navigation.FRIEND_USERNAME
 import com.ahmetocak.chat_box.audio.recorder.AudioRecorder
+import com.ahmetocak.chat_box.navigation.FRIENDSHIP_ID
 import com.ahmetocak.common.MessageManager
 import com.ahmetocak.common.Response
 import com.ahmetocak.common.SnackbarManager
+import com.ahmetocak.common.UiText
+import com.ahmetocak.designsystem.R.string as AppStrings
 import com.ahmetocak.domain.usecase.chat.AddMessageUseCase
 import com.ahmetocak.domain.usecase.chat.GetMessagesUseCase
 import com.ahmetocak.domain.usecase.chat.SendMessageUseCase
@@ -55,23 +58,23 @@ class ChatBoxViewModel @Inject constructor(
     val navigationState = _navigationState.asStateFlow()
 
     private var friendEmail: String? = null
+    private var friendshipId: Int? = null
 
     init {
         observeMessages()
         observeUser()
 
+        friendshipId = savedStateHandle.get<Int>(FRIENDSHIP_ID)
         friendEmail = savedStateHandle.get<String>(FRIEND_EMAIL)
         val friendUsername = savedStateHandle.get<String>(FRIEND_USERNAME)
         val friendProfilePicUrl = savedStateHandle.get<String?>(FRIEND_PROF_PIC_URL)
 
         _uiState.update {
             it.copy(
-                title = friendUsername ?: friendEmail ?: "",
+                title = friendUsername ?: friendEmail ?: "deleted account",
                 imageUrl = friendProfilePicUrl,
-                messageList = getMessagesUseCase(
-                    userEmail = _uiState.value.currentUser?.email ?: "",
-                    friendEmail = friendEmail ?: ""
-                ).cachedIn(viewModelScope)
+                messageList = getMessagesUseCase(friendshipId = friendshipId ?: -1)
+                    .cachedIn(viewModelScope)
             )
         }
 
@@ -104,7 +107,8 @@ class ChatBoxViewModel @Inject constructor(
                             senderEmail = user.email,
                             senderUsername = user.username,
                             senderImgUrl = user.profilePicUrl,
-                            receiverEmail = friendEmail!!
+                            receiverEmail = friendEmail!!,
+                            friendshipId = friendshipId!!
                         )
                     }
                 }
@@ -146,9 +150,6 @@ class ChatBoxViewModel @Inject constructor(
                         }
                     }
                 }
-            }
-
-            is ChatBoxUiEvent.OnCallClick -> { /* TODO: Start a call */
             }
 
             is ChatBoxUiEvent.OnBackClick -> _navigationState.update { NavigationState.Back }
@@ -238,16 +239,19 @@ class ChatBoxViewModel @Inject constructor(
     }
 
     private fun sendMessage(messageType: MessageType, messageContent: String) {
-        sendMessageUseCase(
-            message = Message(
-                senderEmail = _uiState.value.currentUser?.email ?: "",
-                receiverEmail = friendEmail ?: "",
-                messageContent = messageContent,
-                senderImgUrl = _uiState.value.currentUser?.profilePicUrl,
-                senderUsername = _uiState.value.currentUser?.username ?: "",
-                messageType = messageType
+        friendshipId?.let {
+            sendMessageUseCase(
+                message = Message(
+                    senderEmail = _uiState.value.currentUser?.email ?: "",
+                    receiverEmail = friendEmail ?: "",
+                    messageContent = messageContent,
+                    senderImgUrl = _uiState.value.currentUser?.profilePicUrl,
+                    senderUsername = _uiState.value.currentUser?.username ?: "",
+                    messageType = messageType,
+                    friendshipId = it
+                )
             )
-        )
+        } ?: run { SnackbarManager.showMessage(UiText.StringResource(AppStrings.unknown_error)) }
         _uiState.update {
             it.copy(messageValue = "")
         }

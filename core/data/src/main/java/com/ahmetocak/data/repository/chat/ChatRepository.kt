@@ -9,7 +9,7 @@ interface ChatRepository {
 
     fun sendMessage(message: Message)
 
-    fun getMessages(userEmail: String, friendEmail: String): Flow<PagingData<Message>>
+    fun getMessages(friendshipId: Int): Flow<PagingData<Message>>
 
     suspend fun addMessage(message: Message): Response<Unit>
 }

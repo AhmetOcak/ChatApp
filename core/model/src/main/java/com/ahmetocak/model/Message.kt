@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Message(
     val id: Int = 0,
+    val friendshipId: Int,
     val senderEmail: String,
     val receiverEmail: String,
     val messageContent: String,

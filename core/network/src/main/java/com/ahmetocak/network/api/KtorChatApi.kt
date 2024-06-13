@@ -56,8 +56,7 @@ interface KtorChatApi {
 
     @GET(KtorMessagesEndPoints.GET)
     suspend fun getMessages(
-        @Path(KtorMessagesEndPoints.Paths.USER_EMAIL) userEmail: String,
-        @Path(KtorMessagesEndPoints.Paths.FRIEND_EMAIL) friendEmail: String,
+        @Path(KtorMessagesEndPoints.Paths.FRIENDSHIP_ID) friendShipId: Int,
         @Path(KtorMessagesEndPoints.Paths.PAGE) page: Int
     ): PaginatedNetworkMessage
 }

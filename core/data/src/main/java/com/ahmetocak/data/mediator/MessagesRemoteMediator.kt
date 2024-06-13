@@ -14,8 +14,7 @@ import com.ahmetocak.network.api.KtorChatApi
 
 @OptIn(ExperimentalPagingApi::class)
 class MessagesRemoteMediator(
-    private val userEmail: String,
-    private val friendEmail: String,
+    private val friendshipId: Int,
     private val api: KtorChatApi,
     private val userDb: UserDatabase
 ) : RemoteMediator<Int, MessageEntity>() {
@@ -54,8 +53,7 @@ class MessagesRemoteMediator(
 
             val response = api.getMessages(
                 page = page,
-                userEmail = userEmail,
-                friendEmail = friendEmail
+                friendShipId = friendshipId
             )
 
             userDb.withTransaction {
