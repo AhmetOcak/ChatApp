@@ -11,4 +11,5 @@ interface UserLocalDataSource {
     suspend fun deleteUser(userEntity: UserEntity): Response<Unit>
     suspend fun updateUser(userEntity: UserEntity): Response<Unit>
     suspend fun clearAllTable()
+    suspend fun getUserEmail(): Response<String>
 }

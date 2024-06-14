@@ -1,13 +1,12 @@
-package com.ahmetocak.network.api.chat
+package com.ahmetocak.common.websocket
 
 import android.util.Log
 import com.ahmetocak.common.MessageManager
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
-import javax.inject.Inject
 
-class WebSocketListener @Inject constructor(): WebSocketListener() {
+class WebSocketListener : WebSocketListener() {
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         super.onOpen(webSocket, response)
@@ -31,6 +30,6 @@ class WebSocketListener @Inject constructor(): WebSocketListener() {
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
         super.onFailure(webSocket, t, response)
-        Log.d("WEB SOCKET fail", t.stackTraceToString())
+        Log.d("WEB SOCKET", t.stackTraceToString())
     }
 }

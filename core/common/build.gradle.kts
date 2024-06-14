@@ -54,5 +54,8 @@ dependencies {
     implementation(libs.androidx.compose.ui.preview)
     implementation(libs.androidx.compose.material3)
 
+    // Okhttp
+    implementation(libs.okhttp)
+
     implementation(project(":core:designsystem"))
 }

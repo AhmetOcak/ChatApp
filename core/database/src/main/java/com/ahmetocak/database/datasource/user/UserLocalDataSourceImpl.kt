@@ -29,4 +29,7 @@ class UserLocalDataSourceImpl @Inject constructor(
     }
 
     override suspend fun clearAllTable() = db.clearAllTables()
+    override suspend fun getUserEmail(): Response<String> {
+        return dbCall { userDao.getUserEmail() }
+    }
 }

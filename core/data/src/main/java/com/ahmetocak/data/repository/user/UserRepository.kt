@@ -23,4 +23,5 @@ interface UserRepository {
     suspend fun deleteUserFromCache(user: User): Response<Unit>
     suspend fun updateUserInCache(user: User): Response<Unit>
     suspend fun clearAllUserData()
+    suspend fun getUserEmail(): Response<String>
 }

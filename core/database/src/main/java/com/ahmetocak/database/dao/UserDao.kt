@@ -23,4 +23,7 @@ interface UserDao {
 
     @Update(UserEntity::class)
     suspend fun updateUser(userEntity: UserEntity)
+
+    @Query("SELECT email FROM UserEntity")
+    suspend fun getUserEmail(): String
 }

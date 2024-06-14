@@ -52,6 +52,9 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun clearAllUserData() = userLocalDataSource.clearAllTable()
+    override suspend fun getUserEmail(): Response<String> {
+        return userLocalDataSource.getUserEmail()
+    }
 
     override suspend fun addUserToCache(user: User): Response<Unit> {
         return userLocalDataSource.addUser(user.toUserEntity())
