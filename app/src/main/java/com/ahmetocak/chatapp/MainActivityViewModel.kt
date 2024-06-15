@@ -7,7 +7,9 @@ import com.ahmetocak.common.SnackbarManager
 import com.ahmetocak.common.websocket.WebSocketManager
 import com.ahmetocak.domain.usecase.app_preferences.GetAppThemeUseCase
 import com.ahmetocak.domain.usecase.app_preferences.GetDynamicColorUseCase
-import com.ahmetocak.domain.usecase.user.local.GetUserEmailUseCase
+import com.ahmetocak.domain.usecase.user.UploadUserFcmTokenUseCase
+import com.ahmetocak.domain.usecase.user.local.ObserveUserInCacheUseCase
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,15 +18,17 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
     private val getAppThemeUseCase: GetAppThemeUseCase,
     private val getDynamicColorUseCase: GetDynamicColorUseCase,
-    private val getUserEmailUseCase: GetUserEmailUseCase,
+    private val observeUserInCacheUseCase: ObserveUserInCacheUseCase,
+    private val uploadUserFcmTokenUseCase: UploadUserFcmTokenUseCase,
     private val ioDispatcher: CoroutineDispatcher
-): ViewModel() {
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainActivityUiState())
     val uiState = _uiState.asStateFlow()
@@ -33,7 +37,7 @@ class MainActivityViewModel @Inject constructor(
         initializeTheme()
         observeAppTheme()
         observeDynamicColor()
-        connectToWebsocket()
+        initializeWebSocketAndUploadToken()
     }
 
     private fun initializeTheme() {
@@ -63,10 +67,22 @@ class MainActivityViewModel @Inject constructor(
         }
     }
 
-    private fun connectToWebsocket() {
+    private fun initializeWebSocketAndUploadToken() {
         viewModelScope.launch(ioDispatcher) {
-            when (val response = getUserEmailUseCase()) {
-                is Response.Success -> WebSocketManager.initializeWebsocket(response.data)
+            when (val response = observeUserInCacheUseCase()) {
+                is Response.Success -> response.data.collect {
+                    if (it != null) {
+                        WebSocketManager.initializeWebsocket(it.email)
+                        uploadUserFcmTokenUseCase(
+                            email = it.email,
+                            token = FirebaseMessaging.getInstance().token.await(),
+                            onFailure = { errorMessage ->
+                                SnackbarManager.showMessage(errorMessage)
+                            }
+                        )
+                    }
+                }
+
                 is Response.Error -> SnackbarManager.showMessage(response.errorMessage)
             }
         }

@@ -1,5 +1,6 @@
 package com.ahmetocak.network.api
 
+import com.ahmetocak.network.helper.KtorFcmTokenEndPoints
 import com.ahmetocak.network.helper.KtorFriendEndPoints
 import com.ahmetocak.network.helper.KtorMessagesEndPoints
 import com.ahmetocak.network.helper.KtorUserEndpoints
@@ -59,4 +60,11 @@ interface KtorChatApi {
         @Path(KtorMessagesEndPoints.Paths.FRIENDSHIP_ID) friendShipId: Int,
         @Path(KtorMessagesEndPoints.Paths.PAGE) page: Int
     ): PaginatedNetworkMessage
+
+    @FormUrlEncoded
+    @POST(KtorFcmTokenEndPoints.POST)
+    suspend fun uploadToken(
+        @Field("email") email: String,
+        @Field("token") token: String
+    )
 }

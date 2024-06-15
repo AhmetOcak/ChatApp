@@ -42,4 +42,8 @@ class UserRemoteDataSourceImpl @Inject constructor(private val api: KtorChatApi)
             )
         }
     }
+
+    override suspend fun uploadUserFcmToken(email: String, token: String): Response<Unit> {
+        return apiCall { api.uploadToken(email = email, token = token) }
+    }
 }

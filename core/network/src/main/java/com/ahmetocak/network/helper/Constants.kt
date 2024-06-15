@@ -30,3 +30,7 @@ internal object KtorMessagesEndPoints {
         const val PAGE = "page"
     }
 }
+
+internal object KtorFcmTokenEndPoints {
+    const val POST = "/token/add"
+}
