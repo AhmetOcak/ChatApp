@@ -77,17 +77,22 @@ class CameraViewModel @Inject constructor(
                         imageFileName = "$senderEmail${LocalDateTime.now()}",
                         imageFileUri = event.imageUri,
                         onSuccess = {
-                            sendMessageUseCase(
-                                message = Message(
-                                    senderEmail = senderEmail!!,
-                                    receiverEmail = receiverEmail!!,
-                                    messageContent = it.toString(),
-                                    senderImgUrl = senderImgUrl,
-                                    senderUsername = senderUsername!!,
-                                    messageType = MessageType.IMAGE,
-                                    friendshipId = friendshipId!!
+                            viewModelScope.launch(ioDispatcher) {
+                                sendMessageUseCase(
+                                    message = Message(
+                                        senderEmail = senderEmail!!,
+                                        receiverEmail = receiverEmail!!,
+                                        messageContent = it.toString(),
+                                        senderImgUrl = senderImgUrl,
+                                        senderUsername = senderUsername!!,
+                                        messageType = MessageType.IMAGE,
+                                        friendshipId = friendshipId!!
+                                    ),
+                                    onFailure = {
+                                        SnackbarManager.showMessage(it)
+                                    }
                                 )
-                            )
+                            }
                         },
                         onFailure = {
                             SnackbarManager.showMessage(it)

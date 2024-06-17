@@ -7,7 +7,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface ChatRepository {
 
-    fun sendMessage(message: Message)
+    fun sendMessageWithWebSocket(message: Message)
+    suspend fun sendMessageWithoutWebSocket(message: Message): Response<Message>
 
     fun getMessages(friendshipId: Int): Flow<PagingData<Message>>
 

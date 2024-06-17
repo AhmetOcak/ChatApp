@@ -64,6 +64,20 @@ internal fun Message.toNetworkMessage(): NetworkMessage {
     )
 }
 
+internal fun NetworkMessage.toMessage(): Message {
+    return Message(
+        id = id,
+        friendshipId = friendshipId,
+        senderEmail = senderEmail,
+        receiverEmail = receiverEmail,
+        messageContent = messageContent,
+        sentAt = sentAt,
+        senderImgUrl = senderImgUrl,
+        senderUsername = senderUsername,
+        messageType = messageType.toMessageType()
+    )
+}
+
 private fun String.toMessageType(): MessageType {
     return when (this.uppercase()) {
         MessageType.TEXT.name -> MessageType.TEXT

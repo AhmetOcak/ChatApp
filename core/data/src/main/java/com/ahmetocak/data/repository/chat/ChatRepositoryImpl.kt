@@ -6,6 +6,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.ahmetocak.common.Response
+import com.ahmetocak.common.mapResponse
 import com.ahmetocak.data.mapper.toMessage
 import com.ahmetocak.data.mapper.toMessageEntity
 import com.ahmetocak.data.mapper.toNetworkMessage
@@ -26,8 +27,14 @@ class ChatRepositoryImpl @Inject constructor(
     private val messageLocalDataSource: MessageLocalDataSource
 ) : ChatRepository {
 
-    override fun sendMessage(message: Message) {
-        chatService.sendMessage(message.toNetworkMessage())
+    override fun sendMessageWithWebSocket(message: Message) {
+        chatService.sendMessageWithWebSocket(message.toNetworkMessage())
+    }
+
+    override suspend fun sendMessageWithoutWebSocket(message: Message): Response<Message> {
+        return chatService.sendMessageWithoutWebSocket(
+            message.toNetworkMessage()
+        ).mapResponse { it.toMessage() }
     }
 
     @OptIn(ExperimentalPagingApi::class)
