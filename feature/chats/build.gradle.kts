@@ -73,6 +73,10 @@ dependencies {
     kapt(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
 
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
+
     implementation(project(":core:designsystem"))
     implementation(project(":core:model"))
     implementation(project(":core:ui"))
