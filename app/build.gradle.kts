@@ -84,6 +84,13 @@ dependencies {
     // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.compose)
 
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
+
+    // Accompanist Permissions
+    implementation(libs.accompanist.permissions)
+
     implementation(project(":feature:login"))
     implementation(project(":feature:chat_box"))
     implementation(project(":feature:signup"))
@@ -96,4 +103,5 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:common"))
     implementation(project(":core:domain"))
+    implementation(project(":core:model"))
 }

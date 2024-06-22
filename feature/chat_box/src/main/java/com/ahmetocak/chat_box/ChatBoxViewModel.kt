@@ -49,6 +49,7 @@ class ChatBoxViewModel @Inject constructor(
     private val uploadAudioFileUseCase: UploadAudioFileUseCase,
     private val uploadImageFileUseCase: UploadImageFileUseCase,
     private val uploadDocFileUseCase: UploadDocFileUseCase,
+    private val ioDispatcher: CoroutineDispatcher,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -241,17 +242,22 @@ class ChatBoxViewModel @Inject constructor(
 
     private fun sendMessage(messageType: MessageType, messageContent: String) {
         friendshipId?.let {
-            sendMessageUseCase(
-                message = Message(
-                    senderEmail = _uiState.value.currentUser?.email ?: "",
-                    receiverEmail = friendEmail ?: "",
-                    messageContent = messageContent,
-                    senderImgUrl = _uiState.value.currentUser?.profilePicUrl,
-                    senderUsername = _uiState.value.currentUser?.username ?: "",
-                    messageType = messageType,
-                    friendshipId = it
+            viewModelScope.launch(ioDispatcher) {
+                sendMessageUseCase(
+                    message = Message(
+                        senderEmail = _uiState.value.currentUser?.email ?: "",
+                        receiverEmail = friendEmail ?: "",
+                        messageContent = messageContent,
+                        senderImgUrl = _uiState.value.currentUser?.profilePicUrl,
+                        senderUsername = _uiState.value.currentUser?.username ?: "",
+                        messageType = messageType,
+                        friendshipId = it
+                    ),
+                    onFailure = {
+                        SnackbarManager.showMessage(it)
+                    }
                 )
-            )
+            }
         } ?: run { SnackbarManager.showMessage(UiText.StringResource(AppStrings.unknown_error)) }
         _uiState.update {
             it.copy(messageValue = "")

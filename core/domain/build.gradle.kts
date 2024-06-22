@@ -51,6 +51,9 @@ dependencies {
     // Paging 3
     implementation(libs.androidx.paging.runtime)
 
+    // Kotlin Serialization
+    implementation(libs.kotlinx.serialization)
+
     implementation(project(":core:model"))
     implementation(project(":core:data"))
     implementation(project(":core:common"))

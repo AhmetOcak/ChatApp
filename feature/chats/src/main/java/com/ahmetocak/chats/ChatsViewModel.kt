@@ -1,22 +1,30 @@
 package com.ahmetocak.chats
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmetocak.common.Response
 import com.ahmetocak.common.SnackbarManager
 import com.ahmetocak.common.ext.encodeForSaveNav
+import com.ahmetocak.common.websocket.Connection
+import com.ahmetocak.common.websocket.WebSocketListener
+import com.ahmetocak.common.websocket.WebSocketManager
 import com.ahmetocak.domain.usecase.friend.CreateFriendUseCase
 import com.ahmetocak.domain.usecase.friend.ObserveFriendsUseCase
+import com.ahmetocak.domain.usecase.user.UploadUserFcmTokenUseCase
 import com.ahmetocak.domain.usecase.user.local.ObserveUserInCacheUseCase
 import com.ahmetocak.model.LoadingState
 import com.ahmetocak.model.User
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,6 +32,7 @@ class ChatsViewModel @Inject constructor(
     private val observeUserInCacheUseCase: ObserveUserInCacheUseCase,
     private val createFriendUseCase: CreateFriendUseCase,
     private val observeFriendsUseCase: ObserveFriendsUseCase,
+    private val uploadUserFcmTokenUseCase: UploadUserFcmTokenUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
 
@@ -38,6 +47,8 @@ class ChatsViewModel @Inject constructor(
     init {
         observeUser()
         observeFriends()
+        uploadFcmToken()
+        observeWebSocketConnection()
     }
 
     fun onEvent(event: ChatsUiEvent) {
@@ -124,6 +135,43 @@ class ChatsViewModel @Inject constructor(
                 }
 
                 is Response.Error -> SnackbarManager.showMessage(response.errorMessage)
+            }
+        }
+    }
+
+    private fun observeWebSocketConnection() {
+        viewModelScope.launch(dispatcher) {
+            WebSocketListener.isConnected.collect { connection ->
+                when (connection) {
+                    Connection.CONNECTED -> Log.d("WEB SOCKET OBSERVER", connection.name)
+                    Connection.NOT_CONNECTED -> {
+                        while (true) {
+                            if (this@ChatsViewModel::currentUser.isInitialized) {
+                                WebSocketManager.initializeWebsocket(currentUser.email)
+                            }
+                            Log.d("WEB SOCKET OBSERVER", "reconnecting")
+                            delay(10000)
+                            if (WebSocketListener.isConnected.value == Connection.CONNECTED) {
+                                Log.d("isConnected", WebSocketListener.isConnected.value.name)
+                                break
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun uploadFcmToken() {
+        viewModelScope.launch(dispatcher) {
+            if (this@ChatsViewModel::currentUser.isInitialized) {
+                uploadUserFcmTokenUseCase(
+                    email = currentUser.email,
+                    token = FirebaseMessaging.getInstance().token.await(),
+                    onFailure = { errorMessage ->
+                        SnackbarManager.showMessage(errorMessage)
+                    }
+                )
             }
         }
     }

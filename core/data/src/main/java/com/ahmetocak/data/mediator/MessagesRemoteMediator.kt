@@ -47,7 +47,8 @@ class MessagesRemoteMediator(
                         remoteKeyDao.getRemoteKey()
                     } ?: return MediatorResult.Success(endOfPaginationReached = true)
 
-                    remoteKey.nextPage ?: return MediatorResult.Success(endOfPaginationReached = true)
+                    remoteKey.nextPage
+                        ?: return MediatorResult.Success(endOfPaginationReached = true)
                 }
             }
 
@@ -63,7 +64,7 @@ class MessagesRemoteMediator(
 
                 val nextPage = if (response.messageList.isEmpty()) {
                     null
-                } else page+1
+                } else page + 1
 
                 remoteKeyDao.insertKey(
                     RemoteKeyEntity(id = "messages_key", nextPage = nextPage)
@@ -71,9 +72,11 @@ class MessagesRemoteMediator(
                 messageDao.insertAll(response.messageList.toListMessageEntity())
             }
 
-            MediatorResult.Success(endOfPaginationReached = response.messageList.isEmpty())
+            MediatorResult.Success(
+                endOfPaginationReached = response.messageList.isEmpty() || response.messageList.size != 20
+            )
         } catch (e: Exception) {
-            Log.d("mediator", e.stackTraceToString())
+            Log.d("MessagesRemoteMediator", e.stackTraceToString())
             return MediatorResult.Error(e)
         }
     }

@@ -24,4 +24,5 @@ interface UserRepository {
     suspend fun updateUserInCache(user: User): Response<Unit>
     suspend fun clearAllUserData()
     suspend fun getUserEmail(): Response<String>
+    suspend fun uploadUserFcmToken(email: String, token: String): Response<Unit>
 }

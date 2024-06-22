@@ -1,11 +1,14 @@
 package com.ahmetocak.network.api
 
+import com.ahmetocak.network.helper.KtorFcmTokenEndPoints
 import com.ahmetocak.network.helper.KtorFriendEndPoints
 import com.ahmetocak.network.helper.KtorMessagesEndPoints
 import com.ahmetocak.network.helper.KtorUserEndpoints
 import com.ahmetocak.network.model.NetworkFriend
+import com.ahmetocak.network.model.NetworkMessage
 import com.ahmetocak.network.model.NetworkUser
 import com.ahmetocak.network.model.PaginatedNetworkMessage
+import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.POST
@@ -59,4 +62,16 @@ interface KtorChatApi {
         @Path(KtorMessagesEndPoints.Paths.FRIENDSHIP_ID) friendShipId: Int,
         @Path(KtorMessagesEndPoints.Paths.PAGE) page: Int
     ): PaginatedNetworkMessage
+
+    @FormUrlEncoded
+    @POST(KtorFcmTokenEndPoints.POST)
+    suspend fun uploadToken(
+        @Field("email") email: String,
+        @Field("token") token: String
+    )
+
+    @POST(KtorMessagesEndPoints.POST)
+    suspend fun sendMessage(
+        @Body message: NetworkMessage
+    ): NetworkMessage
 }

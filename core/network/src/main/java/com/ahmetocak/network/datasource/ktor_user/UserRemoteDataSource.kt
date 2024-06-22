@@ -18,4 +18,5 @@ interface UserRemoteDataSource {
         username: String?,
         profilePicUrl: String?
     ): Response<Unit>
+    suspend fun uploadUserFcmToken(email: String, token: String): Response<Unit>
 }

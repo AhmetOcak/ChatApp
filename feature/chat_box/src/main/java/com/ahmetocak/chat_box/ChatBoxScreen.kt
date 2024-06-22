@@ -58,7 +58,7 @@ internal fun ChatBoxRoute(
     upPress: () -> Unit,
     navigateChatDetail: (String) -> Unit,
     navigateChatDocs: (String) -> Unit,
-    navigateCamera: (Int, String, String, String?, String, ) -> Unit,
+    navigateCamera: (Int, String, String, String?, String) -> Unit,
     viewModel: ChatBoxViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -123,7 +123,6 @@ internal fun ChatBoxRoute(
                     }
 
                     AttachType.DOCUMENT -> pickFileLauncher.launch("application/pdf")
-                    AttachType.LOCATION -> {}
                 }
             }
         )
@@ -249,7 +248,7 @@ private fun AttachSection(onAttachItemClick: (AttachType) -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp),
-                columns = GridCells.Fixed(3),
+                columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(vertical = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -268,8 +267,7 @@ private fun AttachSection(onAttachItemClick: (AttachType) -> Unit) {
 
 private val attachList: List<AttachItem> = listOf(
     AttachItem.Gallery,
-    AttachItem.Document,
-    AttachItem.Location
+    AttachItem.Document
 )
 
 private sealed class AttachItem(
@@ -289,16 +287,9 @@ private sealed class AttachItem(
         icon = ChatAppIcons.Filled.document,
         attachType = AttachType.DOCUMENT
     )
-
-    data object Location : AttachItem(
-        title = "Location",
-        icon = ChatAppIcons.Filled.location,
-        attachType = AttachType.LOCATION
-    )
 }
 
 enum class AttachType {
     GALLERY,
-    DOCUMENT,
-    LOCATION
+    DOCUMENT
 }

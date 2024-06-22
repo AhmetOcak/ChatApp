@@ -1,5 +1,6 @@
 package com.ahmetocak.network.di
 
+import com.ahmetocak.network.api.KtorChatApi
 import com.ahmetocak.network.api.chat.ChatService
 import com.ahmetocak.network.api.chat.ChatServiceImpl
 import dagger.Module
@@ -14,7 +15,7 @@ object ServiceModule {
 
     @Provides
     @Singleton
-    fun provideChatService(): ChatService {
-        return ChatServiceImpl()
+    fun provideChatService(api: KtorChatApi): ChatService {
+        return ChatServiceImpl(api)
     }
 }

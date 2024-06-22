@@ -132,9 +132,11 @@ private fun BubbleSkeleton(
     LaunchedEffect(key1 = pdfUri) {
         val fileName = "$author-$messageDate"
         val file = File(context.cacheDir, "$fileName.pdf")
-        val fileUri = FileProvider.getUriForFile(context, "com.ahmetocak.chatapp.provider", file)
-
-        pdfUri = fileUri ?: downloadDocumentToPermanentStorage(context, pdfUrl, fileName)
+        pdfUri = if (file.exists()) FileProvider.getUriForFile(
+            context,
+            "com.ahmetocak.chatapp.provider",
+            file
+        ) else downloadDocumentToPermanentStorage(context, pdfUrl, fileName)
         pdfUri?.let {
             bitmap = renderPdfToBitmap(context, it)
         }
@@ -144,7 +146,9 @@ private fun BubbleSkeleton(
         modifier = Modifier
             .padding(horizontal = 2.dp)
             .width(IntrinsicSize.Max)
-            .clickable(enabled = pdfUri != null, onClick = remember { { pdfUri?.let { onClick(it) } } })
+            .clickable(
+                enabled = pdfUri != null,
+                onClick = remember { { pdfUri?.let { onClick(it) } } })
     ) {
         Text(
             modifier = Modifier
@@ -154,7 +158,12 @@ private fun BubbleSkeleton(
             style = authorTextStyle
         )
         bitmap?.let {
-            Box(modifier = Modifier.clip(RoundedCornerShape(5))) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(5))
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
                 Image(
                     bitmap = it.asImageBitmap(),
                     contentDescription = null,

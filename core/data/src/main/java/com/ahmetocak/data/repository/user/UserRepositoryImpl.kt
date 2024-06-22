@@ -56,6 +56,10 @@ class UserRepositoryImpl @Inject constructor(
         return userLocalDataSource.getUserEmail()
     }
 
+    override suspend fun uploadUserFcmToken(email: String, token: String): Response<Unit> {
+        return userRemoteDataSource.uploadUserFcmToken(email, token)
+    }
+
     override suspend fun addUserToCache(user: User): Response<Unit> {
         return userLocalDataSource.addUser(user.toUserEntity())
     }
