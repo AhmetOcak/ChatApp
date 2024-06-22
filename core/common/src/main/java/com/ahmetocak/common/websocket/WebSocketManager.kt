@@ -6,7 +6,7 @@ import okhttp3.WebSocket
 
 object WebSocketManager {
 
-    private const val BASE_URL = "ws://192.168.1.6:8080/chat"
+    private const val BASE_URL = "ws://10.0.2.2:8080/chat"
     private var currentUserEmail: String? = null
     private lateinit var webSocket: WebSocket
 
