@@ -7,7 +7,8 @@ import androidx.camera.core.ImageCapture
 data class CameraUiState(
     val screenState: ScreenState = ScreenState.CAMERA,
     val capturedImageUri: Uri? = null,
-    val navigateBack: Boolean = false
+    val navigateBack: Boolean = false,
+    val isMessageSending: Boolean = false
 )
 
 sealed class CameraUiEvent {

@@ -73,6 +73,7 @@ class CameraViewModel @Inject constructor(
                         UiText.DynamicString("Something went wrong! Please try again later.")
                     )
                 } else {
+                    _uiState.update { it.copy(isMessageSending = true) }
                     uploadImageFileUseCase(
                         imageFileName = "$senderEmail${LocalDateTime.now()}",
                         imageFileUri = event.imageUri,
@@ -88,17 +89,21 @@ class CameraViewModel @Inject constructor(
                                         messageType = MessageType.IMAGE,
                                         friendshipId = friendshipId!!
                                     ),
-                                    onFailure = {
-                                        SnackbarManager.showMessage(it)
-                                    }
+                                    onFailure = SnackbarManager::showMessage
                                 )
+                                _uiState.update {
+                                    it.copy(
+                                        navigateBack = true,
+                                        isMessageSending = false
+                                    )
+                                }
                             }
                         },
-                        onFailure = {
-                            SnackbarManager.showMessage(it)
+                        onFailure = { errorMessage ->
+                            SnackbarManager.showMessage(errorMessage)
+                            _uiState.update { it.copy(isMessageSending = false) }
                         }
                     )
-                    _uiState.update { it.copy(navigateBack = true) }
                 }
             }
         }

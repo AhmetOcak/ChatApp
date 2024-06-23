@@ -48,18 +48,13 @@ internal object CameraController {
             object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exc: ImageCaptureException) {
                     SnackbarManager.showMessage(
-                        UiText.DynamicString(
-                            exc.message ?: "Something went wrong!"
-                        )
+                        UiText.DynamicString(exc.message ?: "Something went wrong!")
                     )
                     Log.e("takePhoto", exc.stackTraceToString())
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     capturedPhotoUri = output.savedUri
-                    capturedPhotoUri?.let {
-                        ImageManipulation(context.contentResolver).manipulateImage(it)
-                    }
                 }
             }
         )
