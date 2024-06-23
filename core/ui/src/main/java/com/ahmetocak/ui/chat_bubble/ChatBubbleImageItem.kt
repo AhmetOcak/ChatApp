@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,23 +21,28 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.ahmetocak.designsystem.components.NetworkImage
 
-
 @Composable
 fun ChatBubbleImageItem(
     author: String,
     imageUrl: String,
     time: String,
     authorImgUrl: String?,
-    isComingFromMe: Boolean
+    isComingFromMe: Boolean,
+    onClick: (String) -> Unit
 ) {
     if (isComingFromMe) {
-        OngoingChatBubbleImageItem(author = author, imageUrl = imageUrl, time = time)
+        OngoingChatBubbleImageItem(
+            author = author,
+            imageUrl = imageUrl,
+            time = time,
+            onClick = remember { { onClick(imageUrl) } })
     } else {
         ComingChatBubbleImageItem(
             author = author,
             imageUrl = imageUrl,
             time = time,
-            authorImgUrl = authorImgUrl
+            authorImgUrl = authorImgUrl,
+            onClick = remember { { onClick(imageUrl) } }
         )
     }
 }
@@ -46,7 +52,8 @@ private fun ComingChatBubbleImageItem(
     author: String,
     imageUrl: String,
     time: String,
-    authorImgUrl: String?
+    authorImgUrl: String?,
+    onClick: () -> Unit
 ) {
     Column {
         AuthorImage(authorImgUrl = authorImgUrl)
@@ -59,7 +66,8 @@ private fun ComingChatBubbleImageItem(
                 topEnd = 48f,
                 bottomStart = 48f,
                 bottomEnd = 48f
-            )
+            ),
+            onClick = onClick
         ) {
             BubbleSkeleton(
                 author = author,
@@ -74,7 +82,8 @@ private fun ComingChatBubbleImageItem(
 private fun OngoingChatBubbleImageItem(
     author: String,
     imageUrl: String,
-    time: String
+    time: String,
+    onClick: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
         ConstraintLayout {
@@ -87,7 +96,8 @@ private fun OngoingChatBubbleImageItem(
                     topEnd = 0f,
                     bottomStart = 48f,
                     bottomEnd = 48f
-                )
+                ),
+                onClick = onClick
             ) {
                 BubbleSkeleton(
                     author = author,
