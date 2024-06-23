@@ -18,7 +18,6 @@ import com.ahmetocak.model.User
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,7 +32,7 @@ class ChatsViewModel @Inject constructor(
     private val createFriendUseCase: CreateFriendUseCase,
     private val observeFriendsUseCase: ObserveFriendsUseCase,
     private val uploadUserFcmTokenUseCase: UploadUserFcmTokenUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ChatsUiState())
@@ -47,7 +46,6 @@ class ChatsViewModel @Inject constructor(
     init {
         observeUser()
         observeFriends()
-        uploadFcmToken()
         observeWebSocketConnection()
     }
 
@@ -130,6 +128,7 @@ class ChatsViewModel @Inject constructor(
                     response.data.collect { user ->
                         if (user != null) {
                             currentUser = user
+                            uploadFcmToken(user.email)
                         }
                     }
                 }
@@ -162,17 +161,13 @@ class ChatsViewModel @Inject constructor(
         }
     }
 
-    private fun uploadFcmToken() {
+    private fun uploadFcmToken(email: String) {
         viewModelScope.launch(dispatcher) {
-            if (this@ChatsViewModel::currentUser.isInitialized) {
-                uploadUserFcmTokenUseCase(
-                    email = currentUser.email,
-                    token = FirebaseMessaging.getInstance().token.await(),
-                    onFailure = { errorMessage ->
-                        SnackbarManager.showMessage(errorMessage)
-                    }
-                )
-            }
+            uploadUserFcmTokenUseCase(
+                email = email,
+                token = FirebaseMessaging.getInstance().token.await(),
+                onFailure = SnackbarManager::showMessage
+            )
         }
     }
 

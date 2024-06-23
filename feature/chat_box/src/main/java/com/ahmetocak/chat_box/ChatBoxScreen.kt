@@ -86,6 +86,7 @@ internal fun ChatBoxRoute(
                     state.senderUsername
                 )
             }
+
             is NavigationState.None -> Unit
         }
     }
@@ -130,19 +131,23 @@ internal fun ChatBoxRoute(
 
     val messageList = uiState.messageList.collectAsLazyPagingItems()
 
-    ChatAppScaffold(modifier = modifier.fillMaxSize(), topBar = {
-        ChatBoxTopBar(
-            chatBoxTitle = uiState.title,
-            imageUrl = uiState.imageUrl,
-            onEvent = onEvent
-        )
-    }, bottomBar = {
-        ChatBoxBottomBar(
-            messageValue = uiState.messageValue,
-            onEvent = onEvent,
-            isAudioRecording = uiState.audioRecordStatus == AudioRecordStatus.RECORDING
-        )
-    }) { paddingValues ->
+    ChatAppScaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            ChatBoxTopBar(
+                chatBoxTitle = uiState.title,
+                imageUrl = uiState.imageUrl,
+                onEvent = onEvent
+            )
+        },
+        bottomBar = {
+            ChatBoxBottomBar(
+                messageValue = uiState.messageValue,
+                onEvent = onEvent,
+                isAudioRecording = uiState.audioRecordStatus == AudioRecordStatus.RECORDING
+            )
+        }
+    ) { paddingValues ->
         ChatBoxScreen(
             modifier = Modifier.padding(paddingValues),
             messageList = messageList,
