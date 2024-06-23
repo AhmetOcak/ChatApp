@@ -134,7 +134,7 @@ private fun BubbleSkeleton(
         val file = File(context.cacheDir, "$fileName.pdf")
         pdfUri = if (file.exists()) FileProvider.getUriForFile(
             context,
-            "com.ahmetocak.chatapp.provider",
+            context.applicationContext.packageName + ".provider",
             file
         ) else downloadDocumentToPermanentStorage(context, pdfUrl, fileName)
         pdfUri?.let {

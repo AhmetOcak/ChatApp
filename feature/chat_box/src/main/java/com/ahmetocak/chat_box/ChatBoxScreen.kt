@@ -215,7 +215,10 @@ internal fun ChatBoxScreen(
                             imageUrl = message.messageContent,
                             time = message.sentAt.showMessageTime(),
                             authorImgUrl = message.senderImgUrl,
-                            isComingFromMe = message.isComingFromMe(currentUserEmail)
+                            isComingFromMe = message.isComingFromMe(currentUserEmail),
+                            onClick = remember { {
+                                viewImage(context = context, imageUrl = message.messageContent)
+                            } }
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                     }

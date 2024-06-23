@@ -83,6 +83,10 @@ dependencies {
     // Accompanist Permissions
     implementation(libs.accompanist.permissions)
 
+    // Coil
+    implementation(libs.coil)
+    implementation(libs.coil.compose)
+
     implementation(project(":core:designsystem"))
     implementation(project(":core:model"))
     implementation(project(":core:ui"))
