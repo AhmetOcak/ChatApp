@@ -58,9 +58,7 @@ private fun ComingChatBubbleImageItem(
     Column {
         AuthorImage(authorImgUrl = authorImgUrl)
         Card(
-            modifier = Modifier
-                .padding(start = AuthorImgHeight, end = 32.dp)
-                .heightIn(0.dp, LocalConfiguration.current.screenHeightDp.dp / 2),
+            modifier = Modifier.padding(start = AuthorImgHeight, end = 32.dp),
             shape = RoundedCornerShape(
                 topStart = 0f,
                 topEnd = 48f,
@@ -90,7 +88,9 @@ private fun OngoingChatBubbleImageItem(
             val (chatBubble) = createRefs()
 
             Card(
-                modifier = Modifier.constrainAs(chatBubble) {},
+                modifier = Modifier
+                    .padding(start = 32.dp)
+                    .constrainAs(chatBubble) {},
                 shape = RoundedCornerShape(
                     topStart = 48f,
                     topEnd = 0f,
@@ -126,6 +126,7 @@ private fun BubbleSkeleton(
         NetworkImage(
             modifier = Modifier
                 .fillMaxWidth()
+                .heightIn(0.dp, LocalConfiguration.current.screenHeightDp.dp / 2)
                 .padding(horizontal = 2.dp)
                 .clip(RoundedCornerShape(5)),
             imageUrl = imageUrl
