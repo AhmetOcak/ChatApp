@@ -91,6 +91,9 @@ dependencies {
     // Accompanist Permissions
     implementation(libs.accompanist.permissions)
 
+    // Splash Screen
+    implementation(libs.androidx.core.splashscreen)
+
     implementation(project(":feature:login"))
     implementation(project(":feature:chat_box"))
     implementation(project(":feature:signup"))
