@@ -6,8 +6,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
@@ -109,10 +111,11 @@ internal fun SignUpScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.SpaceEvenly
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.Center
     ) {
         WelcomeMessage()
+        Spacer(modifier = Modifier.height(32.dp))
         InputSection(
             onEvent = onEvent,
             nameValue = nameValue,
@@ -120,13 +123,14 @@ internal fun SignUpScreen(
             passwordValue = passwordValue,
             confirmPasswordValue = confirmPasswordValue,
         )
+        Spacer(modifier = Modifier.height(32.dp))
         SubmitSignUpSection(onEvent = onEvent, onSignInWithGoogleClick = onSignInWithGoogleClick)
     }
 }
 
 @Composable
 private fun WelcomeMessage() {
-    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(text = "Hi!", style = MaterialTheme.typography.displayLarge)
         Text(text = "Create a new account", style = MaterialTheme.typography.displaySmall)
     }
