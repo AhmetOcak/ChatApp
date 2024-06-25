@@ -258,7 +258,9 @@ class ChatBoxViewModel @Inject constructor(
                     }
                 )
             }
-        } ?: run { SnackbarManager.showMessage(UiText.StringResource(AppStrings.unknown_error)) }
+        } ?: run {
+            SnackbarManager.showMessage(UiText.StringResource(AppStrings.unknown_error))
+        }
         _uiState.update {
             it.copy(messageValue = "")
         }

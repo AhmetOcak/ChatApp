@@ -22,18 +22,6 @@ class MessagesRemoteMediator(
     private val messageDao = userDb.messageDao()
     private val remoteKeyDao = userDb.remoteKeyDao()
 
-    override suspend fun initialize(): InitializeAction {
-        val remoteKey = userDb.withTransaction {
-            remoteKeyDao.getRemoteKey()
-        }
-
-        return if (remoteKey == null) {
-            InitializeAction.LAUNCH_INITIAL_REFRESH
-        } else {
-            InitializeAction.SKIP_INITIAL_REFRESH
-        }
-    }
-
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, MessageEntity>
@@ -41,7 +29,9 @@ class MessagesRemoteMediator(
         return try {
             val page = when (loadType) {
                 LoadType.REFRESH -> 0
-                LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
+                LoadType.PREPEND -> {
+                    return MediatorResult.Success(endOfPaginationReached = true)
+                }
                 LoadType.APPEND -> {
                     val remoteKey = userDb.withTransaction {
                         remoteKeyDao.getRemoteKey()

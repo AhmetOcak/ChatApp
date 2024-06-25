@@ -18,7 +18,7 @@ class SendMessageUseCase @Inject constructor(private val chatRepository: ChatRep
             Connection.NOT_CONNECTED -> {
                 when (val response = chatRepository.sendMessageWithoutWebSocket(message)) {
                     is Response.Success -> {
-                        val decodedMessage = Json.encodeToString(Message.serializer(), message)
+                        val decodedMessage = Json.encodeToString(Message.serializer(), response.data)
                         MessageManager.emitMessage(decodedMessage)
                     }
                     is Response.Error -> onFailure(response.errorMessage)
