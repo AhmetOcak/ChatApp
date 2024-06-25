@@ -7,8 +7,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -99,8 +101,8 @@ internal fun LoginRoute(
     if (uiState.showForgotPasswordDialog) {
         ChatAppSubmitValueDialog(
             onDismissRequest = viewModel::hideResetPasswordDialog,
-            onSubmitClick = { onEvent(LoginUiEvent.OnSendPasswordResetMailClick) },
-            onValueChange = { onEvent(LoginUiEvent.OnResetEmailChanged(it)) },
+            onSubmitClick = remember { { onEvent(LoginUiEvent.OnSendPasswordResetMailClick) } },
+            onValueChange = remember { { onEvent(LoginUiEvent.OnResetEmailChanged(it)) } },
             title = stringResource(id = AppStrings.password_reset),
             description = stringResource(id = AppStrings.password_reset_description),
             submitText = stringResource(id = AppStrings.send),
@@ -125,10 +127,11 @@ internal fun LoginScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.SpaceEvenly
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.Center
     ) {
         WelcomeMessage()
+        Spacer(modifier = Modifier.height(64.dp))
         AuthInputSection(
             emailValue = emailValue,
             isEmailFieldError = isEmailFieldError,
@@ -138,6 +141,7 @@ internal fun LoginScreen(
             passwordFieldLabelText = passwordFieldLabelText,
             onEvent = onEvent
         )
+        Spacer(modifier = Modifier.height(64.dp))
         SubmitLoginSection(onEvent = onEvent, onSignInWithGoogleClick = onSignInWithGoogleClick)
     }
 }
