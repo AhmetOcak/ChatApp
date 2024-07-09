@@ -77,7 +77,7 @@ fun ChatAppModalBottomSheet(
                     if (isLoading) {
                         ButtonCircularProgressIndicator()
                     } else {
-                        Text(text = "Update")
+                        Text(text = "Add")
                     }
                 }
             }

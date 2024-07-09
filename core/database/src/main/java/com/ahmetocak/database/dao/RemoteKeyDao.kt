@@ -12,9 +12,9 @@ interface RemoteKeyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertKey(remoteKeyEntity: RemoteKeyEntity)
 
-    @Query("SELECT * FROM RemoteKeyEntity")
-    suspend fun getRemoteKey(): RemoteKeyEntity?
+    @Query("SELECT * FROM RemoteKeyEntity WHERE friendship_id == :friendshipId")
+    suspend fun getRemoteKey(friendshipId: Int): RemoteKeyEntity?
 
-    @Query("DELETE FROM RemoteKeyEntity")
-    suspend fun clearKey()
+    @Query("DELETE FROM RemoteKeyEntity WHERE friendship_id == :friendshipId")
+    suspend fun clearKey(friendshipId: Int)
 }

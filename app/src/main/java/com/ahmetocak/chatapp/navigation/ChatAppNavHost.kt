@@ -56,12 +56,14 @@ fun ChatAppNavHost(
         )
         signUpScreen(
             navigateUp = navController::navigateUp,
-            navigateToChats = navController::navigateToChats,
+            navigateToChats = {
+                navController.navigateToChats(navOptions = navOptions { popUpTo(0) })
+            },
             navigateToLogin = {
                 navController.navigateToLogin(navOptions = navOptions { popUpTo(0) })
             }
         )
-        profileScreen(upPress = navController::navigateUp,)
+        profileScreen(upPress = navController::navigateUp)
         cameraScreen(upPress = navController::navigateUp)
     }
 }

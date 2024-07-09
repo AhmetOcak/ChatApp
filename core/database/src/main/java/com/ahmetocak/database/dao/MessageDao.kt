@@ -16,8 +16,8 @@ interface MessageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addMessage(messageEntity: MessageEntity)
 
-    @Query("SELECT * FROM messageentity ORDER BY id DESC")
-    fun pagingSource(): PagingSource<Int, MessageEntity>
+    @Query("SELECT * FROM messageentity WHERE friendship_id == :friendshipId ORDER BY id DESC")
+    fun pagingSource(friendshipId: Int): PagingSource<Int, MessageEntity>
 
     @Query("DELETE FROM messageentity")
     suspend fun clearAll()

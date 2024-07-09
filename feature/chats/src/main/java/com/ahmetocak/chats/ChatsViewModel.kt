@@ -10,6 +10,7 @@ import com.ahmetocak.common.websocket.Connection
 import com.ahmetocak.common.websocket.WebSocketListener
 import com.ahmetocak.common.websocket.WebSocketManager
 import com.ahmetocak.domain.usecase.friend.CreateFriendUseCase
+import com.ahmetocak.domain.usecase.friend.GetFriendsUseCase
 import com.ahmetocak.domain.usecase.friend.ObserveFriendsUseCase
 import com.ahmetocak.domain.usecase.user.UploadUserFcmTokenUseCase
 import com.ahmetocak.domain.usecase.user.local.ObserveUserInCacheUseCase
@@ -32,6 +33,7 @@ class ChatsViewModel @Inject constructor(
     private val createFriendUseCase: CreateFriendUseCase,
     private val observeFriendsUseCase: ObserveFriendsUseCase,
     private val uploadUserFcmTokenUseCase: UploadUserFcmTokenUseCase,
+    private val getFriendsUseCase: GetFriendsUseCase,
     private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -44,8 +46,7 @@ class ChatsViewModel @Inject constructor(
     private lateinit var currentUser: User
 
     init {
-        observeUser()
-        observeFriends()
+        initializeUserData()
         observeWebSocketConnection()
     }
 
@@ -105,23 +106,30 @@ class ChatsViewModel @Inject constructor(
         }
     }
 
-    private fun observeFriends() {
+    private fun getFriends(userEmail: String) {
         viewModelScope.launch(dispatcher) {
-            when (val response = observeFriendsUseCase()) {
-                is Response.Success -> {
-                    response.data.collect { friendList ->
-                        _uiState.update {
-                            it.copy(friendList = friendList)
+            getFriendsUseCase(
+                userEmail = userEmail,
+                onComplete = { errorMessage ->
+                    when (val response = observeFriendsUseCase()) {
+                        is Response.Success -> {
+                            response.data.collect { friendList ->
+                                _uiState.update {
+                                    it.copy(friendList = friendList)
+                                }
+                            }
+                        }
+
+                        is Response.Error -> {
+                            Log.e("getFriends", errorMessage.toString())
                         }
                     }
                 }
-
-                is Response.Error -> SnackbarManager.showMessage(response.errorMessage)
-            }
+            )
         }
     }
 
-    private fun observeUser() {
+    private fun initializeUserData() {
         viewModelScope.launch(dispatcher) {
             when (val response = observeUserInCacheUseCase()) {
                 is Response.Success -> {
@@ -129,6 +137,7 @@ class ChatsViewModel @Inject constructor(
                         if (user != null) {
                             currentUser = user
                             uploadFcmToken(user.email)
+                            getFriends(user.email)
                         }
                     }
                 }

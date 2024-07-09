@@ -54,12 +54,16 @@ class CameraViewModel @Inject constructor(
         when (event) {
             is CameraUiEvent.OnCaptureImageClick -> {
                 viewModelScope.launch(ioDispatcher) {
-                    val imgUri = CameraController.takePhoto(event.imageCapture, event.context)
-                    _uiState.update {
-                        it.copy(
-                            capturedImageUri = imgUri,
-                            screenState = if (imgUri == null) ScreenState.CAMERA else ScreenState.CAPTURED_IMAGE
-                        )
+                    CameraController.takePhoto(
+                        event.imageCapture,
+                        event.context
+                    ) { capturedImageUri ->
+                        _uiState.update {
+                            it.copy(
+                                capturedImageUri = capturedImageUri,
+                                screenState = if (capturedImageUri == null) ScreenState.CAMERA else ScreenState.CAPTURED_IMAGE
+                            )
+                        }
                     }
                 }
             }
