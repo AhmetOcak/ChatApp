@@ -18,7 +18,7 @@ internal object CameraController {
 
     private var capturedPhotoUri: Uri? = null
 
-    fun takePhoto(imageCapture: ImageCapture, context: Context): Uri? {
+    fun takePhoto(imageCapture: ImageCapture, context: Context, onImageCaptured: (Uri?) -> Unit) {
         val name = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS", Locale.US)
             .format(System.currentTimeMillis())
         val contentValues = ContentValues().apply {
@@ -55,11 +55,10 @@ internal object CameraController {
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     capturedPhotoUri = output.savedUri
+                    onImageCaptured(output.savedUri)
                 }
             }
         )
-
-        return capturedPhotoUri
     }
 
     fun resetCapturedPhotoUri() {

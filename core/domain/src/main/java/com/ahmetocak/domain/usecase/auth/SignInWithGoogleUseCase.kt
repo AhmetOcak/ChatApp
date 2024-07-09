@@ -5,7 +5,6 @@ import androidx.activity.result.IntentSenderRequest
 import com.ahmetocak.authentication.client.GoogleSignInClient
 import com.ahmetocak.common.UiText
 import com.ahmetocak.common.ext.failureMessage
-import com.ahmetocak.domain.usecase.friend.GetFriendsUseCase
 import com.ahmetocak.domain.usecase.user.local.AddUserToCacheUseCase
 import com.ahmetocak.domain.usecase.user.remote.CreateUserUseCase
 import com.ahmetocak.domain.usecase.user.remote.GetUserFromRemoteUseCase
@@ -15,7 +14,6 @@ class SignInWithGoogleUseCase @Inject internal constructor(
     private val googleSignInClient: GoogleSignInClient,
     private val addUserToCacheUseCase: AddUserToCacheUseCase,
     private val createUserUseCase: CreateUserUseCase,
-    private val getFriendsUseCase: GetFriendsUseCase,
     private val getUserFromRemoteUseCase: GetUserFromRemoteUseCase
 ) {
 
@@ -51,24 +49,14 @@ class SignInWithGoogleUseCase @Inject internal constructor(
                     profilePicUrl = result.photoUrl.toString(),
                     onSuccess = { user ->
                         addUserToCacheUseCase(user)
-
-                        getFriendsUseCase(
-                            userEmail = result.email!!,
-                            onSuccess = onSuccess,
-                            onFailure = onFailure
-                        )
+                        onSuccess()
                     },
                     onFailure = {
                         getUserFromRemoteUseCase(
                             userEmail = result.email!!,
                             onSuccess = { user ->
                                 addUserToCacheUseCase(user)
-
-                                getFriendsUseCase(
-                                    userEmail = result.email!!,
-                                    onSuccess = onSuccess,
-                                    onFailure = onFailure
-                                )
+                                onSuccess()
                             },
                             onFailure = onFailure
                         )

@@ -86,18 +86,3 @@ fun ChatItemPreview() {
         }
     }
 }
-
-@Preview
-@Composable
-fun ChatItemPreviewSilent() {
-    ChatAppTheme {
-        Surface {
-            ChatItem(
-                id = 0,
-                title = "Ahmet Ocak",
-                imageUrl = null,
-                onClick = {},
-            )
-        }
-    }
-}

@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
@@ -53,6 +54,7 @@ fun AnimatedNetworkImage(
                 modifier = modifier,
                 painter = painter,
                 contentDescription = null,
+                contentScale = ContentScale.Crop,
                 colorFilter = ColorFilter.colorMatrix(matrix)
             )
         }

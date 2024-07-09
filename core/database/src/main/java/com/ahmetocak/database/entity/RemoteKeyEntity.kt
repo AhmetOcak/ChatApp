@@ -8,8 +8,8 @@ import androidx.room.PrimaryKey
 data class RemoteKeyEntity(
 
     @PrimaryKey(autoGenerate = false)
-    @ColumnInfo("id")
-    val id: String,
+    @ColumnInfo("friendship_id")
+    val friendshipId: Int,
 
     @ColumnInfo("next_page")
     val nextPage: Int?

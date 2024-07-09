@@ -32,13 +32,15 @@ class MessagesRemoteMediator(
                 LoadType.PREPEND -> {
                     return MediatorResult.Success(endOfPaginationReached = true)
                 }
+
                 LoadType.APPEND -> {
                     val remoteKey = userDb.withTransaction {
-                        remoteKeyDao.getRemoteKey()
+                        remoteKeyDao.getRemoteKey(friendshipId)
                     } ?: return MediatorResult.Success(endOfPaginationReached = true)
 
                     remoteKey.nextPage
                         ?: return MediatorResult.Success(endOfPaginationReached = true)
+
                 }
             }
 
@@ -49,7 +51,7 @@ class MessagesRemoteMediator(
 
             userDb.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    remoteKeyDao.clearKey()
+                    remoteKeyDao.clearKey(friendshipId)
                 }
 
                 val nextPage = if (response.messageList.isEmpty()) {
@@ -57,7 +59,10 @@ class MessagesRemoteMediator(
                 } else page + 1
 
                 remoteKeyDao.insertKey(
-                    RemoteKeyEntity(id = "messages_key", nextPage = nextPage)
+                    RemoteKeyEntity(
+                        nextPage = nextPage,
+                        friendshipId = friendshipId
+                    )
                 )
                 messageDao.insertAll(response.messageList.toListMessageEntity())
             }

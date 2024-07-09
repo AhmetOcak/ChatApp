@@ -46,7 +46,7 @@ class ChatRepositoryImpl @Inject constructor(
                 api = api,
                 userDb = db
             ),
-            pagingSourceFactory = { db.messageDao().pagingSource() }
+            pagingSourceFactory = { db.messageDao().pagingSource(friendshipId) }
         ).flow.map { messageEntity ->
             messageEntity.map { it.toMessage() }
         }

@@ -48,7 +48,7 @@ fun String.showMessageTime(): String {
             "${messageDate.hour.fixedTime()}:${messageDate.minute.fixedTime()} " +
                     "${messageDate.dayOfMonth.fixedTime()}-${messageDate.month.value.fixedTime()}-${messageDate.year.fixedTime()}"
         } else {
-            "${messageDate.hour}:${messageDate.minute}"
+            "${messageDate.hour.fixedTime()}:${messageDate.minute.fixedTime()}"
         }
     } catch (e: Exception) {
         Log.d("showMessageTime", e.stackTraceToString())
@@ -63,28 +63,3 @@ fun Int.fixedTime(): String {
         this.toString()
     }
 }
-
-/*
-fun OffsetDateTime.showMessageSendTime(): String {
-    try {
-        val currentDate = LocalDateTime.now()
-        val difference = ChronoUnit.DAYS.between(this, currentDate)
-
-        return if (difference > 1) {
-            this.format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy"))
-        } else {
-            this.format(DateTimeFormatter.ofPattern("HH:mm"))
-        }
-    } catch (e: Exception) {
-        Log.d("showMessageSendTime", e.stackTraceToString())
-        return ""
-    }
-}
-
-fun String.toOffsetDateTime(): OffsetDateTime {
-    val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
-    val dateTime = LocalDateTime.parse(this, formatter)
-    return OffsetDateTime.of(dateTime, ZoneOffset.UTC)
-}
-
- */
