@@ -7,6 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.ahmetocak.chat_box.ChatBoxRoute
+import com.ahmetocak.model.ChatGroup
 
 const val CHAT_BOX_ROUTE = "chat_box_route"
 const val FRIEND_EMAIL = "friend_email"
@@ -15,13 +16,10 @@ const val FRIEND_PROF_PIC_URL = "friend_prof_pic_url"
 const val FRIENDSHIP_ID = "friendship_id"
 
 fun NavHostController.navigateToChatBox(
-    friendshipId: Int,
-    friendEmail: String?,
-    friendUsername: String?,
-    friendProfPicUrl: String?,
+    chatGroup: ChatGroup,
     navOptions: NavOptions? = null
 ) = navigate(
-    route = "$CHAT_BOX_ROUTE/$friendshipId/$friendEmail/$friendUsername/$friendProfPicUrl",
+    route = "$CHAT_BOX_ROUTE/$chatGroup",
     navOptions = navOptions
 )
 

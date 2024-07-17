@@ -13,11 +13,13 @@ internal object KtorUserEndpoints {
     }
 }
 
-internal object KtorFriendEndPoints {
-    const val GET = "/friend/getFriends/{${Paths.USER_EMAIL}}"
-    const val POST = "/friend/create"
+internal object KtorChatGroupEndPoints {
+    const val CREATE_PRIVATE_GROUP = "/chatGroup/createPrivateGroup"
+    const val CREATE_GROUP = "/chatGroup/createGroup"
+    const val ADD_PARTICIPANT = "/chatGroup/addParticipant"
+    const val GET = "/chatGroup/getGroups/{${Path.USER_EMAIL}}"
 
-    internal object Paths {
+    internal object Path {
         const val USER_EMAIL = "userEmail"
     }
 }

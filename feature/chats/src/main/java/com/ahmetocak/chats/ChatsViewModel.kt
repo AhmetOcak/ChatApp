@@ -5,15 +5,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmetocak.common.Response
 import com.ahmetocak.common.SnackbarManager
-import com.ahmetocak.common.ext.encodeForSaveNav
+import com.ahmetocak.common.UiText
 import com.ahmetocak.common.websocket.Connection
 import com.ahmetocak.common.websocket.WebSocketListener
 import com.ahmetocak.common.websocket.WebSocketManager
-import com.ahmetocak.domain.usecase.friend.CreateFriendUseCase
-import com.ahmetocak.domain.usecase.friend.GetFriendsUseCase
-import com.ahmetocak.domain.usecase.friend.ObserveFriendsUseCase
+import com.ahmetocak.domain.usecase.chat_group.CreateChatGroupUseCase
+import com.ahmetocak.domain.usecase.chat_group.CreatePrivateGroupUseCase
+import com.ahmetocak.domain.usecase.chat_group.GetChatGroupsAndCacheUseCase
+import com.ahmetocak.domain.usecase.chat_group.ObserveChatGroupsInCache
 import com.ahmetocak.domain.usecase.user.UploadUserFcmTokenUseCase
 import com.ahmetocak.domain.usecase.user.local.ObserveUserInCacheUseCase
+import com.ahmetocak.model.ChatGroupParticipants
+import com.ahmetocak.model.GroupType
 import com.ahmetocak.model.LoadingState
 import com.ahmetocak.model.User
 import com.google.firebase.messaging.FirebaseMessaging
@@ -30,10 +33,11 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatsViewModel @Inject constructor(
     private val observeUserInCacheUseCase: ObserveUserInCacheUseCase,
-    private val createFriendUseCase: CreateFriendUseCase,
-    private val observeFriendsUseCase: ObserveFriendsUseCase,
     private val uploadUserFcmTokenUseCase: UploadUserFcmTokenUseCase,
-    private val getFriendsUseCase: GetFriendsUseCase,
+    private val createChatGroupUseCase: CreateChatGroupUseCase,
+    private val createPrivateGroupUseCase: CreatePrivateGroupUseCase,
+    private val observeChatGroupsInCache: ObserveChatGroupsInCache,
+    private val getChatGroupsAndCacheUseCase: GetChatGroupsAndCacheUseCase,
     private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -52,76 +56,148 @@ class ChatsViewModel @Inject constructor(
 
     fun onEvent(event: ChatsUiEvent) {
         when (event) {
+            is ChatsUiEvent.OnAddOrCreateContactClick -> _uiState.update {
+                it.copy(screenState = ScreenState.CreateContact)
+            }
+
+            is ChatsUiEvent.OnAddFriendClick -> _uiState.update {
+                it.copy(screenState = ScreenState.AddFriend)
+            }
+
+            is ChatsUiEvent.OnSelectParticipantsForGroup -> _uiState.update {
+                it.copy(screenState = ScreenState.SelectParticipantsForGroup)
+            }
+
+            is ChatsUiEvent.OnCreateGroupClick -> {
+                if (uiState.value.selectedParticipants.isNotEmpty()) {
+                    _uiState.update {
+                        it.copy(screenState = ScreenState.CreateChatGroup)
+                    }
+                } else {
+                    SnackbarManager.showMessage(
+                        message = UiText.DynamicString("You must select participants.")
+                    )
+                }
+            }
+
+            is ChatsUiEvent.OnBackClick -> handleBackClick()
+            is ChatsUiEvent.OnSubmitContactClick -> createContact()
             is ChatsUiEvent.OnChatItemClick -> _navigationState.update {
-                NavigationState.ChatBox(
-                    event.friendshipId,
-                    event.friendEmail,
-                    event.friendUsername,
-                    event.friendProfPicUrl.encodeForSaveNav()
-                )
+                NavigationState.ChatBox(event.chatGroup)
             }
 
-            is ChatsUiEvent.OnFriendValueChanged -> _uiState.update { it.copy(friendValue = event.value) }
+            is ChatsUiEvent.OnValueChanged -> _uiState.update { it.copy(textFieldValue = event.value) }
+            is ChatsUiEvent.OnSearchValueChanged -> _uiState.update { it.copy(searchValue = event.value) }
             is ChatsUiEvent.OnSettingsClick -> _navigationState.update { NavigationState.Settings }
-            is ChatsUiEvent.OnShowAddFriendSheetClick -> _uiState.update {
-                it.copy(showAddFriendBottomSheet = true)
+
+            is ChatsUiEvent.OnAddParticipantClick -> {
+                val updatedList = uiState.value.selectedParticipants.toMutableList()
+                updatedList.add(event.participant)
+                _uiState.update {
+                    it.copy(selectedParticipants = updatedList)
+                }
             }
 
-            is ChatsUiEvent.OnDismissAddFriendSheet -> _uiState.update {
-                it.copy(showAddFriendBottomSheet = false, friendValue = "")
+            is ChatsUiEvent.OnRemoveAddedParticipantClick -> {
+                val updatedList = uiState.value.selectedParticipants.toMutableList()
+                updatedList.remove(event.participant)
+                _uiState.update {
+                    it.copy(selectedParticipants = updatedList)
+                }
             }
 
-            is ChatsUiEvent.OnAddFriendClick -> addFriend()
+            is ChatsUiEvent.OnGroupImagePicked -> {
+                _uiState.update {
+                    it.copy(selectedGroupImgUri = event.uri)
+                }
+            }
         }
     }
 
-    private fun addFriend() {
+    private fun createContact() {
         viewModelScope.launch(dispatcher) {
             _uiState.update {
-                it.copy(addFriendLoadingState = LoadingState.Loading, addFriendErrorMessage = null)
+                it.copy(loadingState = LoadingState.Loading)
             }
 
-            createFriendUseCase(
-                userEmail = currentUser.email,
-                friendEmail = _uiState.value.friendValue,
-                onSuccess = {
-                    _uiState.update {
-                        it.copy(
-                            addFriendErrorMessage = null,
-                            addFriendLoadingState = LoadingState.Idle,
-                            friendValue = "",
-                            showAddFriendBottomSheet = false
-                        )
+            if (uiState.value.screenState is ScreenState.AddFriend) {
+                when (val response = createPrivateGroupUseCase(
+                    currentUser.email,
+                    friendEmail = uiState.value.textFieldValue
+                )) {
+                    is Response.Success -> {
+                        _uiState.update {
+                            it.copy(loadingState = LoadingState.Idle)
+                        }
                     }
-                },
-                onFailure = { errorMessage ->
-                    _uiState.update {
-                        it.copy(
-                            addFriendErrorMessage = errorMessage,
-                            addFriendLoadingState = LoadingState.Idle
-                        )
+
+                    is Response.Error -> {
+                        _uiState.update {
+                            it.copy(loadingState = LoadingState.Idle)
+                        }
+                        Log.e("addFriend", response.errorMessage.toString())
                     }
                 }
-            )
+            } else {
+                if (uiState.value.textFieldValue.isNotBlank()) {
+                    when (val response = createChatGroupUseCase(
+                        creatorEmail = currentUser.email,
+                        groupName = uiState.value.textFieldValue,
+                        creatorUsername = currentUser.username,
+                        creatorProfilePicUrl = currentUser.profilePicUrl,
+                        groupImageUrl = uiState.value.selectedGroupImgUri
+                    )) {
+                        is Response.Success -> {
+                            _uiState.update {
+                                it.copy(loadingState = LoadingState.Idle)
+                            }
+                        }
+
+                        is Response.Error -> {
+                            _uiState.update {
+                                it.copy(loadingState = LoadingState.Idle)
+                            }
+                            Log.e("addFriend", response.errorMessage.toString())
+                        }
+                    }
+                } else {
+                    _uiState.update {
+                        it.copy(loadingState = LoadingState.Idle)
+                    }
+                    SnackbarManager.showMessage(
+                        UiText.DynamicString("Please enter the group name")
+                    )
+                }
+            }
         }
     }
 
     private fun getFriends(userEmail: String) {
         viewModelScope.launch(dispatcher) {
-            getFriendsUseCase(
+            getChatGroupsAndCacheUseCase(
                 userEmail = userEmail,
-                onComplete = { errorMessage ->
-                    when (val response = observeFriendsUseCase()) {
-                        is Response.Success -> {
-                            response.data.collect { friendList ->
-                                _uiState.update {
-                                    it.copy(friendList = friendList)
+                onComplete = {
+                    observeChatGroupsInCache().collect { chatList ->
+                        val privateChatGroups = chatList.filter {
+                            it.groupType == GroupType.PRIVATE_CHAT_GROUP
+                        }
+                        val addableParticipants: MutableList<ChatGroupParticipants> = mutableListOf()
+                        privateChatGroups.forEach {
+                            it.participants.forEach { participant ->
+                                if (participant.participantEmail != currentUser.email) {
+                                    addableParticipants.add(
+                                        ChatGroupParticipants(
+                                            id = participant.id,
+                                            participantEmail = participant.participantEmail,
+                                            participantUsername = participant.participantUsername,
+                                            participantProfilePicUrl = participant.participantProfilePicUrl
+                                        )
+                                    )
                                 }
                             }
                         }
-
-                        is Response.Error -> {
-                            Log.e("getFriends", errorMessage.toString())
+                        _uiState.update { state ->
+                            state.copy(chatList = chatList, participantList = addableParticipants)
                         }
                     }
                 }
@@ -177,6 +253,35 @@ class ChatsViewModel @Inject constructor(
                 token = FirebaseMessaging.getInstance().token.await(),
                 onFailure = SnackbarManager::showMessage
             )
+        }
+    }
+
+    private fun handleBackClick() {
+        when (uiState.value.screenState) {
+            is ScreenState.CreateChatGroup -> _uiState.update {
+                it.copy(
+                    screenState = ScreenState.SelectParticipantsForGroup,
+                    textFieldValue = "",
+                    selectedGroupImgUri = null
+                )
+            }
+
+            is ScreenState.SelectParticipantsForGroup -> _uiState.update {
+                it.copy(
+                    screenState = ScreenState.CreateContact,
+                    selectedParticipants = emptyList()
+                )
+            }
+
+            is ScreenState.AddFriend -> _uiState.update {
+                it.copy(screenState = ScreenState.CreateContact, textFieldValue = "")
+            }
+
+            is ScreenState.CreateContact -> _uiState.update {
+                it.copy(screenState = ScreenState.Chats)
+            }
+
+            is ScreenState.Chats -> { /* There is no back action in chats screen */ }
         }
     }
 

@@ -1,10 +1,10 @@
 package com.ahmetocak.database.di
 
-import com.ahmetocak.database.dao.FriendDao
+import com.ahmetocak.database.dao.ChatGroupDao
 import com.ahmetocak.database.dao.MessageDao
 import com.ahmetocak.database.dao.UserDao
-import com.ahmetocak.database.datasource.friend.FriendLocalDataSource
-import com.ahmetocak.database.datasource.friend.FriendLocalDataSourceImpl
+import com.ahmetocak.database.datasource.chat_group.ChatGroupLocalDataSource
+import com.ahmetocak.database.datasource.chat_group.ChatGroupLocalDataSourceImpl
 import com.ahmetocak.database.datasource.message.MessageLocalDataSource
 import com.ahmetocak.database.datasource.message.MessageLocalDataSourceImpl
 import com.ahmetocak.database.datasource.user.UserLocalDataSource
@@ -28,8 +28,8 @@ object DataSourceModule {
 
     @Singleton
     @Provides
-    fun provideFriendLocalDataSource(friendDao: FriendDao): FriendLocalDataSource {
-        return FriendLocalDataSourceImpl(friendDao)
+    fun provideChatGroupLocalDataSource(chatGroupDao: ChatGroupDao): ChatGroupLocalDataSource {
+        return ChatGroupLocalDataSourceImpl(chatGroupDao)
     }
 
     @Singleton

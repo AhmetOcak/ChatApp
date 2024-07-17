@@ -31,12 +31,14 @@ fun ChatItem(
     title: String,
     imageUrl: String?,
     onClick: (Int) -> Unit,
+    enabled: Boolean = true
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RectangleShape,
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-        onClick = { onClick(id) }
+        onClick = { onClick(id) },
+        enabled = enabled
     ) {
         Row(
             modifier = Modifier
