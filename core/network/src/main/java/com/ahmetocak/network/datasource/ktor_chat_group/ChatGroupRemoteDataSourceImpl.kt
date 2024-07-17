@@ -37,4 +37,20 @@ class ChatGroupRemoteDataSourceImpl @Inject constructor(
     override suspend fun getGroups(userEmail: String): Response<List<NetworkChatGroup>> {
         return apiCall { api.getGroups(userEmail) }
     }
+
+    override suspend fun addParticipantToChatGroup(
+        groupId: Int,
+        participantEmail: String,
+        participantUsername: String,
+        participantProfilePicUrl: String?
+    ): Response<Unit> {
+        return apiCall {
+            api.addParticipantToChatGroup(
+                groupId = groupId,
+                participantUsername = participantUsername,
+                participantEmail = participantEmail,
+                participantProfilePicUrl = participantProfilePicUrl
+            )
+        }
+    }
 }

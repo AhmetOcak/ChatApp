@@ -9,7 +9,7 @@ data class ChatGroup(
 )
 
 data class ChatGroupParticipants(
-    val id: Int = 0,
+    val groupId: Int = 0,
     val participantEmail: String,
     val participantUsername: String,
     val participantProfilePicUrl: String?

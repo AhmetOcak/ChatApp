@@ -145,11 +145,17 @@ class ChatsViewModel @Inject constructor(
                         groupName = uiState.value.textFieldValue,
                         creatorUsername = currentUser.username,
                         creatorProfilePicUrl = currentUser.profilePicUrl,
-                        groupImageUrl = uiState.value.selectedGroupImgUri
+                        groupImageUrl = uiState.value.selectedGroupImgUri,
+                        participants = uiState.value.selectedParticipants
                     )) {
                         is Response.Success -> {
                             _uiState.update {
-                                it.copy(loadingState = LoadingState.Idle)
+                                it.copy(
+                                    loadingState = LoadingState.Idle,
+                                    textFieldValue = "",
+                                    selectedParticipants = emptyList(),
+                                    screenState = ScreenState.Chats
+                                )
                             }
                         }
 
@@ -181,13 +187,12 @@ class ChatsViewModel @Inject constructor(
                         val privateChatGroups = chatList.filter {
                             it.groupType == GroupType.PRIVATE_CHAT_GROUP
                         }
-                        val addableParticipants: MutableList<ChatGroupParticipants> = mutableListOf()
+                        val addableParticipants: MutableSet<ChatGroupParticipants> = mutableSetOf()
                         privateChatGroups.forEach {
                             it.participants.forEach { participant ->
                                 if (participant.participantEmail != currentUser.email) {
                                     addableParticipants.add(
                                         ChatGroupParticipants(
-                                            id = participant.id,
                                             participantEmail = participant.participantEmail,
                                             participantUsername = participant.participantUsername,
                                             participantProfilePicUrl = participant.participantProfilePicUrl
@@ -197,7 +202,10 @@ class ChatsViewModel @Inject constructor(
                             }
                         }
                         _uiState.update { state ->
-                            state.copy(chatList = chatList, participantList = addableParticipants)
+                            state.copy(
+                                chatList = chatList,
+                                participantList = addableParticipants.toMutableList()
+                            )
                         }
                     }
                 }
@@ -281,7 +289,8 @@ class ChatsViewModel @Inject constructor(
                 it.copy(screenState = ScreenState.Chats)
             }
 
-            is ScreenState.Chats -> { /* There is no back action in chats screen */ }
+            is ScreenState.Chats -> { /* There is no back action in chats screen */
+            }
         }
     }
 
@@ -289,3 +298,4 @@ class ChatsViewModel @Inject constructor(
         _navigationState.update { NavigationState.None }
     }
 }
+

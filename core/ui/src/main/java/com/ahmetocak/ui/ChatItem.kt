@@ -27,7 +27,7 @@ import com.ahmetocak.designsystem.theme.ChatAppTheme
 
 @Composable
 fun ChatItem(
-    id: Int,
+    id: Int = 0,
     title: String,
     imageUrl: String?,
     onClick: (Int) -> Unit,

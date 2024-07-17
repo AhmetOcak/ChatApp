@@ -16,7 +16,7 @@ fun NetworkChatGroup.toChatGroup(): ChatGroup {
         imageUrl = imageUrl,
         participants = participants.map {
             ChatGroupParticipants(
-                id = it.id,
+                groupId = it.id,
                 participantEmail = it.participantEmail,
                 participantUsername = it.participantUsername,
                 participantProfilePicUrl = it.participantProfilePicUrl
@@ -50,7 +50,7 @@ fun NetworkChatGroupParticipants.toParticipantsEntity() : ChatGroupParticipantsE
 
 fun ChatGroupParticipantsEntity.toParticipants(): ChatGroupParticipants {
     return ChatGroupParticipants(
-        id = groupId,
+        groupId = groupId,
         participantUsername = username,
         participantEmail = email,
         participantProfilePicUrl = profileImgUrl

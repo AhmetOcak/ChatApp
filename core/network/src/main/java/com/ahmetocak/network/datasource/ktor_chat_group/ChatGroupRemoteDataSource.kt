@@ -18,4 +18,10 @@ interface ChatGroupRemoteDataSource {
     ): Response<NetworkChatGroup>
 
     suspend fun getGroups(userEmail: String): Response<List<NetworkChatGroup>>
+    suspend fun addParticipantToChatGroup(
+        groupId: Int,
+        participantEmail: String,
+        participantUsername: String,
+        participantProfilePicUrl: String?
+    ): Response<Unit>
 }

@@ -260,7 +260,7 @@ private fun SelectParticipantsForGroupSection(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
-                items(selectedParticipants, key = { it.id }) { participant ->
+                items(selectedParticipants, key = { it.participantEmail }) { participant ->
                     AddedParticipant(
                         imageUrl = participant.participantProfilePicUrl,
                         username = participant.participantUsername,
@@ -280,9 +280,8 @@ private fun SelectParticipantsForGroupSection(
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
-                items(addableParticipants, key = { it.id }) { participant ->
+                items(addableParticipants, key = { it.participantEmail }) { participant ->
                     ChatItem(
-                        id = participant.id,
                         title = participant.participantUsername,
                         imageUrl = participant.participantProfilePicUrl,
                         onClick = remember {
@@ -341,7 +340,7 @@ private fun CreateGroupSection(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(32.dp)
             ) {
-                items(addedParticipants, key = { it.id }) {
+                items(addedParticipants, key = { it.groupId }) {
                     AddedParticipant(
                         username = it.participantUsername,
                         imageUrl = it.participantProfilePicUrl

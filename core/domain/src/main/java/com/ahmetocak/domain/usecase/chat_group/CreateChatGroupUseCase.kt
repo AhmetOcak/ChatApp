@@ -5,6 +5,7 @@ import com.ahmetocak.common.Response
 import com.ahmetocak.data.repository.chat_group.ChatGroupRepository
 import com.ahmetocak.data.repository.firebase.storage.StorageRepository
 import com.ahmetocak.domain.usecase.firebase.storage.UploadImageFileUseCase
+import com.ahmetocak.model.ChatGroupParticipants
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
@@ -20,7 +21,8 @@ class CreateChatGroupUseCase @Inject constructor(
         groupName: String,
         creatorUsername: String,
         creatorProfilePicUrl: String?,
-        groupImageUrl: Uri?
+        groupImageUrl: Uri?,
+        participants: List<ChatGroupParticipants>
     ): Response<Unit> {
         val url = if (groupImageUrl != null) {
             storageRepository.uploadImageFile(
@@ -35,7 +37,8 @@ class CreateChatGroupUseCase @Inject constructor(
             groupName = groupName,
             creatorUsername = creatorUsername,
             creatorProfilePicUrl = creatorProfilePicUrl,
-            groupImageUrl = url
+            groupImageUrl = url,
+            participants = participants
         )
     }
 }

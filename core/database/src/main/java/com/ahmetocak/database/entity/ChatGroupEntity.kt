@@ -32,7 +32,9 @@ data class ChatGroupEntity(
 )
 data class ChatGroupParticipantsEntity(
 
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+
     @ColumnInfo("group_id")
     val groupId: Int,
 
