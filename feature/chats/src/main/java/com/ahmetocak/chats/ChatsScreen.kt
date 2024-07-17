@@ -217,28 +217,32 @@ private fun AddFriendSection(
     newPersonValue: String,
     isLoading: Boolean
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.End
-    ) {
-        ChatAppOutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = newPersonValue,
-            onValueChange = { onEvent(ChatsUiEvent.OnValueChanged(it)) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            label = {
-                Text(text = "Person Email")
-            }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        ChatAppButton(
-            onClick = remember { { onEvent(ChatsUiEvent.OnSubmitContactClick) } },
-            enabled = newPersonValue.isNotBlank() && !isLoading
+    if (isLoading) {
+        ChatAppProgressIndicator(modifier)
+    } else {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.End
         ) {
-            Text(text = "Add Person")
+            ChatAppOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = newPersonValue,
+                onValueChange = { onEvent(ChatsUiEvent.OnValueChanged(it)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                label = {
+                    Text(text = "Person Email")
+                }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            ChatAppButton(
+                onClick = remember { { onEvent(ChatsUiEvent.OnSubmitContactClick) } },
+                enabled = newPersonValue.isNotBlank()
+            ) {
+                Text(text = "Add Person")
+            }
         }
     }
 }
@@ -285,13 +289,7 @@ private fun SelectParticipantsForGroupSection(
                         title = participant.participantUsername,
                         imageUrl = participant.participantProfilePicUrl,
                         onClick = remember {
-                            {
-                                onEvent(
-                                    ChatsUiEvent.OnAddParticipantClick(
-                                        participant
-                                    )
-                                )
-                            }
+                            { onEvent(ChatsUiEvent.OnAddParticipantClick(participant)) }
                         },
                         enabled = !selectedParticipants.contains(participant)
                     )
@@ -340,7 +338,7 @@ private fun CreateGroupSection(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(32.dp)
             ) {
-                items(addedParticipants, key = { it.groupId }) {
+                items(addedParticipants, key = { it.participantEmail }) {
                     AddedParticipant(
                         username = it.participantUsername,
                         imageUrl = it.participantProfilePicUrl
@@ -377,33 +375,6 @@ private fun AddedParticipant(
         Text(text = username, style = MaterialTheme.typography.labelLarge)
     }
 }
-
-/*
-@Composable
-private fun AddFriendBottomSheet(
-    friendValue: String,
-    errorMessage: UiText?,
-    isLoading: Boolean,
-    onEvent: (ChatsUiEvent) -> Unit
-) {
-    ChatAppModalBottomSheet(
-        onDismissRequest = remember { { onEvent(ChatsUiEvent.OnDismissAddFriendSheet) } },
-        value = friendValue,
-        onValueChange = remember { { onEvent(ChatsUiEvent.OnFriendValueChanged(it)) } },
-        onSubmitClick = remember { { onEvent(ChatsUiEvent.OnAddFriendClick) } },
-        labelText = errorMessage?.asString() ?: "Friend Email",
-        placeholderText = "Enter friend email",
-        leadingIcon = {
-            Icon(imageVector = ChatAppIcons.Filled.email, contentDescription = null)
-        },
-        isLoading = isLoading,
-        isError = errorMessage != null,
-        title = "Add Friend",
-        keyboardActions = KeyboardActions(onDone = remember { { onEvent(ChatsUiEvent.OnAddFriendClick) } }),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-    )
-}
- */
 
 @Preview
 @Composable

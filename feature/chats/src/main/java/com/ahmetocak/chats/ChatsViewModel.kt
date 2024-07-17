@@ -135,7 +135,7 @@ class ChatsViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(loadingState = LoadingState.Idle)
                         }
-                        Log.e("addFriend", response.errorMessage.toString())
+                        SnackbarManager.showMessage(response.errorMessage)
                     }
                 }
             } else {
@@ -163,7 +163,7 @@ class ChatsViewModel @Inject constructor(
                             _uiState.update {
                                 it.copy(loadingState = LoadingState.Idle)
                             }
-                            Log.e("addFriend", response.errorMessage.toString())
+                            SnackbarManager.showMessage(response.errorMessage)
                         }
                     }
                 } else {

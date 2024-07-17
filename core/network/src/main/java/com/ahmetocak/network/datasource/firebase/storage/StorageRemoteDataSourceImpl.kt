@@ -10,6 +10,7 @@ private const val PROFILE_IMAGES_DIR = "user_profile_images"
 private const val AUDIO_FILES_DIR = "user_audio_files"
 private const val IMAGE_FILES_DIR = "user_image_files"
 private const val DOC_FILES_DIR = "user_doc_files"
+private const val CHAT_GROUP_IMAGES_DIR = "chat_group_images"
 
 class StorageRemoteDataSourceImpl @Inject constructor(
     storage: FirebaseStorage
@@ -53,5 +54,10 @@ class StorageRemoteDataSourceImpl @Inject constructor(
     override fun uploadDocFile(docFileName: String, docFileUri: Uri, userUid: String): UploadTask {
         val docFileRef = storageRef.child("$DOC_FILES_DIR/$userUid/$docFileName")
         return docFileRef.putFile(docFileUri)
+    }
+
+    override fun uploadChatGroupImage(imageFileName: String, imageFileUri: Uri): UploadTask {
+        val imageFileRef = storageRef.child("$CHAT_GROUP_IMAGES_DIR/$imageFileName")
+        return imageFileRef.putFile(imageFileUri)
     }
 }

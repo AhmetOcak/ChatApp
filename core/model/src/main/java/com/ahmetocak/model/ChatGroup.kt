@@ -1,5 +1,8 @@
 package com.ahmetocak.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ChatGroup(
     val id: Int = 0,
     val name: String,
@@ -8,6 +11,7 @@ data class ChatGroup(
     val groupType: GroupType
 )
 
+@Serializable
 data class ChatGroupParticipants(
     val groupId: Int = 0,
     val participantEmail: String,

@@ -46,9 +46,8 @@ sealed class NavigationState {
     data class ChatDetail(val id: String) : NavigationState()
     data class ChatDocuments(val id: String) : NavigationState()
     data class Camera(
-        val friendshipId: Int,
+        val messageBoxId: Int,
         val senderEmail: String,
-        val receiverEmail: String,
         val senderImgUrl: String?,
         val senderUsername: String
     ) : NavigationState()

@@ -7,19 +7,18 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.ahmetocak.chat_box.ChatBoxRoute
+import com.ahmetocak.common.ext.encodeForSaveNav
 import com.ahmetocak.model.ChatGroup
+import kotlinx.serialization.json.Json
 
 const val CHAT_BOX_ROUTE = "chat_box_route"
-const val FRIEND_EMAIL = "friend_email"
-const val FRIEND_USERNAME = "friend_username"
-const val FRIEND_PROF_PIC_URL = "friend_prof_pic_url"
-const val FRIENDSHIP_ID = "friendship_id"
+const val CHAT_GROUP = "chat_group"
 
 fun NavHostController.navigateToChatBox(
     chatGroup: ChatGroup,
     navOptions: NavOptions? = null
 ) = navigate(
-    route = "$CHAT_BOX_ROUTE/$chatGroup",
+    route = "$CHAT_BOX_ROUTE/${Json.encodeToString(ChatGroup.serializer(), chatGroup).encodeForSaveNav()}",
     navOptions = navOptions
 )
 
@@ -27,24 +26,12 @@ fun NavGraphBuilder.chatBoxScreen(
     upPress: () -> Unit,
     navigateChatDetail: (String) -> Unit,
     navigateChatDocs: (String) -> Unit,
-    navigateCamera: (Int, String, String, String?, String) -> Unit,
+    navigateCamera: (Int, String, String, String?) -> Unit,
 ) {
     composable(
-        route = "$CHAT_BOX_ROUTE/{$FRIENDSHIP_ID}/{$FRIEND_EMAIL}/{$FRIEND_USERNAME}/{${FRIEND_PROF_PIC_URL}}",
+        route = "$CHAT_BOX_ROUTE/{$CHAT_GROUP}",
         arguments = listOf(
-            navArgument(FRIENDSHIP_ID) { type = NavType.IntType },
-            navArgument(FRIEND_EMAIL) {
-                type = NavType.StringType
-                nullable = true
-            },
-            navArgument(FRIEND_USERNAME) {
-                type = NavType.StringType
-                nullable = true
-            },
-            navArgument(FRIEND_PROF_PIC_URL) {
-                type = NavType.StringType
-                nullable = true
-            }
+            navArgument(CHAT_GROUP) { type = NavType.StringType }
         )
     ) {
         ChatBoxRoute(

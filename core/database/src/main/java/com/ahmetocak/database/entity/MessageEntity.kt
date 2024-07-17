@@ -12,13 +12,10 @@ data class MessageEntity(
     val id: Int,
 
     @ColumnInfo("friendship_id")
-    val friendshipId: Int,
+    val messageBoxId: Int,
 
     @ColumnInfo("sender_email")
     val senderEmail: String,
-
-    @ColumnInfo("receiver_email")
-    val receiverEmail: String,
 
     @ColumnInfo("message_content")
     val messageContent: String,

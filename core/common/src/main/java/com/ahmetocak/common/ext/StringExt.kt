@@ -3,6 +3,7 @@ package com.ahmetocak.common.ext
 import android.util.Log
 import android.util.Patterns
 import com.ahmetocak.common.UiText
+import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.time.LocalDateTime
@@ -34,6 +35,11 @@ fun Exception?.failureMessage(): UiText {
 }
 
 fun String?.encodeForSaveNav(): String? = if (this == null) null else URLEncoder.encode(
+    this,
+    StandardCharsets.UTF_8.toString()
+)
+
+fun String.decodeString(): String = URLDecoder.decode(
     this,
     StandardCharsets.UTF_8.toString()
 )

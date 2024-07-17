@@ -6,15 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.ahmetocak.chat_box.audio.player.AudioPlayer
-import com.ahmetocak.chat_box.navigation.FRIEND_EMAIL
-import com.ahmetocak.chat_box.navigation.FRIEND_PROF_PIC_URL
-import com.ahmetocak.chat_box.navigation.FRIEND_USERNAME
 import com.ahmetocak.chat_box.audio.recorder.AudioRecorder
-import com.ahmetocak.chat_box.navigation.FRIENDSHIP_ID
+import com.ahmetocak.chat_box.navigation.CHAT_GROUP
 import com.ahmetocak.common.MessageManager
 import com.ahmetocak.common.Response
 import com.ahmetocak.common.SnackbarManager
 import com.ahmetocak.common.UiText
+import com.ahmetocak.common.ext.decodeString
 import com.ahmetocak.common.ext.encodeForSaveNav
 import com.ahmetocak.designsystem.R.string as AppStrings
 import com.ahmetocak.domain.usecase.chat.AddMessageUseCase
@@ -24,6 +22,7 @@ import com.ahmetocak.domain.usecase.firebase.storage.UploadAudioFileUseCase
 import com.ahmetocak.domain.usecase.firebase.storage.UploadDocFileUseCase
 import com.ahmetocak.domain.usecase.firebase.storage.UploadImageFileUseCase
 import com.ahmetocak.domain.usecase.user.local.ObserveUserInCacheUseCase
+import com.ahmetocak.model.ChatGroup
 import com.ahmetocak.model.Message
 import com.ahmetocak.model.MessageType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -59,25 +58,28 @@ class ChatBoxViewModel @Inject constructor(
     private val _navigationState = MutableStateFlow<NavigationState>(NavigationState.None)
     val navigationState = _navigationState.asStateFlow()
 
-    private var friendEmail: String? = null
-    private var friendshipId: Int? = null
+    private var groupData: ChatGroup? = null
 
     init {
-        observeMessages()
-        observeUser()
-
-        friendshipId = savedStateHandle.get<Int>(FRIENDSHIP_ID)
-        friendEmail = savedStateHandle.get<String>(FRIEND_EMAIL)
-        val friendUsername = savedStateHandle.get<String>(FRIEND_USERNAME)
-        val friendProfilePicUrl = savedStateHandle.get<String?>(FRIEND_PROF_PIC_URL)
-
-        _uiState.update {
-            it.copy(
-                title = friendUsername ?: friendEmail ?: "deleted account",
-                imageUrl = friendProfilePicUrl,
-                messageList = getMessagesUseCase(friendshipId = friendshipId ?: -1)
-                    .cachedIn(viewModelScope)
+        val data = savedStateHandle.get<String>(CHAT_GROUP)
+        if (data != null) {
+            val decodedData = Json.decodeFromString<ChatGroup>(data)
+            groupData = decodedData.copy(
+                name = decodedData.name.decodeString(),
+                participants = decodedData.participants.map {
+                    it.copy(participantUsername = it.participantUsername.decodeString())
+                }
             )
+        }
+
+        groupData?.let {
+            _uiState.update { state ->
+                state.copy(
+                    title = it.name,
+                    imageUrl = it.imageUrl,
+                    messageList = getMessagesUseCase(friendshipId = it.id).cachedIn(viewModelScope)
+                )
+            }
         }
 
         audioPlayer.initializeMediaPlayer(onCompletion = {
@@ -85,6 +87,9 @@ class ChatBoxViewModel @Inject constructor(
                 it.copy(audioPlayStatus = AudioPlayStatus.IDLE)
             }
         })
+
+        observeMessages()
+        observeUser()
     }
 
     fun onEvent(event: ChatBoxUiEvent) {
@@ -109,8 +114,7 @@ class ChatBoxViewModel @Inject constructor(
                             senderEmail = user.email,
                             senderUsername = user.username,
                             senderImgUrl = user.profilePicUrl.encodeForSaveNav(),
-                            receiverEmail = friendEmail!!,
-                            friendshipId = friendshipId!!
+                            messageBoxId = groupData?.id!!,
                         )
                     }
                 }
@@ -241,17 +245,16 @@ class ChatBoxViewModel @Inject constructor(
     }
 
     private fun sendMessage(messageType: MessageType, messageContent: String) {
-        friendshipId?.let {
+        groupData?.let {
             viewModelScope.launch(ioDispatcher) {
                 sendMessageUseCase(
                     message = Message(
                         senderEmail = _uiState.value.currentUser?.email ?: "",
-                        receiverEmail = friendEmail ?: "",
                         messageContent = messageContent,
                         senderImgUrl = _uiState.value.currentUser?.profilePicUrl,
                         senderUsername = _uiState.value.currentUser?.username ?: "",
                         messageType = messageType,
-                        friendshipId = it
+                        messageBoxId = it.id
                     ),
                     onFailure = {
                         SnackbarManager.showMessage(it)
@@ -266,9 +269,7 @@ class ChatBoxViewModel @Inject constructor(
         }
     }
 
-    fun resetNavigation() {
-        _navigationState.update { NavigationState.None }
-    }
+    fun resetNavigation() { _navigationState.update { NavigationState.None } }
 
     fun resetAttachMenu() = _uiState.update { it.copy(showAttachMenu = false) }
 
