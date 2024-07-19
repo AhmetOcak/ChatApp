@@ -3,6 +3,8 @@ package com.ahmetocak.chat_box
 import android.content.Context
 import android.net.Uri
 import androidx.paging.PagingData
+import com.ahmetocak.model.ChatGroup
+import com.ahmetocak.model.LoadingState
 import com.ahmetocak.model.Message
 import com.ahmetocak.model.MessageType
 import com.ahmetocak.model.User
@@ -10,15 +12,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 
 data class ChatBoxUiState(
+    val screenState: ScreenState = ScreenState.ChatBox,
     val messageValue: String = "",
     val messageList: Flow<PagingData<Message>> = emptyFlow(),
     val title: String = "",
-    val showDropdownMenu: Boolean = false,
     val imageUrl: String? = null,
     val audioRecordStatus: AudioRecordStatus = AudioRecordStatus.IDLE,
     val currentUser: User? = null,
     val audioPlayStatus: AudioPlayStatus = AudioPlayStatus.IDLE,
-    val showAttachMenu: Boolean = false
+    val showAttachMenu: Boolean = false,
+    val mediaMessages: List<Message> = emptyList(),
+    val mediaMessagesLoadingState: LoadingState = LoadingState.Loading
 )
 
 sealed class ChatBoxUiEvent {
@@ -33,12 +37,13 @@ sealed class ChatBoxUiEvent {
 
     data object OnBackClick : ChatBoxUiEvent()
     data class OnChatDetailClick(val id: String) : ChatBoxUiEvent()
-    data object OnMenuClick : ChatBoxUiEvent()
     data class OnSendMessageClick(val messageType: MessageType) : ChatBoxUiEvent()
     data class OnViewChatDocsClick(val id: String) : ChatBoxUiEvent()
     data class OnPlayAudioClick(val audioUrl: Uri) : ChatBoxUiEvent()
     data class OnSendImageClick(val imageUri: Uri) : ChatBoxUiEvent()
     data class OnSendDocClick(val docUri: Uri) : ChatBoxUiEvent()
+    data object OnGroupInfoClicked : ChatBoxUiEvent()
+    data object OnGroupMediaClicked : ChatBoxUiEvent()
 }
 
 sealed class NavigationState {
@@ -62,4 +67,10 @@ sealed interface AudioRecordStatus {
 sealed interface AudioPlayStatus {
     data object PLAYING : AudioPlayStatus
     data object IDLE : AudioPlayStatus
+}
+
+sealed interface ScreenState {
+    data object ChatBox : ScreenState
+    data object GroupInfo : ScreenState
+    data object GroupMedia : ScreenState
 }

@@ -3,6 +3,7 @@ package com.ahmetocak.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity
@@ -28,7 +29,8 @@ data class ChatGroupEntity(
         parentColumns = ["group_id"],
         childColumns = ["group_id"],
         onDelete = ForeignKey.CASCADE
-    )]
+    )],
+    indices = [Index(value = ["group_id", "email"], unique = true)]
 )
 data class ChatGroupParticipantsEntity(
 

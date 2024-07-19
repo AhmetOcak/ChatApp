@@ -9,17 +9,27 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,7 +40,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
@@ -38,15 +51,24 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.ahmetocak.chat_box.components.AddParticipantItem
 import com.ahmetocak.chat_box.components.AttachItem
 import com.ahmetocak.chat_box.components.BottomBarHeight
 import com.ahmetocak.chat_box.components.ChatBoxBottomBar
 import com.ahmetocak.chat_box.components.ChatBoxTopBar
+import com.ahmetocak.chat_box.components.LeaveGroupItem
+import com.ahmetocak.chat_box.components.MediaItem
 import com.ahmetocak.common.ext.showMessageTime
+import com.ahmetocak.designsystem.components.ChatAppIconButton
+import com.ahmetocak.designsystem.components.ChatAppPlaceableProgressIndicator
 import com.ahmetocak.designsystem.components.ChatAppScaffold
 import com.ahmetocak.designsystem.icons.ChatAppIcons
+import com.ahmetocak.model.ChatGroupParticipants
+import com.ahmetocak.model.LoadingState
 import com.ahmetocak.model.Message
 import com.ahmetocak.model.MessageType
+import com.ahmetocak.ui.ChatItem
+import com.ahmetocak.ui.EditableImage
 import com.ahmetocak.ui.chat_bubble.ChatBubbleAudioItem
 import com.ahmetocak.ui.chat_bubble.ChatBubbleImageItem
 import com.ahmetocak.ui.chat_bubble.ChatBubblePdfItem
@@ -136,24 +158,48 @@ internal fun ChatBoxRoute(
             ChatBoxTopBar(
                 chatBoxTitle = uiState.title,
                 imageUrl = uiState.imageUrl,
-                onEvent = onEvent
+                onEvent = onEvent,
+                screenState = uiState.screenState
             )
         },
         bottomBar = {
-            ChatBoxBottomBar(
-                messageValue = uiState.messageValue,
-                onEvent = onEvent,
-                isAudioRecording = uiState.audioRecordStatus == AudioRecordStatus.RECORDING
-            )
+            if (uiState.screenState is ScreenState.ChatBox) {
+                ChatBoxBottomBar(
+                    messageValue = uiState.messageValue,
+                    onEvent = onEvent,
+                    isAudioRecording = uiState.audioRecordStatus == AudioRecordStatus.RECORDING
+                )
+            }
         }
     ) { paddingValues ->
-        ChatBoxScreen(
-            modifier = Modifier.padding(paddingValues),
-            messageList = messageList,
-            currentUserEmail = uiState.currentUser?.email ?: "",
-            onPlayClick = remember { { onEvent(ChatBoxUiEvent.OnPlayAudioClick(it)) } },
-            isAudioPlaying = uiState.audioPlayStatus == AudioPlayStatus.PLAYING
-        )
+        when (uiState.screenState) {
+            is ScreenState.ChatBox -> {
+                ChatBoxScreen(
+                    modifier = Modifier.padding(paddingValues),
+                    messageList = messageList,
+                    currentUserEmail = uiState.currentUser?.email ?: "",
+                    onPlayClick = remember { { onEvent(ChatBoxUiEvent.OnPlayAudioClick(it)) } },
+                    isAudioPlaying = uiState.audioPlayStatus == AudioPlayStatus.PLAYING
+                )
+            }
+
+            is ScreenState.GroupInfo -> {
+                GroupInfoScreen(
+                    modifier = Modifier.padding(paddingValues),
+                    groupImgUrl = uiState.imageUrl,
+                    groupName = uiState.title,
+                    participantSize = viewModel.groupData.participants.size,
+                    participants = viewModel.groupData.participants,
+                    groupMediaMessages = uiState.mediaMessages,
+                    isMediaMessagesLoading = uiState.mediaMessagesLoadingState == LoadingState.Loading,
+                    onEvent = onEvent
+                )
+            }
+
+            is ScreenState.GroupMedia -> {
+
+            }
+        }
     }
 }
 
@@ -215,9 +261,9 @@ internal fun ChatBoxScreen(
                             time = message.sentAt.showMessageTime(),
                             authorImgUrl = message.senderImgUrl,
                             isComingFromMe = message.isComingFromMe(currentUserEmail),
-                            onClick = remember { {
-                                viewImage(context = context, imageUrl = message.messageContent)
-                            } }
+                            onClick = remember {
+                                { viewImage(context = context, imageUrl = message.messageContent) }
+                            }
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                     }
@@ -266,6 +312,108 @@ private fun AttachSection(onAttachItemClick: (AttachType) -> Unit) {
                         imageVector = it.icon,
                         title = it.title
                     )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun GroupInfoScreen(
+    modifier: Modifier = Modifier,
+    groupImgUrl: String?,
+    groupName: String,
+    participantSize: Int,
+    groupMediaMessages: List<Message>,
+    participants: List<ChatGroupParticipants>,
+    isMediaMessagesLoading: Boolean,
+    onEvent: (ChatBoxUiEvent) -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            EditableImage(imageUrl = groupImgUrl, onPickImageClick = { /*TODO*/ })
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp),
+                text = groupName,
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                textAlign = TextAlign.Center
+            )
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = "Group * $participantSize participant",
+                textAlign = TextAlign.Center
+            )
+        }
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            if (isMediaMessagesLoading) {
+                ChatAppPlaceableProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                )
+            } else {
+                if (groupMediaMessages.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = "Media")
+                        ChatAppIconButton(
+                            onClick = { /*TODO*/ },
+                            imageVector = ChatAppIcons.Default.iosArrowForward
+                        )
+                    }
+                }
+            }
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(groupMediaMessages, key = { it.id }) {
+                    MediaItem(
+                        modifier = Modifier.size(128.dp),
+                        onClick = { /*TODO*/ },
+                        messageContent = it.messageContent,
+                        messageType = it.messageType
+                    )
+                }
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(LocalConfiguration.current.screenHeightDp.dp / 2),
+                    contentPadding = PaddingValues(vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    item {
+                        AddParticipantItem(onEvent = onEvent)
+                    }
+                    items(participants, key = { it.participantEmail }) {
+                        ChatItem(
+                            title = it.participantUsername,
+                            imageUrl = it.participantProfilePicUrl
+                        )
+                    }
+                    item {
+                        LeaveGroupItem(onEvent = onEvent)
+                    }
                 }
             }
         }

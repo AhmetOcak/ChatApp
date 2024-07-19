@@ -25,11 +25,12 @@ internal object KtorChatGroupEndPoints {
 }
 
 internal object KtorMessagesEndPoints {
-    const val GET = "/messages/getMessages/{${Paths.FRIENDSHIP_ID}}/{${Paths.PAGE}}"
+    const val GET = "/messages/getMessages/{${Paths.MESSAGE_BOX_ID}}/{${Paths.PAGE}}"
     const val POST = "/messages/sendMessage"
+    const val GET_MEDIA_MESS = "/messages/getAllMediaMessages/{${Paths.MESSAGE_BOX_ID}}"
 
     internal object Paths {
-        const val FRIENDSHIP_ID = "friendshipId"
+        const val MESSAGE_BOX_ID = "messageBoxId"
         const val PAGE = "page"
     }
 }

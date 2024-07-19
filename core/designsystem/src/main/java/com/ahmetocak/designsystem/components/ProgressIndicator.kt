@@ -38,6 +38,16 @@ fun ChatAppProgressIndicator(modifier: Modifier = Modifier) {
 }
 
 @Composable
+fun ChatAppPlaceableProgressIndicator(modifier: Modifier, alignment: Alignment = Alignment.Center) {
+    Box(
+        modifier = modifier,
+        contentAlignment = alignment
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
 fun ButtonCircularProgressIndicator() {
     CircularProgressIndicator(
         modifier = Modifier.size(24.dp),

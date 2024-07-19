@@ -22,7 +22,7 @@ import com.ahmetocak.designsystem.icons.ChatAppIcons
 fun EditableImage(
     imageUrl: String?,
     onPickImageClick: () -> Unit,
-    isImageUploading: Boolean
+    isImageUploading: Boolean = false
 ) {
     val size = (LocalConfiguration.current.screenWidthDp / 2.5f).dp
 

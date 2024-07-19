@@ -16,6 +16,7 @@ import com.ahmetocak.database.db.UserDatabase
 import com.ahmetocak.model.Message
 import com.ahmetocak.network.api.KtorChatApi
 import com.ahmetocak.network.api.chat.ChatService
+import com.ahmetocak.network.datasource.messages.MessagesRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -24,7 +25,8 @@ class ChatRepositoryImpl @Inject constructor(
     private val chatService: ChatService,
     private val api: KtorChatApi,
     private val db: UserDatabase,
-    private val messageLocalDataSource: MessageLocalDataSource
+    private val messageLocalDataSource: MessageLocalDataSource,
+    private val messagesRemoteDataSource: MessagesRemoteDataSource
 ) : ChatRepository {
 
     override fun sendMessageWithWebSocket(message: Message) {
@@ -54,5 +56,10 @@ class ChatRepositoryImpl @Inject constructor(
 
     override suspend fun addMessage(message: Message): Response<Unit> {
         return messageLocalDataSource.addMessage(messageEntity = message.toMessageEntity())
+    }
+
+    override suspend fun getAllMediaMessages(messageBoxId: Int): Response<List<Message>> {
+        return messagesRemoteDataSource.getAllMediaMessages(messageBoxId)
+            .mapResponse { list -> list.map { it.toMessage() } }
     }
 }

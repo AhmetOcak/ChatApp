@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.ahmetocak.designsystem.components.FilledChatAppIconButton
 
 @Composable
-fun AttachItem(onClick: () -> Unit, imageVector: ImageVector, title: String) {
+internal fun AttachItem(onClick: () -> Unit, imageVector: ImageVector, title: String) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp)

@@ -78,9 +78,14 @@ interface KtorChatApi {
 
     @GET(KtorMessagesEndPoints.GET)
     suspend fun getMessages(
-        @Path(KtorMessagesEndPoints.Paths.FRIENDSHIP_ID) friendShipId: Int,
+        @Path(KtorMessagesEndPoints.Paths.MESSAGE_BOX_ID) messageBoxId: Int,
         @Path(KtorMessagesEndPoints.Paths.PAGE) page: Int
     ): PaginatedNetworkMessage
+
+    @GET(KtorMessagesEndPoints.GET_MEDIA_MESS)
+    suspend fun getAllMediaMessages(
+        @Path(KtorMessagesEndPoints.Paths.MESSAGE_BOX_ID) messageBoxId: Int,
+    ): List<NetworkMessage>
 
     @FormUrlEncoded
     @POST(KtorFcmTokenEndPoints.POST)

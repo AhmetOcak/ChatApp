@@ -7,6 +7,8 @@ import com.ahmetocak.network.datasource.ktor_chat_group.ChatGroupRemoteDataSourc
 import com.ahmetocak.network.datasource.ktor_chat_group.ChatGroupRemoteDataSourceImpl
 import com.ahmetocak.network.datasource.ktor_user.UserRemoteDataSource
 import com.ahmetocak.network.datasource.ktor_user.UserRemoteDataSourceImpl
+import com.ahmetocak.network.datasource.messages.MessagesRemoteDataSource
+import com.ahmetocak.network.datasource.messages.MessagesRemoteDataSourceImpl
 import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
@@ -34,5 +36,11 @@ object DataSourceModule {
     @Provides
     fun provideChatGroupRemoteDataSource(api: KtorChatApi): ChatGroupRemoteDataSource {
         return ChatGroupRemoteDataSourceImpl(api)
+    }
+
+    @Singleton
+    @Provides
+    fun provideMessagesRemoteDataSource(api: KtorChatApi): MessagesRemoteDataSource {
+        return MessagesRemoteDataSourceImpl(api)
     }
 }

@@ -30,7 +30,7 @@ fun ChatItem(
     id: Int = 0,
     title: String,
     imageUrl: String?,
-    onClick: (Int) -> Unit,
+    onClick: (Int) -> Unit = {},
     enabled: Boolean = true
 ) {
     Card(
@@ -44,7 +44,51 @@ fun ChatItem(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()
-                .height(56.dp),
+                .height(CHAT_ITEM_HEIGHT),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            imageUrl?.let { url ->
+                AnimatedNetworkImage(
+                    imageUrl = url,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .size(56.dp)
+                        .clip(CircleShape)
+                )
+            } ?: run {
+                BlankUserImage(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .size(56.dp)
+                        .clip(CircleShape)
+                )
+            }
+            Text(
+                text = title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
+    }
+}
+
+@Composable
+fun ChatItem(
+    title: String,
+    imageUrl: String?
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RectangleShape,
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+                .height(CHAT_ITEM_HEIGHT),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -88,3 +132,5 @@ fun ChatItemPreview() {
         }
     }
 }
+
+val CHAT_ITEM_HEIGHT = 56.dp

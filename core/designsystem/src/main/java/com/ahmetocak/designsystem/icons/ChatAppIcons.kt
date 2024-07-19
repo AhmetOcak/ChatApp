@@ -3,11 +3,14 @@ package com.ahmetocak.designsystem.icons
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.AttachFile
+import androidx.compose.material.icons.filled.AudioFile
 import androidx.compose.material.icons.filled.BrightnessAuto
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Check
@@ -18,7 +21,6 @@ import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.GroupAdd
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
@@ -37,6 +39,8 @@ object ChatAppIcons {
         val send = Icons.AutoMirrored.Default.Send
         val logout = Icons.AutoMirrored.Default.Logout
         val arrowForward = Icons.AutoMirrored.Filled.ArrowForward
+        val iosArrowForward = Icons.AutoMirrored.Filled.ArrowForwardIos
+        val exitToApp = Icons.AutoMirrored.Filled.ExitToApp
     }
 
     object Filled {
@@ -53,7 +57,6 @@ object ChatAppIcons {
         val play = Icons.Filled.PlayArrow
         val gallery = Icons.Filled.PhotoLibrary
         val document = Icons.Filled.Description
-        val location = Icons.Filled.LocationOn
         val capture = Icons.Filled.Circle
         val darkMode = Icons.Filled.DarkMode
         val brightnessAuto = Icons.Filled.BrightnessAuto
@@ -63,6 +66,7 @@ object ChatAppIcons {
         val ok = Icons.Filled.Check
         val cancel = Icons.Filled.Cancel
         val search = Icons.Filled.Search
+        val audioFile = Icons.Filled.AudioFile
     }
 
     object Outlined {

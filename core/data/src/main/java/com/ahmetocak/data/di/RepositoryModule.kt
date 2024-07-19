@@ -17,6 +17,7 @@ import com.ahmetocak.network.api.chat.ChatService
 import com.ahmetocak.network.datasource.firebase.storage.StorageRemoteDataSource
 import com.ahmetocak.network.datasource.ktor_chat_group.ChatGroupRemoteDataSource
 import com.ahmetocak.network.datasource.ktor_user.UserRemoteDataSource
+import com.ahmetocak.network.datasource.messages.MessagesRemoteDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,9 +34,16 @@ object RepositoryModule {
         chatService: ChatService,
         api: KtorChatApi,
         db: UserDatabase,
-        messageLocalDataSource: MessageLocalDataSource
+        messageLocalDataSource: MessageLocalDataSource,
+        messagesRemoteDataSource: MessagesRemoteDataSource
     ): ChatRepository {
-        return ChatRepositoryImpl(chatService, api, db, messageLocalDataSource)
+        return ChatRepositoryImpl(
+            chatService,
+            api,
+            db,
+            messageLocalDataSource,
+            messagesRemoteDataSource
+        )
     }
 
     @Singleton

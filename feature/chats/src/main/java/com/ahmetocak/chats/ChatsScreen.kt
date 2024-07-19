@@ -184,7 +184,10 @@ private fun ChatsScreen(
                     id = chat.id,
                     title = chat.name,
                     imageUrl = chat.imageUrl,
-                    onClick = remember { { onEvent(ChatsUiEvent.OnChatItemClick(chat)) } }
+                    onClick = remember { {
+                        val participants = chat.participants.filter { it.groupId == chat.id }
+                        onEvent(ChatsUiEvent.OnChatItemClick(chat.copy(participants = participants)))
+                    } }
                 )
             }
         }
@@ -321,8 +324,7 @@ private fun CreateGroupSection(
         ) {
             EditableImage(
                 imageUrl = groupImgUri.toString(),
-                onPickImageClick = onPickImageClick,
-                isImageUploading = false
+                onPickImageClick = onPickImageClick
             )
             ChatAppFilledTextField(
                 modifier = Modifier.fillMaxWidth(),
