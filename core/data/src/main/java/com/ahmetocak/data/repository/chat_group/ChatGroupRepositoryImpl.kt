@@ -66,9 +66,7 @@ class ChatGroupRepositoryImpl @Inject constructor(
                     participants.forEach {
                         addParticipantToChatGroup(
                             groupId = data.id,
-                            participantEmail = it.participantEmail,
-                            participantUsername = it.participantUsername,
-                            participantProfilePicUrl = it.participantProfilePicUrl
+                            participantEmail = it.participantEmail
                         )
                     }
                 }
@@ -115,27 +113,24 @@ class ChatGroupRepositoryImpl @Inject constructor(
 
     override suspend fun addParticipantToChatGroup(
         groupId: Int,
-        participantEmail: String,
-        participantUsername: String,
-        participantProfilePicUrl: String?
+        participantEmail: String
     ): Response<Unit> {
-        return when (val response = remoteDataSource.addParticipantToChatGroup(
-            groupId,
-            participantEmail,
-            participantUsername,
-            participantProfilePicUrl
-        )) {
+        return when (val response =
+            remoteDataSource.addParticipantToChatGroup(groupId, participantEmail)) {
             is Response.Success -> {
-                localDataSource.insertChatGroupParticipants(
-                    chatGroupParticipantsEntity = ChatGroupParticipantsEntity(
-                        groupId = groupId,
-                        username = participantUsername,
-                        email = participantEmail,
-                        profileImgUrl = participantProfilePicUrl
+                with(response.data) {
+                    localDataSource.insertChatGroupParticipants(
+                        chatGroupParticipantsEntity = ChatGroupParticipantsEntity(
+                            groupId = groupId,
+                            username = username,
+                            email = email,
+                            profileImgUrl = profilePicUrl
+                        )
                     )
-                )
+                }
                 return Response.Success(Unit)
             }
+
             is Response.Error -> Response.Error(response.errorMessage)
         }
     }

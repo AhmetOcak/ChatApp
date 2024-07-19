@@ -20,10 +20,5 @@ interface ChatGroupRepository {
     ): Response<Unit>
     suspend fun getGroups(userEmail: String): Response<Unit>
     suspend fun observeGroups(): Flow<List<ChatGroup>>
-    suspend fun addParticipantToChatGroup(
-        groupId: Int,
-        participantEmail: String,
-        participantUsername: String,
-        participantProfilePicUrl: String?
-    ): Response<Unit>
+    suspend fun addParticipantToChatGroup(groupId: Int, participantEmail: String): Response<Unit>
 }

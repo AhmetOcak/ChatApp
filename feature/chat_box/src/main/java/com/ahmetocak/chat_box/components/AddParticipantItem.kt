@@ -23,7 +23,7 @@ internal fun AddParticipantItem(onEvent: (ChatBoxUiEvent) -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(onClick = {})
+                .clickable(onClick = { onEvent(ChatBoxUiEvent.ShowAddParticipantView) })
                 .padding(16.dp)
                 .height(CHAT_ITEM_HEIGHT),
             verticalAlignment = Alignment.CenterVertically,

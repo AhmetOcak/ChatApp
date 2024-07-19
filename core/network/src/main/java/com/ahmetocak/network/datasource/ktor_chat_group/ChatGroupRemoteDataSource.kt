@@ -2,6 +2,7 @@ package com.ahmetocak.network.datasource.ktor_chat_group
 
 import com.ahmetocak.common.Response
 import com.ahmetocak.network.model.NetworkChatGroup
+import com.ahmetocak.network.model.NetworkUser
 
 interface ChatGroupRemoteDataSource {
     suspend fun createPrivateGroup(
@@ -20,8 +21,6 @@ interface ChatGroupRemoteDataSource {
     suspend fun getGroups(userEmail: String): Response<List<NetworkChatGroup>>
     suspend fun addParticipantToChatGroup(
         groupId: Int,
-        participantEmail: String,
-        participantUsername: String,
-        participantProfilePicUrl: String?
-    ): Response<Unit>
+        participantEmail: String
+    ): Response<NetworkUser>
 }

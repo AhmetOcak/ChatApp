@@ -3,7 +3,6 @@ package com.ahmetocak.chat_box
 import android.content.Context
 import android.net.Uri
 import androidx.paging.PagingData
-import com.ahmetocak.model.ChatGroup
 import com.ahmetocak.model.LoadingState
 import com.ahmetocak.model.Message
 import com.ahmetocak.model.MessageType
@@ -14,6 +13,7 @@ import kotlinx.coroutines.flow.emptyFlow
 data class ChatBoxUiState(
     val screenState: ScreenState = ScreenState.ChatBox,
     val messageValue: String = "",
+    val parEmailVal: String = "",
     val messageList: Flow<PagingData<Message>> = emptyFlow(),
     val title: String = "",
     val imageUrl: String? = null,
@@ -22,7 +22,7 @@ data class ChatBoxUiState(
     val audioPlayStatus: AudioPlayStatus = AudioPlayStatus.IDLE,
     val showAttachMenu: Boolean = false,
     val mediaMessages: List<Message> = emptyList(),
-    val mediaMessagesLoadingState: LoadingState = LoadingState.Loading
+    val loadingState: LoadingState = LoadingState.Loading
 )
 
 sealed class ChatBoxUiEvent {
@@ -42,8 +42,12 @@ sealed class ChatBoxUiEvent {
     data class OnPlayAudioClick(val audioUrl: Uri) : ChatBoxUiEvent()
     data class OnSendImageClick(val imageUri: Uri) : ChatBoxUiEvent()
     data class OnSendDocClick(val docUri: Uri) : ChatBoxUiEvent()
-    data object OnGroupInfoClicked : ChatBoxUiEvent()
-    data object OnGroupMediaClicked : ChatBoxUiEvent()
+    data object OnGroupInfoClick : ChatBoxUiEvent()
+    data object OnGroupMediaClick : ChatBoxUiEvent()
+    data class UpdateGroupImage(val uri: Uri) : ChatBoxUiEvent()
+    data object ShowAddParticipantView  : ChatBoxUiEvent()
+    data object OnAddParticipantClick : ChatBoxUiEvent()
+    data class OnParticipantValChange(val value: String) : ChatBoxUiEvent()
 }
 
 sealed class NavigationState {
@@ -73,4 +77,5 @@ sealed interface ScreenState {
     data object ChatBox : ScreenState
     data object GroupInfo : ScreenState
     data object GroupMedia : ScreenState
+    data object AddParticipant : ScreenState
 }

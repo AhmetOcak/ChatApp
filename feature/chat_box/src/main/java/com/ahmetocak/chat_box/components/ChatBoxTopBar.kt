@@ -47,6 +47,7 @@ internal fun ChatBoxTopBar(
 
                 is ScreenState.GroupInfo -> Text(text = "Group Info")
                 is ScreenState.GroupMedia -> Text(text = "Group Media")
+                is ScreenState.AddParticipant -> Text(text = "Add Participant")
             }
         },
         actions = {
@@ -63,13 +64,13 @@ internal fun ChatBoxTopBar(
                     DropdownMenuItem(
                         text = { Text(text = "Group Info") },
                         onClick = {
-                            onEvent(ChatBoxUiEvent.OnGroupInfoClicked)
+                            onEvent(ChatBoxUiEvent.OnGroupInfoClick)
                             isExpanded = false
                         })
                     DropdownMenuItem(
                         text = { Text(text = "Group Media") },
                         onClick = {
-                            onEvent(ChatBoxUiEvent.OnGroupMediaClicked)
+                            onEvent(ChatBoxUiEvent.OnGroupMediaClick)
                             isExpanded = false
                         })
                 }

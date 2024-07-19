@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,6 +25,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -59,8 +60,11 @@ import com.ahmetocak.chat_box.components.ChatBoxTopBar
 import com.ahmetocak.chat_box.components.LeaveGroupItem
 import com.ahmetocak.chat_box.components.MediaItem
 import com.ahmetocak.common.ext.showMessageTime
+import com.ahmetocak.designsystem.components.ChatAppButton
 import com.ahmetocak.designsystem.components.ChatAppIconButton
+import com.ahmetocak.designsystem.components.ChatAppOutlinedTextField
 import com.ahmetocak.designsystem.components.ChatAppPlaceableProgressIndicator
+import com.ahmetocak.designsystem.components.ChatAppProgressIndicator
 import com.ahmetocak.designsystem.components.ChatAppScaffold
 import com.ahmetocak.designsystem.icons.ChatAppIcons
 import com.ahmetocak.model.ChatGroupParticipants
@@ -191,7 +195,7 @@ internal fun ChatBoxRoute(
                     participantSize = viewModel.groupData.participants.size,
                     participants = viewModel.groupData.participants,
                     groupMediaMessages = uiState.mediaMessages,
-                    isMediaMessagesLoading = uiState.mediaMessagesLoadingState == LoadingState.Loading,
+                    isMediaMessagesLoading = uiState.loadingState == LoadingState.Loading,
                     onEvent = onEvent
                 )
             }
@@ -199,12 +203,21 @@ internal fun ChatBoxRoute(
             is ScreenState.GroupMedia -> {
 
             }
+
+            is ScreenState.AddParticipant -> {
+                AddParticipantScreen(
+                    modifier = Modifier.padding(paddingValues),
+                    onEvent = onEvent,
+                    participantVal = uiState.parEmailVal,
+                    isLoading = uiState.loadingState == LoadingState.Loading
+                )
+            }
         }
     }
 }
 
 @Composable
-internal fun ChatBoxScreen(
+private fun ChatBoxScreen(
     modifier: Modifier = Modifier,
     messageList: LazyPagingItems<Message>,
     currentUserEmail: String,
@@ -329,6 +342,14 @@ private fun GroupInfoScreen(
     isMediaMessagesLoading: Boolean,
     onEvent: (ChatBoxUiEvent) -> Unit
 ) {
+    val pickMediaLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) {
+            onEvent(ChatBoxUiEvent.UpdateGroupImage(uri))
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -341,7 +362,14 @@ private fun GroupInfoScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            EditableImage(imageUrl = groupImgUrl, onPickImageClick = { /*TODO*/ })
+            EditableImage(
+                imageUrl = groupImgUrl,
+                onPickImageClick = remember { {
+                    pickMediaLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                } }
+            )
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -374,7 +402,7 @@ private fun GroupInfoScreen(
                     ) {
                         Text(text = "Media")
                         ChatAppIconButton(
-                            onClick = { /*TODO*/ },
+                            onClick = remember { { onEvent(ChatBoxUiEvent.OnGroupMediaClick) } },
                             imageVector = ChatAppIcons.Default.iosArrowForward
                         )
                     }
@@ -415,6 +443,43 @@ private fun GroupInfoScreen(
                         LeaveGroupItem(onEvent = onEvent)
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AddParticipantScreen(
+    modifier: Modifier = Modifier,
+    onEvent: (ChatBoxUiEvent) -> Unit,
+    participantVal: String,
+    isLoading: Boolean
+) {
+    if (isLoading) {
+        ChatAppProgressIndicator(modifier)
+    } else {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.End
+        ) {
+            ChatAppOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = participantVal,
+                onValueChange = { onEvent(ChatBoxUiEvent.OnParticipantValChange(it)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                label = {
+                    Text(text = "Participant Email")
+                }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            ChatAppButton(
+                onClick = remember { { onEvent(ChatBoxUiEvent.OnAddParticipantClick) } },
+                enabled = participantVal.isNotBlank()
+            ) {
+                Text(text = "Add Participant")
             }
         }
     }

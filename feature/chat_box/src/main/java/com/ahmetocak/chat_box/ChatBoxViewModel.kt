@@ -1,5 +1,6 @@
 package com.ahmetocak.chat_box
 
+import android.net.Uri
 import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -17,6 +18,7 @@ import com.ahmetocak.domain.usecase.chat.AddMessageUseCase
 import com.ahmetocak.domain.usecase.chat.GetAllMediaMessagesUseCase
 import com.ahmetocak.domain.usecase.chat.GetMessagesUseCase
 import com.ahmetocak.domain.usecase.chat.SendMessageUseCase
+import com.ahmetocak.domain.usecase.chat_group.AddParticipantToGroupUseCase
 import com.ahmetocak.domain.usecase.firebase.storage.UploadAudioFileUseCase
 import com.ahmetocak.domain.usecase.firebase.storage.UploadDocFileUseCase
 import com.ahmetocak.domain.usecase.firebase.storage.UploadImageFileUseCase
@@ -49,6 +51,7 @@ class ChatBoxViewModel @Inject constructor(
     private val uploadImageFileUseCase: UploadImageFileUseCase,
     private val uploadDocFileUseCase: UploadDocFileUseCase,
     private val getAllMediaMessagesUseCase: GetAllMediaMessagesUseCase,
+    private val addParticipantToGroupUseCase: AddParticipantToGroupUseCase,
     private val ioDispatcher: CoroutineDispatcher,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -165,6 +168,9 @@ class ChatBoxViewModel @Inject constructor(
                     is ScreenState.ChatBox -> _navigationState.update { NavigationState.Back }
                     is ScreenState.GroupInfo -> _uiState.update { it.copy(screenState = ScreenState.ChatBox) }
                     is ScreenState.GroupMedia -> _uiState.update { it.copy(screenState = ScreenState.ChatBox) }
+                    is ScreenState.AddParticipant -> _uiState.update {
+                        it.copy(parEmailVal = "", screenState = ScreenState.GroupInfo)
+                    }
                 }
             }
 
@@ -221,17 +227,29 @@ class ChatBoxViewModel @Inject constructor(
                 _uiState.update { it.copy(showAttachMenu = false) }
             }
 
-            is ChatBoxUiEvent.OnGroupInfoClicked -> {
+            is ChatBoxUiEvent.OnGroupInfoClick -> {
                 _uiState.update {
                     it.copy(screenState = ScreenState.GroupInfo)
                 }
                 getMediaMessages()
             }
 
-            is ChatBoxUiEvent.OnGroupMediaClicked -> {
+            is ChatBoxUiEvent.OnGroupMediaClick -> {
                 _uiState.update {
                     it.copy(screenState = ScreenState.GroupMedia)
                 }
+                getMediaMessages()
+            }
+
+            is ChatBoxUiEvent.UpdateGroupImage -> updateGroupImage(event.uri)
+
+            is ChatBoxUiEvent.OnAddParticipantClick -> addParticipant()
+            is ChatBoxUiEvent.ShowAddParticipantView -> _uiState.update {
+                it.copy(screenState = ScreenState.AddParticipant)
+            }
+
+            is ChatBoxUiEvent.OnParticipantValChange -> {
+                _uiState.update { it.copy(parEmailVal = event.value) }
             }
         }
     }
@@ -293,17 +311,34 @@ class ChatBoxViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             mediaMessages = response.data,
-                            mediaMessagesLoadingState = LoadingState.Idle
+                            loadingState = LoadingState.Idle
                         )
                     }
                 }
 
                 is Response.Error -> {
-                    _uiState.update { it.copy(mediaMessagesLoadingState = LoadingState.Idle) }
+                    _uiState.update { it.copy(loadingState = LoadingState.Idle) }
                     SnackbarManager.showMessage(response.errorMessage)
                 }
             }
         }
+    }
+
+    private fun addParticipant() {
+        _uiState.update { it.copy(loadingState = LoadingState.Loading) }
+        viewModelScope.launch(ioDispatcher) {
+            when (val response = addParticipantToGroupUseCase(groupData.id, uiState.value.parEmailVal)) {
+                is Response.Success -> _uiState.update { it.copy(loadingState = LoadingState.Idle) }
+                is Response.Error -> {
+                    _uiState.update { it.copy(loadingState = LoadingState.Idle) }
+                    SnackbarManager.showMessage(response.errorMessage)
+                }
+            }
+        }
+    }
+
+    private fun updateGroupImage(uri: Uri) {
+        TODO("Not yet implemented")
     }
 
     fun resetNavigation() {

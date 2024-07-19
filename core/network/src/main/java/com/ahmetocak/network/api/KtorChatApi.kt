@@ -71,10 +71,8 @@ interface KtorChatApi {
     @PUT(KtorChatGroupEndPoints.ADD_PARTICIPANT)
     suspend fun addParticipantToChatGroup(
         @Field("groupId") groupId: Int,
-        @Field("participantEmail") participantEmail: String,
-        @Field("participantUsername") participantUsername: String,
-        @Field("participantProfilePicUrl") participantProfilePicUrl: String?
-    )
+        @Field("participantEmail") participantEmail: String
+    ): NetworkUser
 
     @GET(KtorMessagesEndPoints.GET)
     suspend fun getMessages(

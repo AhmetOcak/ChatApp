@@ -4,6 +4,7 @@ import com.ahmetocak.common.Response
 import com.ahmetocak.network.api.KtorChatApi
 import com.ahmetocak.network.helper.apiCall
 import com.ahmetocak.network.model.NetworkChatGroup
+import com.ahmetocak.network.model.NetworkUser
 import javax.inject.Inject
 
 class ChatGroupRemoteDataSourceImpl @Inject constructor(
@@ -40,16 +41,12 @@ class ChatGroupRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun addParticipantToChatGroup(
         groupId: Int,
-        participantEmail: String,
-        participantUsername: String,
-        participantProfilePicUrl: String?
-    ): Response<Unit> {
+        participantEmail: String
+    ): Response<NetworkUser> {
         return apiCall {
             api.addParticipantToChatGroup(
                 groupId = groupId,
-                participantUsername = participantUsername,
                 participantEmail = participantEmail,
-                participantProfilePicUrl = participantProfilePicUrl
             )
         }
     }
