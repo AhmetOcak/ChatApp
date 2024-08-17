@@ -10,9 +10,8 @@ internal fun List<NetworkMessage>.toListMessageEntity(): List<MessageEntity> {
     return this.map {
         MessageEntity(
             id = it.id,
-            friendshipId = it.friendshipId,
+            messageBoxId = it.messageBoxId,
             senderEmail = it.senderEmail,
-            receiverEmail = it.receiverEmail,
             messageContent = it.messageContent,
             sentAt = it.sentAt,
             senderImgUrl = it.senderImgUrl,
@@ -25,9 +24,8 @@ internal fun List<NetworkMessage>.toListMessageEntity(): List<MessageEntity> {
 internal fun MessageEntity.toMessage(): Message {
     return Message(
         id = id,
-        friendshipId = friendshipId,
+        messageBoxId = messageBoxId,
         senderEmail = senderEmail,
-        receiverEmail = receiverEmail,
         messageContent = messageContent,
         sentAt = sentAt,
         senderImgUrl = senderImgUrl,
@@ -39,9 +37,8 @@ internal fun MessageEntity.toMessage(): Message {
 internal fun Message.toMessageEntity(): MessageEntity {
     return MessageEntity(
         id = id,
-        friendshipId = friendshipId,
+        messageBoxId = messageBoxId,
         senderEmail = senderEmail,
-        receiverEmail = receiverEmail,
         messageContent = messageContent,
         sentAt = sentAt,
         senderImgUrl = senderImgUrl,
@@ -53,9 +50,8 @@ internal fun Message.toMessageEntity(): MessageEntity {
 internal fun Message.toNetworkMessage(): NetworkMessage {
     return NetworkMessage(
         id = id,
-        friendshipId = friendshipId,
+        messageBoxId = messageBoxId,
         senderEmail = senderEmail,
-        receiverEmail = receiverEmail,
         messageContent = messageContent,
         sentAt = sentAt,
         senderImgUrl = senderImgUrl,
@@ -67,9 +63,8 @@ internal fun Message.toNetworkMessage(): NetworkMessage {
 internal fun NetworkMessage.toMessage(): Message {
     return Message(
         id = id,
-        friendshipId = friendshipId,
+        messageBoxId = messageBoxId,
         senderEmail = senderEmail,
-        receiverEmail = receiverEmail,
         messageContent = messageContent,
         sentAt = sentAt,
         senderImgUrl = senderImgUrl,

@@ -74,7 +74,8 @@ fun AnimatedNetworkImage(
 @Composable
 fun NetworkImage(
     modifier: Modifier = Modifier,
-    imageUrl: String
+    imageUrl: String,
+    contentScale: ContentScale = ContentScale.Fit
 ) {
     val painter = rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
@@ -93,7 +94,8 @@ fun NetworkImage(
                 Image(
                     modifier = modifier,
                     painter = painter,
-                    contentDescription = null
+                    contentDescription = null,
+                    contentScale = contentScale
                 )
             }
         }

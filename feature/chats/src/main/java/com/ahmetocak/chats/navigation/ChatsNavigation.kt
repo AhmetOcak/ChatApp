@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.ahmetocak.chats.ChatsRoute
+import com.ahmetocak.model.ChatGroup
 
 const val CHATS_ROUTE = "chats_route"
 
@@ -12,7 +13,7 @@ fun NavHostController.navigateToChats(navOptions: NavOptions? = null) =
     navigate(CHATS_ROUTE, navOptions)
 
 fun NavGraphBuilder.chatsScreen(
-    onNavigateToChatBox: (Int, String?, String?, String?) -> Unit,
+    onNavigateToChatBox: (ChatGroup) -> Unit,
     onNavigateSettings: () -> Unit
 ) {
     composable(CHATS_ROUTE) {

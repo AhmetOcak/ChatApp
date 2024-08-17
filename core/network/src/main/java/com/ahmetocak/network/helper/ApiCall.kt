@@ -1,5 +1,6 @@
 package com.ahmetocak.network.helper
 
+import android.util.Log
 import com.ahmetocak.common.Response
 import com.ahmetocak.common.UiText
 import java.io.IOException
@@ -19,6 +20,7 @@ suspend inline fun <T> apiCall(crossinline call: suspend () -> T): Response<T> {
     } catch (e: IOException) {
         Response.Error(errorMessage = UiText.DynamicString(e.stackTraceToString()))
     } catch (e: Exception) {
+        Log.e("API_CALL", e.stackTraceToString())
         Response.Error(errorMessage = e.message?.let { message ->
             UiText.DynamicString(message)
         } ?: UiText.DynamicString("Something went wrong"))

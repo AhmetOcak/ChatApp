@@ -2,21 +2,22 @@ package com.ahmetocak.data.di
 
 import com.ahmetocak.data.repository.chat.ChatRepository
 import com.ahmetocak.data.repository.chat.ChatRepositoryImpl
+import com.ahmetocak.data.repository.chat_group.ChatGroupRepository
+import com.ahmetocak.data.repository.chat_group.ChatGroupRepositoryImpl
 import com.ahmetocak.data.repository.firebase.storage.StorageRepository
 import com.ahmetocak.data.repository.firebase.storage.StorageRepositoryImpl
-import com.ahmetocak.data.repository.friend.FriendRepository
-import com.ahmetocak.data.repository.friend.FriendRepositoryImpl
 import com.ahmetocak.data.repository.user.UserRepository
 import com.ahmetocak.data.repository.user.UserRepositoryImpl
-import com.ahmetocak.database.datasource.friend.FriendLocalDataSource
+import com.ahmetocak.database.datasource.chat_group.ChatGroupLocalDataSource
 import com.ahmetocak.database.datasource.message.MessageLocalDataSource
 import com.ahmetocak.database.datasource.user.UserLocalDataSource
 import com.ahmetocak.database.db.UserDatabase
 import com.ahmetocak.network.api.KtorChatApi
 import com.ahmetocak.network.api.chat.ChatService
 import com.ahmetocak.network.datasource.firebase.storage.StorageRemoteDataSource
-import com.ahmetocak.network.datasource.ktor_friend.FriendRemoteDataSource
+import com.ahmetocak.network.datasource.ktor_chat_group.ChatGroupRemoteDataSource
 import com.ahmetocak.network.datasource.ktor_user.UserRemoteDataSource
+import com.ahmetocak.network.datasource.messages.MessagesRemoteDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,9 +34,16 @@ object RepositoryModule {
         chatService: ChatService,
         api: KtorChatApi,
         db: UserDatabase,
-        messageLocalDataSource: MessageLocalDataSource
+        messageLocalDataSource: MessageLocalDataSource,
+        messagesRemoteDataSource: MessagesRemoteDataSource
     ): ChatRepository {
-        return ChatRepositoryImpl(chatService, api, db, messageLocalDataSource)
+        return ChatRepositoryImpl(
+            chatService,
+            api,
+            db,
+            messageLocalDataSource,
+            messagesRemoteDataSource
+        )
     }
 
     @Singleton
@@ -60,10 +68,10 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideFriendRepository(
-        friendRemoteDataSource: FriendRemoteDataSource,
-        friendLocalDataSource: FriendLocalDataSource
-    ): FriendRepository {
-        return FriendRepositoryImpl(friendRemoteDataSource, friendLocalDataSource)
+    fun provideChatGroupRepository(
+        localDataSource: ChatGroupLocalDataSource,
+        remoteDataSource: ChatGroupRemoteDataSource
+    ): ChatGroupRepository {
+        return ChatGroupRepositoryImpl(remoteDataSource, localDataSource)
     }
 }

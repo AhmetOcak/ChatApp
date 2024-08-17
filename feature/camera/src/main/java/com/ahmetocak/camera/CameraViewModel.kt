@@ -4,8 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmetocak.camera.capture_img.CameraController
-import com.ahmetocak.camera.navigation.FRIENDSHIP_ID
-import com.ahmetocak.camera.navigation.RECEIVER_EMAIL
+import com.ahmetocak.camera.navigation.MESSAGE_BOX_ID
 import com.ahmetocak.camera.navigation.SENDER_EMAIL
 import com.ahmetocak.camera.navigation.SENDER_IMG_URL
 import com.ahmetocak.camera.navigation.SENDER_USERNAME
@@ -36,16 +35,14 @@ class CameraViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(CameraUiState())
     val uiState: StateFlow<CameraUiState> = _uiState.asStateFlow()
 
-    private var friendshipId: Int? = null
+    private var messageBoxId: Int? = null
     private var senderEmail: String? = null
-    private var receiverEmail: String? = null
     private var senderImgUrl: String? = null
     private var senderUsername: String? = null
 
     init {
-        friendshipId = savedStateHandle.get<String>(FRIENDSHIP_ID)?.toInt()
+        messageBoxId = savedStateHandle.get<String>(MESSAGE_BOX_ID)?.toInt()
         senderEmail = savedStateHandle.get<String>(SENDER_EMAIL)
-        receiverEmail = savedStateHandle.get<String>(RECEIVER_EMAIL)
         senderImgUrl = savedStateHandle.get<String>(SENDER_IMG_URL)
         senderUsername = savedStateHandle.get<String>(SENDER_USERNAME)
     }
@@ -69,10 +66,7 @@ class CameraViewModel @Inject constructor(
             }
 
             is CameraUiEvent.OnSendImageClick -> {
-                if (senderEmail.isNullOrBlank() ||
-                    receiverEmail.isNullOrBlank() ||
-                    senderUsername.isNullOrBlank()
-                ) {
+                if (senderEmail.isNullOrBlank() || senderUsername.isNullOrBlank()) {
                     SnackbarManager.showMessage(
                         UiText.DynamicString("Something went wrong! Please try again later.")
                     )
@@ -86,12 +80,11 @@ class CameraViewModel @Inject constructor(
                                 sendMessageUseCase(
                                     message = Message(
                                         senderEmail = senderEmail!!,
-                                        receiverEmail = receiverEmail!!,
                                         messageContent = it.toString(),
                                         senderImgUrl = senderImgUrl,
                                         senderUsername = senderUsername!!,
                                         messageType = MessageType.IMAGE,
-                                        friendshipId = friendshipId!!
+                                        messageBoxId = messageBoxId!!
                                     ),
                                     onFailure = SnackbarManager::showMessage
                                 )

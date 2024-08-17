@@ -13,21 +13,25 @@ internal object KtorUserEndpoints {
     }
 }
 
-internal object KtorFriendEndPoints {
-    const val GET = "/friend/getFriends/{${Paths.USER_EMAIL}}"
-    const val POST = "/friend/create"
+internal object KtorChatGroupEndPoints {
+    const val CREATE_PRIVATE_GROUP = "/chatGroup/createPrivateGroup"
+    const val CREATE_GROUP = "/chatGroup/createGroup"
+    const val ADD_PARTICIPANT = "/chatGroup/addParticipant"
+    const val GET = "/chatGroup/getGroups/{${Path.USER_EMAIL}}"
+    const val UPDATE_GROUP_IMG = "/chatGroup/updateGroupImage"
 
-    internal object Paths {
+    internal object Path {
         const val USER_EMAIL = "userEmail"
     }
 }
 
 internal object KtorMessagesEndPoints {
-    const val GET = "/messages/getMessages/{${Paths.FRIENDSHIP_ID}}/{${Paths.PAGE}}"
+    const val GET = "/messages/getMessages/{${Paths.MESSAGE_BOX_ID}}/{${Paths.PAGE}}"
     const val POST = "/messages/sendMessage"
+    const val GET_MEDIA_MESS = "/messages/getAllMediaMessages/{${Paths.MESSAGE_BOX_ID}}"
 
     internal object Paths {
-        const val FRIENDSHIP_ID = "friendshipId"
+        const val MESSAGE_BOX_ID = "messageBoxId"
         const val PAGE = "page"
     }
 }

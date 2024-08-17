@@ -46,7 +46,7 @@ class MessagesRemoteMediator(
 
             val response = api.getMessages(
                 page = page,
-                friendShipId = friendshipId
+                messageBoxId = friendshipId
             )
 
             userDb.withTransaction {

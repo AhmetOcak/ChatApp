@@ -1,6 +1,5 @@
 package com.ahmetocak.designsystem.components
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,16 +26,24 @@ fun ChatAppGreyProgressIndicator(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ChatAppProgressIndicator(modifier: Modifier = Modifier, visible: Boolean) {
+fun ChatAppProgressIndicator(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxSize()
             .zIndex(2f),
         contentAlignment = Alignment.Center
     ) {
-        AnimatedVisibility(visible = visible) {
-            CircularProgressIndicator()
-        }
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun ChatAppPlaceableProgressIndicator(modifier: Modifier, alignment: Alignment = Alignment.Center) {
+    Box(
+        modifier = modifier,
+        contentAlignment = alignment
+    ) {
+        CircularProgressIndicator()
     }
 }
 

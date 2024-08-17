@@ -1,6 +1,6 @@
 package com.ahmetocak.database.di
 
-import com.ahmetocak.database.dao.FriendDao
+import com.ahmetocak.database.dao.ChatGroupDao
 import com.ahmetocak.database.dao.MessageDao
 import com.ahmetocak.database.dao.RemoteKeyDao
 import com.ahmetocak.database.dao.UserDao
@@ -23,8 +23,8 @@ object DaoModule {
 
     @Singleton
     @Provides
-    fun provideFriendDao(userDatabase: UserDatabase): FriendDao {
-        return userDatabase.friendDao()
+    fun provideChatGroupDao(userDatabase: UserDatabase): ChatGroupDao {
+        return userDatabase.chatGroupDao()
     }
 
     @Singleton

@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -11,12 +13,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.ahmetocak.chat_box.ChatBoxUiEvent
+import com.ahmetocak.chat_box.ScreenState
 import com.ahmetocak.designsystem.components.AnimatedNetworkImage
 import com.ahmetocak.designsystem.components.ChatAppIconButton
 import com.ahmetocak.designsystem.icons.ChatAppIcons
@@ -27,44 +33,81 @@ import com.ahmetocak.ui.BlankUserImage
 internal fun ChatBoxTopBar(
     chatBoxTitle: String,
     imageUrl: String?,
-    onEvent: (ChatBoxUiEvent) -> Unit
+    onEvent: (ChatBoxUiEvent) -> Unit,
+    screenState: ScreenState
 ) {
+    var isExpanded by remember { mutableStateOf(false) }
+
     TopAppBar(
         title = {
-            Text(text = chatBoxTitle, style = MaterialTheme.typography.titleMedium)
+            when (screenState) {
+                is ScreenState.ChatBox -> {
+                    Text(text = chatBoxTitle, style = MaterialTheme.typography.titleMedium)
+                }
+
+                is ScreenState.GroupInfo -> Text(text = "Group Info")
+                is ScreenState.GroupMedia -> Text(text = "Group Media")
+                is ScreenState.AddParticipant -> Text(text = "Add Participant")
+            }
         },
         actions = {
-            ChatAppIconButton(
-                onClick = remember { { onEvent(ChatBoxUiEvent.OnCameraClick) } },
-                imageVector = ChatAppIcons.Outlined.camera
-            )
-            ChatAppIconButton(
-                onClick = remember { { onEvent(ChatBoxUiEvent.OnMenuClick) } },
-                imageVector = ChatAppIcons.Filled.moreVert
-            )
+            if (screenState is ScreenState.ChatBox) {
+                ChatAppIconButton(
+                    onClick = remember { { onEvent(ChatBoxUiEvent.OnCameraClick) } },
+                    imageVector = ChatAppIcons.Outlined.camera
+                )
+                ChatAppIconButton(
+                    onClick = remember { { isExpanded = true } },
+                    imageVector = ChatAppIcons.Filled.moreVert
+                )
+                DropdownMenu(expanded = isExpanded, onDismissRequest = { isExpanded = false }) {
+                    DropdownMenuItem(
+                        text = { Text(text = "Group Info") },
+                        onClick = {
+                            onEvent(ChatBoxUiEvent.OnGroupInfoClick)
+                            isExpanded = false
+                        })
+                    DropdownMenuItem(
+                        text = { Text(text = "Group Media") },
+                        onClick = {
+                            onEvent(ChatBoxUiEvent.OnGroupMediaClick)
+                            isExpanded = false
+                        })
+                }
+            }
         },
         navigationIcon = {
-            Surface(
-                onClick = remember { { onEvent(ChatBoxUiEvent.OnBackClick) } },
-                shape = RoundedCornerShape(20)
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(imageVector = ChatAppIcons.Default.arrowBack, contentDescription = null)
-                    imageUrl?.let { url ->
-                        AnimatedNetworkImage(
-                            imageUrl = url,
-                            modifier = Modifier
-                                .size(48.dp)
-                                .clip(CircleShape)
+            if (screenState is ScreenState.ChatBox) {
+                Surface(
+                    onClick = remember { { onEvent(ChatBoxUiEvent.OnBackClick) } },
+                    shape = RoundedCornerShape(20)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = ChatAppIcons.Default.arrowBack,
+                            contentDescription = null
                         )
-                    } ?: run {
-                        BlankUserImage(
-                            Modifier
-                                .size(48.dp)
-                                .clip(CircleShape)
-                        )
+                        imageUrl?.let { url ->
+                            AnimatedNetworkImage(
+                                imageUrl = url,
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clip(CircleShape)
+                            )
+                        } ?: run {
+                            BlankUserImage(
+                                Modifier
+                                    .size(48.dp)
+                                    .clip(CircleShape)
+                            )
+                        }
                     }
                 }
+            } else {
+                ChatAppIconButton(
+                    onClick = remember { { onEvent(ChatBoxUiEvent.OnBackClick) } },
+                    imageVector = ChatAppIcons.Default.arrowBack
+                )
             }
         }
     )

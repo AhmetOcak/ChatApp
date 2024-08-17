@@ -3,6 +3,7 @@ package com.ahmetocak.domain.usecase.auth
 import com.ahmetocak.authentication.client.FirebaseEmailPasswordClient
 import com.ahmetocak.common.UiText
 import com.ahmetocak.common.ext.failureMessage
+import com.ahmetocak.domain.usecase.chat_group.GetChatGroupsAndCacheUseCase
 import com.ahmetocak.domain.usecase.firebase.storage.GetUserProfileImageUseCase
 import com.ahmetocak.domain.usecase.user.local.AddUserToCacheUseCase
 import com.ahmetocak.domain.usecase.user.remote.GetUserFromRemoteUseCase
@@ -36,6 +37,7 @@ class LoginUseCase @Inject internal constructor(
                     }
                 )
             } else {
+                firebaseEmailPasswordClient.signOut()
                 onFailure(task.exception.failureMessage())
             }
         }

@@ -52,4 +52,11 @@ class StorageRepositoryImpl @Inject constructor(
             userUid = userUid
         )
     }
+
+    override fun uploadChatGroupImage(imageFileName: String, imageFileUri: Uri): UploadTask {
+        return storageRemoteDataSource.uploadChatGroupImage(
+            imageFileName = imageFileName,
+            imageFileUri = imageFileUri
+        )
+    }
 }

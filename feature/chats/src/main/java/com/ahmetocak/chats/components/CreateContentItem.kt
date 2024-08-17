@@ -15,12 +15,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.ahmetocak.designsystem.icons.ChatAppIcons
 
 @Composable
-internal fun CreateContentItem(title: String, onClick: () -> Unit) {
+internal fun CreateContentItem(title: String, icon: ImageVector, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -34,14 +34,14 @@ internal fun CreateContentItem(title: String, onClick: () -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             IconButton(
-                onClick = {},
+                onClick = onClick,
                 enabled = false,
                 colors = IconButtonDefaults.iconButtonColors(
                     disabledContainerColor = FloatingActionButtonDefaults.containerColor,
                     disabledContentColor = MaterialTheme.colorScheme.primary
                 )
             ) {
-                Icon(imageVector = ChatAppIcons.Filled.addPerson, contentDescription = null)
+                Icon(imageVector = icon, contentDescription = null)
             }
             Text(
                 text = title,

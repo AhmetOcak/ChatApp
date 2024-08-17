@@ -4,24 +4,18 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,22 +27,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ahmetocak.designsystem.components.AnimatedNetworkImage
 import com.ahmetocak.designsystem.components.ChatAppIconButton
 import com.ahmetocak.designsystem.components.ChatAppModalBottomSheet
 import com.ahmetocak.designsystem.components.ChatAppScaffold
 import com.ahmetocak.designsystem.icons.ChatAppIcons
 import com.ahmetocak.designsystem.theme.ChatAppTheme
 import com.ahmetocak.model.LoadingState
-import com.ahmetocak.ui.BlankUserImage
+import com.ahmetocak.ui.EditableImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -143,7 +134,7 @@ internal fun ProfileScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(16.dp))
-        EditableUserProfileImage(
+        EditableImage(
             imageUrl = userImageUrl,
             onPickImageClick = onPickImageClick,
             isImageUploading = isImageUploading
@@ -209,45 +200,6 @@ private fun UserEmailSection(information: String) {
             Column {
                 Text(text = "Email", style = MaterialTheme.typography.titleSmall)
                 Text(text = information, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            }
-        }
-    }
-}
-
-@Composable
-private fun EditableUserProfileImage(
-    imageUrl: String?,
-    onPickImageClick: () -> Unit,
-    isImageUploading: Boolean
-) {
-    val size = (LocalConfiguration.current.screenWidthDp / 2.5f).dp
-
-    Box(
-        modifier = Modifier.size(size),
-        contentAlignment = Alignment.Center
-    ) {
-        if (isImageUploading) {
-            CircularProgressIndicator()
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(CircleShape)
-            ) {
-                imageUrl?.let { url ->
-                    AnimatedNetworkImage(imageUrl = url, modifier = Modifier.fillMaxSize())
-                } ?: run {
-                    BlankUserImage(
-                        modifier = Modifier.fillMaxSize().aspectRatio(1f)
-                    )
-                }
-            }
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd) {
-                ChatAppIconButton(
-                    onClick = onPickImageClick,
-                    imageVector = ChatAppIcons.Outlined.camera,
-                    colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.primary)
-                )
             }
         }
     }

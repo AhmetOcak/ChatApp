@@ -3,10 +3,12 @@ package com.ahmetocak.network.di
 import com.ahmetocak.network.api.KtorChatApi
 import com.ahmetocak.network.datasource.firebase.storage.StorageRemoteDataSource
 import com.ahmetocak.network.datasource.firebase.storage.StorageRemoteDataSourceImpl
-import com.ahmetocak.network.datasource.ktor_friend.FriendRemoteDataSource
-import com.ahmetocak.network.datasource.ktor_friend.FriendRemoteDataSourceImpl
+import com.ahmetocak.network.datasource.ktor_chat_group.ChatGroupRemoteDataSource
+import com.ahmetocak.network.datasource.ktor_chat_group.ChatGroupRemoteDataSourceImpl
 import com.ahmetocak.network.datasource.ktor_user.UserRemoteDataSource
 import com.ahmetocak.network.datasource.ktor_user.UserRemoteDataSourceImpl
+import com.ahmetocak.network.datasource.messages.MessagesRemoteDataSource
+import com.ahmetocak.network.datasource.messages.MessagesRemoteDataSourceImpl
 import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
@@ -32,7 +34,13 @@ object DataSourceModule {
 
     @Singleton
     @Provides
-    fun provideFriendRemoteDataSource(api: KtorChatApi): FriendRemoteDataSource {
-        return FriendRemoteDataSourceImpl(api)
+    fun provideChatGroupRemoteDataSource(api: KtorChatApi): ChatGroupRemoteDataSource {
+        return ChatGroupRemoteDataSourceImpl(api)
+    }
+
+    @Singleton
+    @Provides
+    fun provideMessagesRemoteDataSource(api: KtorChatApi): MessagesRemoteDataSource {
+        return MessagesRemoteDataSourceImpl(api)
     }
 }

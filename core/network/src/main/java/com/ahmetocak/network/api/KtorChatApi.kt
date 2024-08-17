@@ -1,10 +1,10 @@
 package com.ahmetocak.network.api
 
+import com.ahmetocak.network.helper.KtorChatGroupEndPoints
 import com.ahmetocak.network.helper.KtorFcmTokenEndPoints
-import com.ahmetocak.network.helper.KtorFriendEndPoints
 import com.ahmetocak.network.helper.KtorMessagesEndPoints
 import com.ahmetocak.network.helper.KtorUserEndpoints
-import com.ahmetocak.network.model.NetworkFriend
+import com.ahmetocak.network.model.NetworkChatGroup
 import com.ahmetocak.network.model.NetworkMessage
 import com.ahmetocak.network.model.NetworkUser
 import com.ahmetocak.network.model.PaginatedNetworkMessage
@@ -45,23 +45,52 @@ interface KtorChatApi {
         @Field("profilePicUrl") profilePicUrl: String?
     )
 
-    @GET(KtorFriendEndPoints.GET)
-    suspend fun getFriends(
-        @Path(KtorFriendEndPoints.Paths.USER_EMAIL) userEmail: String
-    ): List<NetworkFriend>
+    @FormUrlEncoded
+    @POST(KtorChatGroupEndPoints.CREATE_PRIVATE_GROUP)
+    suspend fun createPrivateGroup(
+        @Field("currentUserEmail") currentUserEmail: String,
+        @Field("friendEmail") friendEmail: String
+    ): NetworkChatGroup
 
     @FormUrlEncoded
-    @POST(KtorFriendEndPoints.POST)
-    suspend fun createFriend(
-        @Field("currentUserEmail") userEmail: String,
-        @Field("friendEmail") friendEmail: String
-    ): NetworkFriend
+    @POST(KtorChatGroupEndPoints.CREATE_GROUP)
+    suspend fun createGroup(
+        @Field("creatorEmail") creatorEmail: String,
+        @Field("name") groupName: String,
+        @Field("creatorUsername") creatorUsername: String,
+        @Field("creatorProfilePicUrl") creatorProfilePicUrl: String?,
+        @Field("imageUrl") groupImageUrl: String?,
+    ): NetworkChatGroup
+
+    @GET(KtorChatGroupEndPoints.GET)
+    suspend fun getGroups(
+        @Path(KtorChatGroupEndPoints.Path.USER_EMAIL) userEmail: String
+    ): List<NetworkChatGroup>
+
+    @FormUrlEncoded
+    @PUT(KtorChatGroupEndPoints.ADD_PARTICIPANT)
+    suspend fun addParticipantToChatGroup(
+        @Field("groupId") groupId: Int,
+        @Field("participantEmail") participantEmail: String
+    ): NetworkUser
+
+    @FormUrlEncoded
+    @PUT(KtorChatGroupEndPoints.UPDATE_GROUP_IMG)
+    suspend fun updateChatGroupImage(
+        @Field("imageUrl") imageUrl: String,
+        @Field("groupId") groupId: Int
+    )
 
     @GET(KtorMessagesEndPoints.GET)
     suspend fun getMessages(
-        @Path(KtorMessagesEndPoints.Paths.FRIENDSHIP_ID) friendShipId: Int,
+        @Path(KtorMessagesEndPoints.Paths.MESSAGE_BOX_ID) messageBoxId: Int,
         @Path(KtorMessagesEndPoints.Paths.PAGE) page: Int
     ): PaginatedNetworkMessage
+
+    @GET(KtorMessagesEndPoints.GET_MEDIA_MESS)
+    suspend fun getAllMediaMessages(
+        @Path(KtorMessagesEndPoints.Paths.MESSAGE_BOX_ID) messageBoxId: Int,
+    ): List<NetworkMessage>
 
     @FormUrlEncoded
     @POST(KtorFcmTokenEndPoints.POST)
