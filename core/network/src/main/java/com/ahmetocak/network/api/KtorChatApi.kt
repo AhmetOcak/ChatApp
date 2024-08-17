@@ -74,6 +74,13 @@ interface KtorChatApi {
         @Field("participantEmail") participantEmail: String
     ): NetworkUser
 
+    @FormUrlEncoded
+    @PUT(KtorChatGroupEndPoints.UPDATE_GROUP_IMG)
+    suspend fun updateChatGroupImage(
+        @Field("imageUrl") imageUrl: String,
+        @Field("groupId") groupId: Int
+    )
+
     @GET(KtorMessagesEndPoints.GET)
     suspend fun getMessages(
         @Path(KtorMessagesEndPoints.Paths.MESSAGE_BOX_ID) messageBoxId: Int,

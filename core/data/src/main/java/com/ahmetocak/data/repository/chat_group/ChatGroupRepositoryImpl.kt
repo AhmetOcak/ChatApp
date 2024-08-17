@@ -115,8 +115,7 @@ class ChatGroupRepositoryImpl @Inject constructor(
         groupId: Int,
         participantEmail: String
     ): Response<Unit> {
-        return when (val response =
-            remoteDataSource.addParticipantToChatGroup(groupId, participantEmail)) {
+        return when (val response = remoteDataSource.addParticipantToChatGroup(groupId, participantEmail)) {
             is Response.Success -> {
                 with(response.data) {
                     localDataSource.insertChatGroupParticipants(
@@ -133,5 +132,9 @@ class ChatGroupRepositoryImpl @Inject constructor(
 
             is Response.Error -> Response.Error(response.errorMessage)
         }
+    }
+
+    override suspend fun updateGroupImage(imgUrl: String, groupId: Int): Response<Unit> {
+        return remoteDataSource.updateGroupImage(imgUrl = imgUrl, groupId = groupId)
     }
 }

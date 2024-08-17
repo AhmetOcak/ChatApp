@@ -50,4 +50,10 @@ class ChatGroupRemoteDataSourceImpl @Inject constructor(
             )
         }
     }
+
+    override suspend fun updateGroupImage(imgUrl: String, groupId: Int): Response<Unit> {
+        return apiCall {
+            api.updateChatGroupImage(imgUrl, groupId)
+        }
+    }
 }

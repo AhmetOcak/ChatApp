@@ -19,6 +19,7 @@ import com.ahmetocak.domain.usecase.chat.GetAllMediaMessagesUseCase
 import com.ahmetocak.domain.usecase.chat.GetMessagesUseCase
 import com.ahmetocak.domain.usecase.chat.SendMessageUseCase
 import com.ahmetocak.domain.usecase.chat_group.AddParticipantToGroupUseCase
+import com.ahmetocak.domain.usecase.chat_group.UpdateChatGroupImageUseCase
 import com.ahmetocak.domain.usecase.firebase.storage.UploadAudioFileUseCase
 import com.ahmetocak.domain.usecase.firebase.storage.UploadDocFileUseCase
 import com.ahmetocak.domain.usecase.firebase.storage.UploadImageFileUseCase
@@ -53,6 +54,7 @@ class ChatBoxViewModel @Inject constructor(
     private val getAllMediaMessagesUseCase: GetAllMediaMessagesUseCase,
     private val addParticipantToGroupUseCase: AddParticipantToGroupUseCase,
     private val ioDispatcher: CoroutineDispatcher,
+    private val updateChatGroupImageUseCase: UpdateChatGroupImageUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -294,9 +296,7 @@ class ChatBoxViewModel @Inject constructor(
                     messageType = messageType,
                     messageBoxId = groupData.id
                 ),
-                onFailure = {
-                    SnackbarManager.showMessage(it)
-                }
+                onFailure = SnackbarManager::showMessage
             )
         }
         _uiState.update {
@@ -338,7 +338,19 @@ class ChatBoxViewModel @Inject constructor(
     }
 
     private fun updateGroupImage(uri: Uri) {
-        TODO("Not yet implemented")
+        viewModelScope.launch(ioDispatcher) {
+            updateChatGroupImageUseCase(
+                groupId = groupData.id,
+                imageUrl = uri,
+                imageFileName = groupData.name,
+                onSuccess = { newImgUrl ->
+                    _uiState.update {
+                        it.copy(imageUrl = newImgUrl.toString())
+                    }
+                },
+                onFailure = SnackbarManager::showMessage
+            )
+        }
     }
 
     fun resetNavigation() {

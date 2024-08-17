@@ -18,6 +18,7 @@ internal object KtorChatGroupEndPoints {
     const val CREATE_GROUP = "/chatGroup/createGroup"
     const val ADD_PARTICIPANT = "/chatGroup/addParticipant"
     const val GET = "/chatGroup/getGroups/{${Path.USER_EMAIL}}"
+    const val UPDATE_GROUP_IMG = "/chatGroup/updateGroupImage"
 
     internal object Path {
         const val USER_EMAIL = "userEmail"

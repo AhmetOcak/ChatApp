@@ -23,4 +23,5 @@ interface ChatGroupRemoteDataSource {
         groupId: Int,
         participantEmail: String
     ): Response<NetworkUser>
+    suspend fun updateGroupImage(imgUrl: String, groupId: Int): Response<Unit>
 }
