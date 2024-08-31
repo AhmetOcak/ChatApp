@@ -11,9 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.ahmetocak.ui.R
+import com.ahmetocak.designsystem.R.dimen as ChatAppDimens
 
 @Composable
 fun ChatBubbleTextItem(
@@ -45,7 +47,7 @@ private fun ComingChatBubbleTextItem(
     Column {
         AuthorImage(authorImgUrl = authorImgUrl)
         Card(
-            modifier = Modifier.padding(start = AuthorImgHeight),
+            modifier = Modifier.padding(start = dimensionResource(id = R.dimen.author_img_height)),
             shape = RoundedCornerShape(
                 topStart = 0f,
                 topEnd = 48f,
@@ -97,16 +99,22 @@ private fun BubbleSkeleton(
     message: String,
     messageDate: String
 ) {
+    val padding2 = dimensionResource(id = ChatAppDimens.padding_2)
+    val padding4 = dimensionResource(id = ChatAppDimens.padding_4)
+    val padding8 = dimensionResource(id = ChatAppDimens.padding_8)
+    val padding32 = dimensionResource(id = ChatAppDimens.padding_32)
+
+
     ConstraintLayout {
         val (authorText, messageText, dateText) = createRefs()
 
         Text(
             modifier = Modifier
                 .constrainAs(authorText) {
-                    top.linkTo(parent.top, margin = 8.dp)
-                    start.linkTo(parent.start, margin = 8.dp)
+                    top.linkTo(parent.top, margin = padding8)
+                    start.linkTo(parent.start, margin = padding8)
                 }
-                .padding(end = 32.dp),
+                .padding(end = padding32),
             text = author,
             style = authorTextStyle
         )
@@ -114,10 +122,10 @@ private fun BubbleSkeleton(
         Text(
             modifier = Modifier
                 .constrainAs(messageText) {
-                    top.linkTo(authorText.bottom, margin = 4.dp)
+                    top.linkTo(authorText.bottom, margin = padding4)
                     start.linkTo(parent.start)
                 }
-                .padding(horizontal = 8.dp),
+                .padding(horizontal = padding8),
             text = message,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Start
@@ -125,9 +133,9 @@ private fun BubbleSkeleton(
 
         Text(
             modifier = Modifier.constrainAs(dateText) {
-                top.linkTo(messageText.bottom, margin = 2.dp)
-                end.linkTo(parent.end, margin = 8.dp)
-            }.padding(start = 32.dp),
+                top.linkTo(messageText.bottom, margin = padding2)
+                end.linkTo(parent.end, margin = padding8)
+            }.padding(start = padding32),
             text = messageDate,
             style = dateTextStyle
         )

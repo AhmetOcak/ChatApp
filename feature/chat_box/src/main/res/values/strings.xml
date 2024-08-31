@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="participant_email">Participant Email</string>
+    <string name="add_participant">Add Participant</string>
+    <string name="gallery">Gallery</string>
+    <string name="document">Document</string>
+    <string name="group_size">Group * %d participant</string>
+    <string name="recording">Recording…</string>
+    <string name="message">Message</string>
+    <string name="group_info">Group Info</string>
+    <string name="group_media">Group Media</string>
+</resources>

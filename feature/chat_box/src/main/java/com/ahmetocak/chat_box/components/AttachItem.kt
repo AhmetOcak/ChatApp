@@ -9,17 +9,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.dimensionResource
+import com.ahmetocak.chat_box.R
 import com.ahmetocak.designsystem.components.FilledChatAppIconButton
+import com.ahmetocak.designsystem.R.dimen as ChatAppDimens
 
 @Composable
 internal fun AttachItem(onClick: () -> Unit, imageVector: ImageVector, title: String) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimens.padding_4))
     ) {
         FilledChatAppIconButton(
-            modifier = Modifier.size(56.dp).aspectRatio(1f),
+            modifier = Modifier
+                .size(dimensionResource(id = R.dimen.attach_item_btn_size))
+                .aspectRatio(1f),
             onClick = onClick,
             imageVector = imageVector
         )

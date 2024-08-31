@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -42,6 +43,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -77,6 +80,7 @@ import com.ahmetocak.ui.chat_bubble.ChatBubbleAudioItem
 import com.ahmetocak.ui.chat_bubble.ChatBubbleImageItem
 import com.ahmetocak.ui.chat_bubble.ChatBubblePdfItem
 import com.ahmetocak.ui.chat_bubble.ChatBubbleTextItem
+import com.ahmetocak.designsystem.R.dimen as ChatAppDimen
 
 @Composable
 internal fun ChatBoxRoute(
@@ -140,15 +144,17 @@ internal fun ChatBoxRoute(
         }
 
         AttachSection(
-            onAttachItemClick = { type ->
-                when (type) {
-                    AttachType.GALLERY -> {
-                        pickMediaLauncher.launch(
-                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                        )
-                    }
+            onAttachItemClick = remember {
+                { type ->
+                    when (type) {
+                        AttachType.GALLERY -> {
+                            pickMediaLauncher.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        }
 
-                    AttachType.DOCUMENT -> pickFileLauncher.launch("application/pdf")
+                        AttachType.DOCUMENT -> pickFileLauncher.launch("application/pdf")
+                    }
                 }
             }
         )
@@ -162,7 +168,7 @@ internal fun ChatBoxRoute(
             ChatBoxTopBar(
                 chatBoxTitle = uiState.title,
                 imageUrl = uiState.imageUrl,
-                onEvent = onEvent,
+                onEvent = remember { onEvent },
                 screenState = uiState.screenState
             )
         },
@@ -170,7 +176,7 @@ internal fun ChatBoxRoute(
             if (uiState.screenState is ScreenState.ChatBox) {
                 ChatBoxBottomBar(
                     messageValue = uiState.messageValue,
-                    onEvent = onEvent,
+                    onEvent = remember { onEvent },
                     isAudioRecording = uiState.audioRecordStatus == AudioRecordStatus.RECORDING
                 )
             }
@@ -196,7 +202,7 @@ internal fun ChatBoxRoute(
                     participants = viewModel.groupData.participants,
                     groupMediaMessages = uiState.mediaMessages,
                     isMediaMessagesLoading = uiState.loadingState == LoadingState.Loading,
-                    onEvent = onEvent
+                    onEvent = remember { onEvent }
                 )
             }
 
@@ -207,7 +213,7 @@ internal fun ChatBoxRoute(
             is ScreenState.AddParticipant -> {
                 AddParticipantScreen(
                     modifier = Modifier.padding(paddingValues),
-                    onEvent = onEvent,
+                    onEvent = remember { onEvent },
                     participantVal = uiState.parEmailVal,
                     isLoading = uiState.loadingState == LoadingState.Loading
                 )
@@ -230,9 +236,9 @@ private fun ChatBoxScreen(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 8.dp),
-        contentPadding = PaddingValues(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(2.dp),
+            .padding(horizontal = dimensionResource(id = ChatAppDimen.padding_8)),
+        contentPadding = PaddingValues(vertical = dimensionResource(id = ChatAppDimen.padding_16)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_2)),
         reverseLayout = true
     ) {
         items(messageList.itemCount) { index ->
@@ -246,7 +252,7 @@ private fun ChatBoxScreen(
                             authorImgUrl = message.senderImgUrl,
                             isComingFromMe = message.isComingFromMe(currentUserEmail)
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(dimensionResource(id = ChatAppDimen.padding_8)))
                     }
 
                     MessageType.AUDIO -> {
@@ -264,7 +270,7 @@ private fun ChatBoxScreen(
                             },
                             isComingFromMe = message.isComingFromMe(currentUserEmail)
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(dimensionResource(id = ChatAppDimen.padding_8)))
                     }
 
                     MessageType.IMAGE -> {
@@ -278,7 +284,7 @@ private fun ChatBoxScreen(
                                 { viewImage(context = context, imageUrl = message.messageContent) }
                             }
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(dimensionResource(id = ChatAppDimen.padding_8)))
                     }
 
                     MessageType.DOC -> {
@@ -290,7 +296,7 @@ private fun ChatBoxScreen(
                             onClick = remember { { viewPdf(context = context, uri = it) } },
                             isComingFromMe = message.isComingFromMe(currentUserEmail)
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(dimensionResource(id = ChatAppDimen.padding_8)))
                     }
                 }
             }
@@ -307,23 +313,23 @@ private fun AttachSection(onAttachItemClick: (AttachType) -> Unit) {
         ElevatedCard(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 32.dp)
-                .padding(bottom = BottomBarHeight + 16.dp)
+                .padding(horizontal = dimensionResource(id = ChatAppDimen.padding_32))
+                .padding(bottom = BottomBarHeight + dimensionResource(id = ChatAppDimen.padding_16))
         ) {
             LazyVerticalGrid(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 32.dp),
+                    .padding(horizontal = dimensionResource(id = ChatAppDimen.padding_32)),
                 columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(vertical = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                contentPadding = PaddingValues(vertical = dimensionResource(id = ChatAppDimen.padding_16)),
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_16)),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_16))
             ) {
-                items(attachList, key = { it.title }) {
+                items(attachList, key = { it.titleId }) {
                     AttachItem(
                         onClick = remember { { onAttachItemClick(it.attachType) } },
                         imageVector = it.icon,
-                        title = it.title
+                        title = stringResource(id = it.titleId)
                     )
                 }
             }
@@ -355,12 +361,12 @@ private fun GroupInfoScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_16))
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_16))
         ) {
             EditableImage(
                 imageUrl = groupImgUrl,
@@ -373,30 +379,30 @@ private fun GroupInfoScreen(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 32.dp),
+                    .padding(horizontal = dimensionResource(id = ChatAppDimen.padding_32)),
                 text = groupName,
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center
             )
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "Group * $participantSize participant",
+                text = stringResource(id = R.string.group_size, participantSize),
                 textAlign = TextAlign.Center
             )
         }
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_16))) {
             if (isMediaMessagesLoading) {
                 ChatAppPlaceableProgressIndicator(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp)
+                        .height(dimensionResource(id = R.dimen.prog_indic_height))
                 )
             } else {
                 if (groupMediaMessages.isNotEmpty()) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
+                            .padding(horizontal = dimensionResource(id = ChatAppDimen.padding_16)),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
@@ -410,25 +416,25 @@ private fun GroupInfoScreen(
             }
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                contentPadding = PaddingValues(horizontal = dimensionResource(id = ChatAppDimen.padding_16)),
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_8))
             ) {
                 items(groupMediaMessages, key = { it.id }) {
                     MediaItem(
-                        modifier = Modifier.size(128.dp),
-                        onClick = { /*TODO*/ },
+                        modifier = Modifier.size(dimensionResource(id = R.dimen.media_item_size)),
+                        onClick = remember { { /*TODO*/ } },
                         messageContent = it.messageContent,
                         messageType = it.messageType
                     )
                 }
             }
-            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_16))) {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(LocalConfiguration.current.screenHeightDp.dp / 2),
-                    contentPadding = PaddingValues(vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    contentPadding = PaddingValues(vertical = dimensionResource(id = ChatAppDimen.padding_16)),
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_16))
                 ) {
                     item {
                         AddParticipantItem(onEvent = onEvent)
@@ -461,26 +467,23 @@ private fun AddParticipantScreen(
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(dimensionResource(id = ChatAppDimen.padding_16)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.End
         ) {
             ChatAppOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = participantVal,
-                onValueChange = { onEvent(ChatBoxUiEvent.OnParticipantValChange(it)) },
+                onValueChange = remember { { onEvent(ChatBoxUiEvent.OnParticipantValChange(it)) } },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                label = {
-                    Text(text = "Participant Email")
-                }
+                labelText = stringResource(id = R.string.participant_email)
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = ChatAppDimen.padding_16)))
             ChatAppButton(
                 onClick = remember { { onEvent(ChatBoxUiEvent.OnAddParticipantClick) } },
-                enabled = participantVal.isNotBlank()
-            ) {
-                Text(text = "Add Participant")
-            }
+                enabled = participantVal.isNotBlank(),
+                text = stringResource(id = R.string.add_participant)
+            )
         }
     }
 }
@@ -491,19 +494,18 @@ private val attachList: List<AttachItem> = listOf(
 )
 
 private sealed class AttachItem(
-    val title: String,
+    @StringRes val titleId: Int,
     val icon: ImageVector,
     val attachType: AttachType
 ) {
-
     data object Gallery : AttachItem(
-        title = "Gallery",
+        titleId = R.string.gallery,
         icon = ChatAppIcons.Filled.gallery,
         attachType = AttachType.GALLERY
     )
 
     data object Document : AttachItem(
-        title = "Document",
+        titleId = R.string.document,
         icon = ChatAppIcons.Filled.document,
         attachType = AttachType.DOCUMENT
     )

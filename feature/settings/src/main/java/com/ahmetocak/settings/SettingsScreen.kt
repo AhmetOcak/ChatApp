@@ -20,10 +20,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmetocak.designsystem.components.ChatAppIconButton
@@ -32,6 +32,7 @@ import com.ahmetocak.designsystem.components.ChatAppSubmitValueDialog
 import com.ahmetocak.designsystem.icons.ChatAppIcons
 import com.ahmetocak.domain.usecase.auth.SignInProvider
 import com.ahmetocak.settings.components.SettingItem
+import com.ahmetocak.designsystem.R.dimen as ChatAppDimen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -103,8 +104,11 @@ internal fun SettingScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(vertical = 8.dp, horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(
+                vertical = dimensionResource(id = ChatAppDimen.padding_8),
+                horizontal = dimensionResource(id = ChatAppDimen.padding_16)
+            ),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_8))
     ) {
         SettingItem(
             nameId = Settings.PROFILE.nameId,
@@ -149,8 +153,8 @@ private fun DeleteAccountDialog(
     when (currentSignInProvider) {
         SignInProvider.GOOGLE -> {
             ChatAppSubmitDialog(
-                onDismissRequest = { onEvent(SettingUiEvent.OnDismissDeleteAccountDialog) },
-                onSubmitClick = { onEvent(SettingUiEvent.OnSubmitDeleteAccountClick) },
+                onDismissRequest = remember { { onEvent(SettingUiEvent.OnDismissDeleteAccountDialog) } },
+                onSubmitClick = remember { { onEvent(SettingUiEvent.OnSubmitDeleteAccountClick) } },
                 title = stringResource(id = R.string.delete_account),
                 description = stringResource(id = R.string.delete_account_descr),
                 submitText = stringResource(id = R.string.delete)

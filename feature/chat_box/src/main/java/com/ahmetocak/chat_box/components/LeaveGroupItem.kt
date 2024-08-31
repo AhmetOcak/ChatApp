@@ -13,10 +13,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.dimensionResource
 import com.ahmetocak.chat_box.ChatBoxUiEvent
 import com.ahmetocak.designsystem.icons.ChatAppIcons
 import com.ahmetocak.ui.CHAT_ITEM_HEIGHT
+import com.ahmetocak.designsystem.R.dimen as ChatAppDimens
 
 @Composable
 internal fun LeaveGroupItem(onEvent: (ChatBoxUiEvent) -> Unit) {
@@ -24,10 +25,10 @@ internal fun LeaveGroupItem(onEvent: (ChatBoxUiEvent) -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(onClick = {})
-                .padding(16.dp)
+                .clickable(onClick = {/*TODO*/ })
+                .padding(dimensionResource(id = ChatAppDimens.padding_16))
                 .height(CHAT_ITEM_HEIGHT),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimens.padding_16)),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(

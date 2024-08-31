@@ -12,10 +12,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import com.ahmetocak.chat_box.ChatBoxUiEvent
+import com.ahmetocak.chat_box.R
 import com.ahmetocak.designsystem.icons.ChatAppIcons
 import com.ahmetocak.ui.CHAT_ITEM_HEIGHT
+import com.ahmetocak.designsystem.R.dimen as ChatAppDimens
 
 @Composable
 internal fun AddParticipantItem(onEvent: (ChatBoxUiEvent) -> Unit) {
@@ -24,16 +27,16 @@ internal fun AddParticipantItem(onEvent: (ChatBoxUiEvent) -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable(onClick = { onEvent(ChatBoxUiEvent.ShowAddParticipantView) })
-                .padding(16.dp)
+                .padding(dimensionResource(id = ChatAppDimens.padding_16))
                 .height(CHAT_ITEM_HEIGHT),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimens.padding_16))
         ) {
             Icon(
                 imageVector = ChatAppIcons.Filled.addPerson,
                 contentDescription = null
             )
-            Text(text = "Add Participant")
+            Text(text = stringResource(id = R.string.add_participant))
         }
     }
 }

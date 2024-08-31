@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="prog_indic_height">56dp</dimen>
+    <dimen name="media_item_size">128dp</dimen>
+    <dimen name="attach_item_btn_size">56dp</dimen>
+    <dimen name="bottom_bar_height">56dp</dimen>
+    <dimen name="friend_or_group_img_size">48dp</dimen>
+</resources>

@@ -8,14 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.dimensionResource
 import com.ahmetocak.designsystem.components.NetworkImage
 import com.ahmetocak.ui.BlankUserImage
+import com.ahmetocak.ui.R
 
-internal val AuthorImgHeight = 16.dp
-
-private val imgModifier = Modifier
-    .height(AuthorImgHeight)
+private val imgModifier @Composable
+get() = Modifier
+    .height(dimensionResource(id = R.dimen.author_img_height))
     .clip(CircleShape)
     .aspectRatio(1f)
 

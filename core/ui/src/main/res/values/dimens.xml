@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="author_img_height">16dp</dimen>
+    <dimen name="chat_item_user_img_size">56dp</dimen>
+    <dimen name="chat_item_height">56dp</dimen>
+</resources>

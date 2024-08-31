@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,9 +23,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmetocak.designsystem.components.ChatAppGreyProgressIndicator
@@ -39,6 +38,7 @@ import com.ahmetocak.designsystem.components.auth.AuthPasswordOutlinedTextField
 import com.ahmetocak.model.LoadingState
 import com.ahmetocak.designsystem.R.drawable as AppResources
 import com.ahmetocak.designsystem.R.string as AppStrings
+import com.ahmetocak.designsystem.R.dimen as ChatAppDimen
 
 @Composable
 internal fun SignUpRoute(
@@ -83,7 +83,7 @@ internal fun SignUpRoute(
 
     SignUpScreen(
         modifier = modifier,
-        onEvent = onEvent,
+        onEvent = remember { onEvent },
         nameValue = uiState.name,
         emailValue = uiState.email,
         passwordValue = uiState.password,
@@ -111,11 +111,11 @@ internal fun SignUpScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = dimensionResource(id = ChatAppDimen.padding_16)),
         verticalArrangement = Arrangement.Center
     ) {
         WelcomeMessage()
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(id = ChatAppDimen.padding_32)))
         InputSection(
             onEvent = onEvent,
             nameValue = nameValue,
@@ -123,16 +123,22 @@ internal fun SignUpScreen(
             passwordValue = passwordValue,
             confirmPasswordValue = confirmPasswordValue,
         )
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(id = ChatAppDimen.padding_32)))
         SubmitSignUpSection(onEvent = onEvent, onSignInWithGoogleClick = onSignInWithGoogleClick)
     }
 }
 
 @Composable
 private fun WelcomeMessage() {
-    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(text = "Hi!", style = MaterialTheme.typography.displayLarge)
-        Text(text = "Create a new account", style = MaterialTheme.typography.displaySmall)
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_8))
+    ) {
+        Text(text = stringResource(id = R.string.hi), style = MaterialTheme.typography.displayLarge)
+        Text(
+            text = stringResource(id = R.string.create_new_account),
+            style = MaterialTheme.typography.displaySmall
+        )
     }
 }
 
@@ -144,33 +150,29 @@ private fun InputSection(
     passwordValue: String,
     confirmPasswordValue: String,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_8))) {
         ChatAppOutlinedTextField(
             value = nameValue,
-            onValueChange = { onEvent(SignUpEvent.OnNameChanged(it)) },
-            label = {
-                Text(text = stringResource(id = AppStrings.username))
-            },
+            onValueChange = remember { { onEvent(SignUpEvent.OnNameChanged(it)) } },
+            labelText = stringResource(id = AppStrings.username),
             modifier = Modifier.fillMaxWidth(),
-            trailingIcon = {
-                Icon(imageVector = Icons.Filled.Person, contentDescription = null)
-            }
+            trailingIcon = Icons.Filled.Person
         )
         AuthEmailOutlinedTextField(
             value = emailValue,
-            onValueChange = { onEvent(SignUpEvent.OnEmailChanged(it)) },
+            onValueChange = remember { { onEvent(SignUpEvent.OnEmailChanged(it)) } },
             labelText = stringResource(id = AppStrings.email),
             modifier = Modifier.fillMaxWidth()
         )
         AuthPasswordOutlinedTextField(
             value = passwordValue,
-            onValueChange = { onEvent(SignUpEvent.OnPasswordChange(it)) },
+            onValueChange = remember { { onEvent(SignUpEvent.OnPasswordChange(it)) } },
             labelText = stringResource(id = AppStrings.password),
             modifier = Modifier.fillMaxWidth()
         )
         AuthPasswordOutlinedTextField(
             value = confirmPasswordValue,
-            onValueChange = { onEvent(SignUpEvent.OnConfirmPasswordChange(it)) },
+            onValueChange = remember { { onEvent(SignUpEvent.OnConfirmPasswordChange(it)) } },
             labelText = stringResource(id = AppStrings.confirm_password),
             modifier = Modifier.fillMaxWidth()
         )
@@ -185,19 +187,18 @@ private fun SubmitSignUpSection(
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_8))
     ) {
         ChatAppButton(
             modifier = Modifier.fillMaxWidth(),
-            onClick = { onEvent(SignUpEvent.OnSignUpClick) }
-        ) {
-            Text(text = "SIGN UP")
-        }
+            onClick = remember { { onEvent(SignUpEvent.OnSignUpClick) } },
+            text = stringResource(id = R.string.sign_up)
+        )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(vertical = dimensionResource(id = ChatAppDimen.padding_8)),
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_8)),
             verticalAlignment = Alignment.CenterVertically
         ) {
             HorizontalDivider(modifier = Modifier.weight(1f))
@@ -213,10 +214,10 @@ private fun SubmitSignUpSection(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Text(text = "Already have an account?")
+            Text(text = stringResource(id = R.string.already_have_account))
             ChatAppTextButton(
-                onClick = { onEvent(SignUpEvent.OnAlreadyHaveAccountClick) },
-                text = "Sign in"
+                onClick = remember { { onEvent(SignUpEvent.OnAlreadyHaveAccountClick) } },
+                text = stringResource(id = R.string.sign_in)
             )
         }
     }

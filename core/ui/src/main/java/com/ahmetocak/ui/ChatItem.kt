@@ -19,11 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.ahmetocak.designsystem.components.AnimatedNetworkImage
 import com.ahmetocak.designsystem.theme.ChatAppTheme
+import com.ahmetocak.designsystem.R.dimen as ChatAppDimens
 
 @Composable
 fun ChatItem(
@@ -42,25 +43,25 @@ fun ChatItem(
     ) {
         Row(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(dimensionResource(id = ChatAppDimens.padding_16))
                 .fillMaxWidth()
                 .height(CHAT_ITEM_HEIGHT),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimens.padding_16))
         ) {
             imageUrl?.let { url ->
                 AnimatedNetworkImage(
                     imageUrl = url,
                     modifier = Modifier
                         .fillMaxHeight()
-                        .size(56.dp)
+                        .size(dimensionResource(id = R.dimen.chat_item_user_img_size))
                         .clip(CircleShape)
                 )
             } ?: run {
                 BlankUserImage(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .size(56.dp)
+                        .size(dimensionResource(id = R.dimen.chat_item_user_img_size))
                         .clip(CircleShape)
                 )
             }
@@ -86,25 +87,25 @@ fun ChatItem(
     ) {
         Row(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(dimensionResource(id = ChatAppDimens.padding_16))
                 .fillMaxWidth()
                 .height(CHAT_ITEM_HEIGHT),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimens.padding_16))
         ) {
             imageUrl?.let { url ->
                 AnimatedNetworkImage(
                     imageUrl = url,
                     modifier = Modifier
                         .fillMaxHeight()
-                        .size(56.dp)
+                        .size(dimensionResource(id = R.dimen.chat_item_user_img_size))
                         .clip(CircleShape)
                 )
             } ?: run {
                 BlankUserImage(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .size(56.dp)
+                        .size(dimensionResource(id = R.dimen.chat_item_user_img_size))
                         .clip(CircleShape)
                 )
             }
@@ -133,4 +134,5 @@ fun ChatItemPreview() {
     }
 }
 
-val CHAT_ITEM_HEIGHT = 56.dp
+val CHAT_ITEM_HEIGHT @Composable
+get() = dimensionResource(id = R.dimen.chat_item_height)

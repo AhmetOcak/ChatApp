@@ -28,9 +28,10 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmetocak.designsystem.components.ChatAppIconButton
@@ -40,6 +41,7 @@ import com.ahmetocak.designsystem.icons.ChatAppIcons
 import com.ahmetocak.designsystem.theme.ChatAppTheme
 import com.ahmetocak.model.LoadingState
 import com.ahmetocak.ui.EditableImage
+import com.ahmetocak.designsystem.R.dimen as ChatAppDimen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,10 +79,10 @@ internal fun ProfileRoute(
     if (uiState.showUpdateUserNameSheet) {
         ChatAppModalBottomSheet(
             title = "Update Username",
-            onDismissRequest = { onEvent(ProfileUiEvent.OnDismissUpdateUsernameSheet) },
+            onDismissRequest = remember { { onEvent(ProfileUiEvent.OnDismissUpdateUsernameSheet) } },
             value = uiState.value,
-            onValueChange = { onEvent(ProfileUiEvent.OnValueChange(it)) },
-            onSubmitClick = { onEvent(ProfileUiEvent.OnUpdateUserNameClick) },
+            onValueChange = remember { { onEvent(ProfileUiEvent.OnValueChange(it)) } },
+            onSubmitClick = remember { { onEvent(ProfileUiEvent.OnUpdateUserNameClick) } },
             isLoading = uiState.loadingState == LoadingState.Loading
         )
     }
@@ -89,10 +91,10 @@ internal fun ProfileRoute(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(text = "Profile") },
+                title = { Text(text = stringResource(id = R.string.profile)) },
                 navigationIcon = {
                     ChatAppIconButton(
-                        onClick = { onEvent(ProfileUiEvent.OnBackClick) },
+                        onClick = remember { { onEvent(ProfileUiEvent.OnBackClick) } },
                         imageVector = ChatAppIcons.Default.arrowBack
                     )
                 }
@@ -130,16 +132,16 @@ internal fun ProfileScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 16.dp),
+            .padding(top = dimensionResource(id = ChatAppDimen.padding_16)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(id = ChatAppDimen.padding_16)))
         EditableImage(
             imageUrl = userImageUrl,
             onPickImageClick = onPickImageClick,
             isImageUploading = isImageUploading
         )
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(id = ChatAppDimen.padding_32)))
         UserNameSection(
             information = username,
             onClick = remember { { onEvent(ProfileUiEvent.OnShowUpdateUsernameSheet) } }
@@ -157,12 +159,15 @@ private fun UserNameSection(information: String, onClick: () -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp, horizontal = 32.dp),
+                .padding(
+                    vertical = dimensionResource(id = ChatAppDimen.padding_16),
+                    horizontal = dimensionResource(id = ChatAppDimen.padding_32)
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_16)),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
@@ -170,7 +175,10 @@ private fun UserNameSection(information: String, onClick: () -> Unit) {
                     contentDescription = null
                 )
                 Column(horizontalAlignment = Alignment.Start) {
-                    Text(text = "Username", style = MaterialTheme.typography.titleSmall)
+                    Text(
+                        text = stringResource(id = R.string.username),
+                        style = MaterialTheme.typography.titleSmall
+                    )
                     Text(text = information, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
             }
@@ -189,16 +197,22 @@ private fun UserEmailSection(information: String) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp, horizontal = 32.dp),
+                .padding(
+                    vertical = dimensionResource(id = ChatAppDimen.padding_16),
+                    horizontal = dimensionResource(id = ChatAppDimen.padding_32)
+                ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 imageVector = ChatAppIcons.Filled.email,
                 contentDescription = null
             )
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(dimensionResource(id = ChatAppDimen.padding_16)))
             Column {
-                Text(text = "Email", style = MaterialTheme.typography.titleSmall)
+                Text(
+                    text = stringResource(id = R.string.email),
+                    style = MaterialTheme.typography.titleSmall
+                )
                 Text(text = information, maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
         }

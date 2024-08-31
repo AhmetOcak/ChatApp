@@ -22,9 +22,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmetocak.designsystem.components.ChatAppGreyProgressIndicator
@@ -38,6 +38,7 @@ import com.ahmetocak.designsystem.theme.ChatAppTheme
 import com.ahmetocak.model.LoadingState
 import com.ahmetocak.designsystem.R.drawable as AppResources
 import com.ahmetocak.designsystem.R.string as AppStrings
+import com.ahmetocak.designsystem.R.dimen as ChatAppDimen
 
 @Composable
 internal fun LoginRoute(
@@ -88,7 +89,7 @@ internal fun LoginRoute(
         passwordValue = uiState.password,
         isPasswordFieldError = false,
         passwordFieldLabelText = stringResource(id = AppStrings.password),
-        onEvent = { event -> onEvent(event) },
+        onEvent = remember { { event -> onEvent(event) } },
         onSignInWithGoogleClick = remember {
             {
                 onEvent(LoginUiEvent.OnGoogleClicked { intentSenderRequest ->
@@ -127,11 +128,11 @@ internal fun LoginScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = dimensionResource(id = ChatAppDimen.padding_16)),
         verticalArrangement = Arrangement.Center
     ) {
         WelcomeMessage()
-        Spacer(modifier = Modifier.height(64.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(id = ChatAppDimen.padding_64)))
         AuthInputSection(
             emailValue = emailValue,
             isEmailFieldError = isEmailFieldError,
@@ -141,14 +142,17 @@ internal fun LoginScreen(
             passwordFieldLabelText = passwordFieldLabelText,
             onEvent = onEvent
         )
-        Spacer(modifier = Modifier.height(64.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(id = ChatAppDimen.padding_64)))
         SubmitLoginSection(onEvent = onEvent, onSignInWithGoogleClick = onSignInWithGoogleClick)
     }
 }
 
 @Composable
 private fun WelcomeMessage() {
-    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_16))
+    ) {
         Text(
             text = stringResource(id = AppStrings.welcome),
             style = MaterialTheme.typography.displayLarge
@@ -170,18 +174,21 @@ private fun AuthInputSection(
     passwordFieldLabelText: String,
     onEvent: (LoginUiEvent) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_16))
+    ) {
         AuthEmailOutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = emailValue,
-            onValueChange = { onEvent(LoginUiEvent.OnEmailChanged(it)) },
+            onValueChange = remember { { onEvent(LoginUiEvent.OnEmailChanged(it)) } },
             isError = isEmailFieldError,
             labelText = emailFieldLabelText
         )
         AuthPasswordOutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = passwordValue,
-            onValueChange = { onEvent(LoginUiEvent.OnPasswordChanged(it)) },
+            onValueChange = remember { { onEvent(LoginUiEvent.OnPasswordChanged(it)) } },
             labelText = passwordFieldLabelText,
             isError = isPasswordFieldError
         )
@@ -196,23 +203,22 @@ private fun SubmitLoginSection(
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_8))
     ) {
         ChatAppButton(
             modifier = Modifier.fillMaxWidth(),
-            onClick = { onEvent(LoginUiEvent.OnLoginClickedUi) }
-        ) {
-            Text(text = stringResource(id = AppStrings.login).uppercase())
-        }
+            onClick = remember { { onEvent(LoginUiEvent.OnLoginClickedUi) } },
+            text = stringResource(id = AppStrings.login).uppercase()
+        )
         ChatAppTextButton(
-            onClick = { onEvent(LoginUiEvent.OnForgotPasswordClick) },
+            onClick = remember { { onEvent(LoginUiEvent.OnForgotPasswordClick) } },
             text = stringResource(id = AppStrings.forgot_password)
         )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(vertical = dimensionResource(id = ChatAppDimen.padding_8)),
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_8)),
             verticalAlignment = Alignment.CenterVertically
         ) {
             HorizontalDivider(modifier = Modifier.weight(1f))
@@ -230,7 +236,7 @@ private fun SubmitLoginSection(
         ) {
             Text(text = stringResource(id = AppStrings.no_account))
             ChatAppTextButton(
-                onClick = { onEvent(LoginUiEvent.OnSignUpClicked) },
+                onClick = remember { { onEvent(LoginUiEvent.OnSignUpClicked) } },
                 text = stringResource(id = AppStrings.sign_up)
             )
         }
