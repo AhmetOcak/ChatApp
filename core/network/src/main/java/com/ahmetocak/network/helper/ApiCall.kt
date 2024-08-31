@@ -14,13 +14,13 @@ import java.io.IOException
  * @param call A suspending lambda function representing the API call.
  * @return A sealed class [Response] containing either the success data or an error message.
  */
-suspend inline fun <T> apiCall(crossinline call: suspend () -> T): Response<T> {
+suspend inline fun <T> apiCall(noinline call: suspend () -> T): Response<T> {
     return try {
         Response.Success(data = call())
     } catch (e: IOException) {
         Response.Error(errorMessage = UiText.DynamicString(e.stackTraceToString()))
     } catch (e: Exception) {
-        Log.e("API_CALL", e.stackTraceToString())
+        Log.e("API_CALL ${call.javaClass.name}", e.stackTraceToString())
         Response.Error(errorMessage = e.message?.let { message ->
             UiText.DynamicString(message)
         } ?: UiText.DynamicString("Something went wrong"))

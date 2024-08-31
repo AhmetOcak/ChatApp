@@ -9,6 +9,7 @@ import com.ahmetocak.database.datasource.chat_group.ChatGroupLocalDataSource
 import com.ahmetocak.database.entity.ChatGroupParticipantsEntity
 import com.ahmetocak.model.ChatGroup
 import com.ahmetocak.model.ChatGroupParticipants
+import com.ahmetocak.model.GroupType
 import com.ahmetocak.network.datasource.ktor_chat_group.ChatGroupRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -56,8 +57,17 @@ class ChatGroupRepositoryImpl @Inject constructor(
         )) {
             is Response.Success -> {
                 val data = response.data
-
-                localDataSource.insertChatGroup(data.toChatGroupEntity())
+                if (data.groupType == GroupType.PRIVATE_CHAT_GROUP.name) {
+                    localDataSource.insertChatGroup(
+                        data.copy(
+                            imageUrl = data.participants.filterNot {
+                                it.participantEmail == creatorEmail
+                            }.first().participantProfilePicUrl
+                        ).toChatGroupEntity()
+                    )
+                } else {
+                    localDataSource.insertChatGroup(data.toChatGroupEntity())
+                }
                 data.participants.map {
                     localDataSource.insertChatGroupParticipants(it.toParticipantsEntity())
                 }
@@ -82,13 +92,22 @@ class ChatGroupRepositoryImpl @Inject constructor(
         return when (val response = remoteDataSource.getGroups(userEmail)) {
             is Response.Success -> {
                 response.data.forEach { data ->
-                    localDataSource.insertChatGroup(data.toChatGroupEntity())
+                    if (data.groupType == GroupType.PRIVATE_CHAT_GROUP.name) {
+                        localDataSource.insertChatGroup(
+                            data.copy(
+                                imageUrl = data.participants.filterNot {
+                                    it.participantEmail == userEmail
+                                }.first().participantProfilePicUrl
+                            ).toChatGroupEntity()
+                        )
+                    } else {
+                        localDataSource.insertChatGroup(data.toChatGroupEntity())
+                    }
+
                     data.participants.map {
                         localDataSource.insertChatGroupParticipants(it.toParticipantsEntity())
                     }
-
                 }
-
                 Response.Success(Unit)
             }
 
@@ -115,7 +134,8 @@ class ChatGroupRepositoryImpl @Inject constructor(
         groupId: Int,
         participantEmail: String
     ): Response<Unit> {
-        return when (val response = remoteDataSource.addParticipantToChatGroup(groupId, participantEmail)) {
+        return when (val response =
+            remoteDataSource.addParticipantToChatGroup(groupId, participantEmail)) {
             is Response.Success -> {
                 with(response.data) {
                     localDataSource.insertChatGroupParticipants(
