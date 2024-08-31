@@ -32,9 +32,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ahmetocak.chats.components.ChatScreenFloatActionButton
@@ -56,6 +57,7 @@ import com.ahmetocak.model.LoadingState
 import com.ahmetocak.ui.BlankUserImage
 import com.ahmetocak.ui.ChatItem
 import com.ahmetocak.ui.EditableImage
+import com.ahmetocak.designsystem.R.dimen as ChatAppDimen
 
 @Composable
 internal fun ChatsRoute(
@@ -100,12 +102,15 @@ internal fun ChatsRoute(
         topBar = {
             ChatsScreenTopBar(
                 screenState = uiState.screenState,
-                onEvent = onEvent,
+                onEvent = remember { onEvent },
                 searchValue = uiState.searchValue
             )
         },
         floatingActionButton = {
-            ChatScreenFloatActionButton(screenState = uiState.screenState, onEvent = onEvent)
+            ChatScreenFloatActionButton(
+                screenState = uiState.screenState,
+                onEvent = remember { onEvent }
+            )
         }
     ) { paddingValues ->
         when (uiState.screenState) {
@@ -113,7 +118,7 @@ internal fun ChatsRoute(
                 ChatsScreen(
                     modifier = Modifier.padding(paddingValues),
                     chatList = uiState.chatList,
-                    onEvent = onEvent,
+                    onEvent = remember { onEvent },
                     isLoading = uiState.loadingState == LoadingState.Loading
                 )
             }
@@ -121,14 +126,14 @@ internal fun ChatsRoute(
             ScreenState.CreateContact -> {
                 CreateChatGroupOrAddContactSection(
                     modifier = Modifier.padding(paddingValues),
-                    onEvent = onEvent
+                    onEvent = remember { onEvent }
                 )
             }
 
             ScreenState.AddFriend -> {
                 AddFriendSection(
                     modifier = Modifier.padding(paddingValues),
-                    onEvent = onEvent,
+                    onEvent = remember { onEvent },
                     newPersonValue = uiState.textFieldValue,
                     isLoading = uiState.loadingState == LoadingState.Loading
                 )
@@ -137,7 +142,7 @@ internal fun ChatsRoute(
             ScreenState.SelectParticipantsForGroup -> {
                 SelectParticipantsForGroupSection(
                     modifier = Modifier.padding(paddingValues),
-                    onEvent = onEvent,
+                    onEvent = remember { onEvent },
                     isLoading = uiState.loadingState == LoadingState.Loading,
                     selectedParticipants = uiState.selectedParticipants,
                     addableParticipants = if (uiState.searchValue.isNotBlank()) {
@@ -149,7 +154,7 @@ internal fun ChatsRoute(
             ScreenState.CreateChatGroup -> {
                 CreateGroupSection(
                     modifier = Modifier.padding(paddingValues),
-                    onEvent = onEvent,
+                    onEvent = remember { onEvent },
                     groupNameValue = uiState.textFieldValue,
                     isLoading = uiState.loadingState == LoadingState.Loading,
                     onPickImageClick = remember {
@@ -184,10 +189,12 @@ private fun ChatsScreen(
                     id = chat.id,
                     title = chat.name,
                     imageUrl = chat.imageUrl,
-                    onClick = remember { {
-                        val participants = chat.participants.filter { it.groupId == chat.id }
-                        onEvent(ChatsUiEvent.OnChatItemClick(chat.copy(participants = participants)))
-                    } }
+                    onClick = remember {
+                        {
+                            val participants = chat.participants.filter { it.groupId == chat.id }
+                            onEvent(ChatsUiEvent.OnChatItemClick(chat.copy(participants = participants)))
+                        }
+                    }
                 )
             }
         }
@@ -201,12 +208,12 @@ private fun CreateChatGroupOrAddContactSection(
 ) {
     Column(modifier = modifier.fillMaxSize()) {
         CreateContentItem(
-            title = "Add Friend",
+            title = stringResource(id = R.string.add_friend),
             onClick = remember { { onEvent(ChatsUiEvent.OnAddFriendClick) } },
             icon = ChatAppIcons.Filled.addPerson
         )
         CreateContentItem(
-            title = "Create Chat Group",
+            title = stringResource(id = R.string.create_chat_group),
             onClick = remember { { onEvent(ChatsUiEvent.OnSelectParticipantsForGroup) } },
             icon = ChatAppIcons.Filled.addPersons
         )
@@ -226,26 +233,23 @@ private fun AddFriendSection(
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(dimensionResource(id = ChatAppDimen.padding_16)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.End
         ) {
             ChatAppOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = newPersonValue,
-                onValueChange = { onEvent(ChatsUiEvent.OnValueChanged(it)) },
+                onValueChange = remember { { onEvent(ChatsUiEvent.OnValueChanged(it)) } },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                label = {
-                    Text(text = "Person Email")
-                }
+                labelText = stringResource(id = R.string.person_email)
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = ChatAppDimen.padding_16)))
             ChatAppButton(
                 onClick = remember { { onEvent(ChatsUiEvent.OnSubmitContactClick) } },
-                enabled = newPersonValue.isNotBlank()
-            ) {
-                Text(text = "Add Person")
-            }
+                enabled = newPersonValue.isNotBlank(),
+                text = stringResource(id = R.string.add_person)
+            )
         }
     }
 }
@@ -264,8 +268,8 @@ private fun SelectParticipantsForGroupSection(
         Column(modifier = modifier.fillMaxSize()) {
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp)
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_16)),
+                contentPadding = PaddingValues(horizontal = dimensionResource(id = ChatAppDimen.padding_16))
             ) {
                 items(selectedParticipants, key = { it.participantEmail }) { participant ->
                     AddedParticipant(
@@ -280,12 +284,12 @@ private fun SelectParticipantsForGroupSection(
             }
             HorizontalDivider(
                 modifier = Modifier
-                    .padding(top = 16.dp)
-                    .padding(horizontal = 16.dp)
+                    .padding(top = dimensionResource(id = ChatAppDimen.padding_16))
+                    .padding(horizontal = dimensionResource(id = ChatAppDimen.padding_16))
             )
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(vertical = 16.dp)
+                contentPadding = PaddingValues(vertical = dimensionResource(id = ChatAppDimen.padding_16))
             ) {
                 items(addableParticipants, key = { it.participantEmail }) { participant ->
                     ChatItem(
@@ -318,9 +322,9 @@ private fun CreateGroupSection(
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(dimensionResource(id = ChatAppDimen.padding_16)),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(32.dp)
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_32))
         ) {
             EditableImage(
                 imageUrl = groupImgUri.toString(),
@@ -330,15 +334,13 @@ private fun CreateGroupSection(
                 modifier = Modifier.fillMaxWidth(),
                 value = groupNameValue,
                 onValueChange = remember { { onEvent(ChatsUiEvent.OnValueChanged(it)) } },
-                placeholder = {
-                    Text(text = "Enter a group name")
-                }
+                placeholderText = stringResource(id = R.string.enter_a_group_name)
             )
             LazyVerticalGrid(
                 columns = GridCells.Fixed(4),
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(32.dp)
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_16)),
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_32))
             ) {
                 items(addedParticipants, key = { it.participantEmail }) {
                     AddedParticipant(
@@ -360,15 +362,18 @@ private fun AddedParticipant(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimen.padding_8))
     ) {
-        Box(modifier = Modifier.size(56.dp), contentAlignment = Alignment.BottomEnd) {
+        Box(
+            modifier = Modifier.size(dimensionResource(id = R.dimen.added_participant_box_size)),
+            contentAlignment = Alignment.BottomEnd
+        ) {
             if (imageUrl != null) {
                 NetworkImage(imageUrl = imageUrl, modifier = Modifier.fillMaxSize())
             } else BlankUserImage(modifier = Modifier.fillMaxSize())
             if (isRemovable) {
                 FilledChatAppIconButton(
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier.size(dimensionResource(id = R.dimen.remove_participant_btn_size)),
                     onClick = onRemoveClick,
                     imageVector = ChatAppIcons.Filled.cancel
                 )

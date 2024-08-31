@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_friend">Add Friend</string>
+    <string name="create_chat_group">Create Chat Group</string>
+    <string name="person_email">Person Email</string>
+    <string name="add_person">Add Person</string>
+    <string name="enter_a_group_name">Enter a group name</string>
+    <string name="create_contact">Create Contact</string>
+    <string name="create_group">Create Group</string>
+    <string name="add_participant">Add Participant</string>
+    <string name="search_user">Search a user</string>
+</resources>

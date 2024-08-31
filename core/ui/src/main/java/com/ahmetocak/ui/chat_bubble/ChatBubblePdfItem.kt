@@ -28,13 +28,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.content.FileProvider
+import com.ahmetocak.ui.R
 import com.ahmetocak.ui.chat_bubble.doc_manager.downloadDocumentToPermanentStorage
 import com.ahmetocak.ui.chat_bubble.doc_manager.renderPdfToBitmap
 import java.io.File
+import com.ahmetocak.designsystem.R.dimen as ChatAppDimens
 
 @Composable
 fun ChatBubblePdfItem(
@@ -46,7 +48,12 @@ fun ChatBubblePdfItem(
     isComingFromMe: Boolean
 ) {
     if (isComingFromMe) {
-        OngoingChatBubblePdfItem(author = author, pdfUrl = pdfUrl, time = time, onClick = onClick)
+        OngoingChatBubblePdfItem(
+            author = author,
+            pdfUrl = pdfUrl,
+            time = time,
+            onClick = onClick
+        )
     } else {
         ComingChatBubblePdfItem(
             author = author,
@@ -69,7 +76,7 @@ private fun ComingChatBubblePdfItem(
     Column {
         AuthorImage(authorImgUrl = authorImgUrl)
         Card(
-            modifier = Modifier.padding(start = AuthorImgHeight),
+            modifier = Modifier.padding(start = dimensionResource(id = R.dimen.author_img_height)),
             shape = RoundedCornerShape(
                 topStart = 0f,
                 topEnd = 48f,
@@ -144,7 +151,7 @@ private fun BubbleSkeleton(
 
     Column(
         modifier = Modifier
-            .padding(horizontal = 2.dp)
+            .padding(horizontal = dimensionResource(id = ChatAppDimens.padding_2))
             .width(IntrinsicSize.Max)
             .clickable(
                 enabled = pdfUri != null,
@@ -152,8 +159,11 @@ private fun BubbleSkeleton(
     ) {
         Text(
             modifier = Modifier
-                .padding(start = 8.dp, end = 32.dp)
-                .padding(vertical = 8.dp),
+                .padding(
+                    start = dimensionResource(id = ChatAppDimens.padding_8),
+                    end = dimensionResource(id = ChatAppDimens.padding_32)
+                )
+                .padding(vertical = dimensionResource(id = ChatAppDimens.padding_8)),
             text = author,
             style = authorTextStyle
         )
@@ -178,8 +188,11 @@ private fun BubbleSkeleton(
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 4.dp)
-                .padding(start = 32.dp, end = 8.dp),
+                .padding(vertical = dimensionResource(id = ChatAppDimens.padding_4))
+                .padding(
+                    start = dimensionResource(id = ChatAppDimens.padding_32),
+                    end = dimensionResource(id = ChatAppDimens.padding_8)
+                ),
             text = messageDate,
             style = dateTextStyle,
             textAlign = TextAlign.End

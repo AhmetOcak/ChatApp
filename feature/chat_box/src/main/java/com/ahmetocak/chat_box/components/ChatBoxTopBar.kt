@@ -20,8 +20,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import com.ahmetocak.chat_box.ChatBoxUiEvent
+import com.ahmetocak.chat_box.R
 import com.ahmetocak.chat_box.ScreenState
 import com.ahmetocak.designsystem.components.AnimatedNetworkImage
 import com.ahmetocak.designsystem.components.ChatAppIconButton
@@ -45,9 +47,9 @@ internal fun ChatBoxTopBar(
                     Text(text = chatBoxTitle, style = MaterialTheme.typography.titleMedium)
                 }
 
-                is ScreenState.GroupInfo -> Text(text = "Group Info")
-                is ScreenState.GroupMedia -> Text(text = "Group Media")
-                is ScreenState.AddParticipant -> Text(text = "Add Participant")
+                is ScreenState.GroupInfo -> Text(text = stringResource(id = R.string.group_info))
+                is ScreenState.GroupMedia -> Text(text = stringResource(id = R.string.group_media))
+                is ScreenState.AddParticipant -> Text(text = stringResource(id = R.string.add_participant))
             }
         },
         actions = {
@@ -62,13 +64,13 @@ internal fun ChatBoxTopBar(
                 )
                 DropdownMenu(expanded = isExpanded, onDismissRequest = { isExpanded = false }) {
                     DropdownMenuItem(
-                        text = { Text(text = "Group Info") },
+                        text = { Text(text = stringResource(id = R.string.group_info)) },
                         onClick = {
                             onEvent(ChatBoxUiEvent.OnGroupInfoClick)
                             isExpanded = false
                         })
                     DropdownMenuItem(
-                        text = { Text(text = "Group Media") },
+                        text = { Text(text = stringResource(id = R.string.group_media)) },
                         onClick = {
                             onEvent(ChatBoxUiEvent.OnGroupMediaClick)
                             isExpanded = false
@@ -91,13 +93,13 @@ internal fun ChatBoxTopBar(
                             AnimatedNetworkImage(
                                 imageUrl = url,
                                 modifier = Modifier
-                                    .size(48.dp)
+                                    .size(dimensionResource(id = R.dimen.friend_or_group_img_size))
                                     .clip(CircleShape)
                             )
                         } ?: run {
                             BlankUserImage(
                                 Modifier
-                                    .size(48.dp)
+                                    .size(dimensionResource(id = R.dimen.friend_or_group_img_size))
                                     .clip(CircleShape)
                             )
                         }

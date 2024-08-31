@@ -16,8 +16,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import com.ahmetocak.designsystem.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,8 +42,8 @@ fun ChatAppModalBottomSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+                .padding(dimensionResource(id = R.dimen.padding_16)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_16)),
             horizontalAlignment = Alignment.End
         ) {
             Text(
@@ -66,9 +68,9 @@ fun ChatAppModalBottomSheet(
                 keyboardActions = keyboardActions,
                 keyboardOptions = keyboardOptions
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_16))) {
                 TextButton(onClick = onCancelClick) {
-                    Text(text = "Cancel")
+                    Text(text = stringResource(id = R.string.cancel))
                 }
                 TextButton(
                     onClick = onSubmitClick,
@@ -77,7 +79,7 @@ fun ChatAppModalBottomSheet(
                     if (isLoading) {
                         ButtonCircularProgressIndicator()
                     } else {
-                        Text(text = "Add")
+                        Text(text = stringResource(id = R.string.add))
                     }
                 }
             }

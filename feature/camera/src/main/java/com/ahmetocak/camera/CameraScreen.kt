@@ -37,7 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,6 +48,7 @@ import com.ahmetocak.designsystem.components.NetworkImage
 import com.ahmetocak.designsystem.icons.ChatAppIcons
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.ahmetocak.designsystem.R.dimen as ChatAppDimen
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -146,9 +147,9 @@ private fun CameraScreen(
         )
         IconButton(
             modifier = Modifier
-                .size(80.dp)
-                .padding(bottom = 64.dp)
-                .border(4.dp, Color.White, CircleShape)
+                .size(dimensionResource(id = R.dimen.img_capture_btn_size))
+                .padding(bottom = dimensionResource(id = ChatAppDimen.padding_64))
+                .border(dimensionResource(id = ChatAppDimen.padding_4), Color.White, CircleShape)
                 .aspectRatio(1f),
             onClick = remember {
                 { onEvent(CameraUiEvent.OnCaptureImageClick(imageCapture!!, context)) }
@@ -157,7 +158,7 @@ private fun CameraScreen(
             Icon(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(8.dp),
+                    .padding(dimensionResource(id = ChatAppDimen.padding_8)),
                 imageVector = ChatAppIcons.Filled.capture,
                 contentDescription = null,
                 tint = Color.White
@@ -181,7 +182,12 @@ private fun CapturedImageScreen(
             NetworkImage(modifier = Modifier.fillMaxSize(), imageUrl = imgUri.toString())
         }
         AnimatedVisibility(visible = isMessageSending, enter = scaleIn(), exit = scaleOut()) {
-            CircularProgressIndicator(modifier = Modifier.padding(bottom = 32.dp, end = 16.dp))
+            CircularProgressIndicator(
+                modifier = Modifier.padding(
+                    bottom = dimensionResource(id = ChatAppDimen.padding_32),
+                    end = dimensionResource(id = ChatAppDimen.padding_16)
+                )
+            )
         }
         AnimatedVisibility(visible = !isMessageSending, enter = scaleIn(), exit = scaleOut()) {
             FilledChatAppIconButton(
@@ -190,8 +196,11 @@ private fun CapturedImageScreen(
                 },
                 imageVector = ChatAppIcons.Default.send,
                 modifier = Modifier
-                    .padding(bottom = 32.dp, end = 16.dp)
-                    .size(48.dp)
+                    .padding(
+                        bottom = dimensionResource(id = ChatAppDimen.padding_32),
+                        end = dimensionResource(id = ChatAppDimen.padding_16)
+                    )
+                    .size(dimensionResource(id = R.dimen.send_img_btn_size))
             )
         }
     }

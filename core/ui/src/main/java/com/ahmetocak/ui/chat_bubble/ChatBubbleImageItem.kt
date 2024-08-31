@@ -16,10 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.ahmetocak.designsystem.components.NetworkImage
+import com.ahmetocak.ui.R
+import com.ahmetocak.designsystem.R.dimen as ChatAppDimens
 
 @Composable
 fun ChatBubbleImageItem(
@@ -58,7 +61,10 @@ private fun ComingChatBubbleImageItem(
     Column {
         AuthorImage(authorImgUrl = authorImgUrl)
         Card(
-            modifier = Modifier.padding(start = AuthorImgHeight, end = 32.dp),
+            modifier = Modifier.padding(
+                start = dimensionResource(id = R.dimen.author_img_height),
+                end = dimensionResource(id = ChatAppDimens.padding_32)
+            ),
             shape = RoundedCornerShape(
                 topStart = 0f,
                 topEnd = 48f,
@@ -89,7 +95,7 @@ private fun OngoingChatBubbleImageItem(
 
             Card(
                 modifier = Modifier
-                    .padding(start = 32.dp)
+                    .padding(start = dimensionResource(id = ChatAppDimens.padding_32))
                     .constrainAs(chatBubble) {},
                 shape = RoundedCornerShape(
                     topStart = 48f,
@@ -118,8 +124,11 @@ private fun BubbleSkeleton(
     Column(modifier = Modifier.width(IntrinsicSize.Max)) {
         Text(
             modifier = Modifier
-                .padding(start = 8.dp, end = 32.dp)
-                .padding(vertical = 8.dp),
+                .padding(
+                    start = dimensionResource(id = ChatAppDimens.padding_8),
+                    end = dimensionResource(id = ChatAppDimens.padding_32)
+                )
+                .padding(vertical = dimensionResource(id = ChatAppDimens.padding_8)),
             text = author,
             style = authorTextStyle
         )
@@ -127,15 +136,18 @@ private fun BubbleSkeleton(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(0.dp, LocalConfiguration.current.screenHeightDp.dp / 2)
-                .padding(horizontal = 2.dp)
+                .padding(horizontal = dimensionResource(id = ChatAppDimens.padding_2))
                 .clip(RoundedCornerShape(5)),
             imageUrl = imageUrl
         )
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 4.dp)
-                .padding(start = 32.dp, end = 8.dp),
+                .padding(vertical = dimensionResource(id = ChatAppDimens.padding_4))
+                .padding(
+                    start = dimensionResource(id = ChatAppDimens.padding_32),
+                    end = dimensionResource(id = ChatAppDimens.padding_8)
+                ),
             text = messageDate,
             style = dateTextStyle,
             textAlign = TextAlign.End

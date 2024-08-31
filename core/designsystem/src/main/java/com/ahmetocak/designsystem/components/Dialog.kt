@@ -13,18 +13,21 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.ahmetocak.designsystem.R
+import com.ahmetocak.designsystem.theme.ChatAppTheme
 
 @Composable
 fun ChatAppDialog(
@@ -33,8 +36,10 @@ fun ChatAppDialog(
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
-            modifier = Modifier.width(LocalConfiguration.current.screenWidthDp.dp - 32.dp),
-            shape = RoundedCornerShape(28.dp),
+            modifier = Modifier.width(
+                LocalConfiguration.current.screenWidthDp.dp - dimensionResource(id = R.dimen.padding_32)
+            ),
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dialog_radius)),
             content = content
         )
     }
@@ -52,14 +57,16 @@ fun ChatAppSubmitDialog(
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
-            modifier = Modifier.width(LocalConfiguration.current.screenWidthDp.dp - 32.dp),
-            shape = RoundedCornerShape(28.dp)
+            modifier = Modifier.width(
+                LocalConfiguration.current.screenWidthDp.dp - dimensionResource(id = R.dimen.padding_32)
+            ),
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dialog_radius))
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(dimensionResource(id = R.dimen.padding_24)),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_16))
             ) {
                 Text(
                     text = title,
@@ -73,7 +80,7 @@ fun ChatAppSubmitDialog(
                     TextButton(onClick = onDismissRequest) {
                         Text(text = stringResource(id = R.string.cancel))
                     }
-                    Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.padding_16)))
                     TextButton(onClick = onSubmitClick, enabled = isSubmitEnabled && !isLoading) {
                         if (isLoading) {
                             ButtonCircularProgressIndicator()
@@ -96,7 +103,7 @@ fun ChatAppSubmitValueDialog(
     title: String,
     description: String,
     submitText: String,
-    textFieldLabel:  @Composable (() -> Unit)? = null,
+    textFieldLabel: @Composable (() -> Unit)? = null,
     isLoading: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -104,14 +111,16 @@ fun ChatAppSubmitValueDialog(
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
-            modifier = Modifier.width(LocalConfiguration.current.screenWidthDp.dp - 32.dp),
-            shape = RoundedCornerShape(28.dp)
+            modifier = Modifier.width(
+                LocalConfiguration.current.screenWidthDp.dp - dimensionResource(id = R.dimen.padding_32)
+            ),
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.dialog_radius))
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(dimensionResource(id = R.dimen.padding_24)),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_16))
             ) {
                 Text(
                     text = title,
@@ -134,8 +143,11 @@ fun ChatAppSubmitValueDialog(
                     TextButton(onClick = onDismissRequest) {
                         Text(text = stringResource(id = R.string.cancel))
                     }
-                    Spacer(modifier = Modifier.width(16.dp))
-                    TextButton(onClick = onSubmitClick, enabled = value.isNotBlank() && !isLoading) {
+                    Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.padding_16)))
+                    TextButton(
+                        onClick = onSubmitClick,
+                        enabled = value.isNotBlank() && !isLoading
+                    ) {
                         if (isLoading) {
                             ButtonCircularProgressIndicator()
                         } else {
@@ -144,6 +156,50 @@ fun ChatAppSubmitValueDialog(
                     }
                 }
             }
+        }
+    }
+}
+
+@LightDarkPreview
+@Composable
+private fun PreviewChatAppDialog() {
+    ChatAppTheme {
+        Surface {
+            ChatAppDialog(onDismissRequest = { /*TODO*/ }, content = {})
+        }
+    }
+}
+
+@LightDarkPreview
+@Composable
+private fun PreviewChatAppSubmitDialog() {
+    ChatAppTheme {
+        Surface {
+            ChatAppSubmitDialog(
+                onDismissRequest = { /*TODO*/ },
+                onSubmitClick = { /*TODO*/ },
+                title = "Dialog Title",
+                description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                submitText = "Submit"
+            )
+        }
+    }
+}
+
+@LightDarkPreview
+@Composable
+private fun PreviewChatAppSubmitValueDialog() {
+    ChatAppTheme {
+        Surface {
+            ChatAppSubmitValueDialog(
+                onDismissRequest = { /*TODO*/ },
+                onSubmitClick = { /*TODO*/ },
+                value = "",
+                onValueChange = {},
+                title = "Dialog Title",
+                description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                submitText = "Submit"
+            )
         }
     }
 }

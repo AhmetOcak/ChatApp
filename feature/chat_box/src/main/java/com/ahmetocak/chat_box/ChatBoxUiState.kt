@@ -2,6 +2,7 @@ package com.ahmetocak.chat_box
 
 import android.content.Context
 import android.net.Uri
+import androidx.compose.runtime.Stable
 import androidx.paging.PagingData
 import com.ahmetocak.model.LoadingState
 import com.ahmetocak.model.Message
@@ -73,6 +74,7 @@ sealed interface AudioPlayStatus {
     data object IDLE : AudioPlayStatus
 }
 
+@Stable
 sealed interface ScreenState {
     data object ChatBox : ScreenState
     data object GroupInfo : ScreenState

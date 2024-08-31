@@ -5,7 +5,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,13 +31,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.dp
 import com.ahmetocak.chats.ChatsUiEvent
+import com.ahmetocak.chats.R
 import com.ahmetocak.chats.ScreenState
 import com.ahmetocak.designsystem.components.ChatAppIconButton
 import com.ahmetocak.designsystem.icons.ChatAppIcons
+import com.ahmetocak.designsystem.R.string as ChatAppStrings
+import com.ahmetocak.designsystem.R.dimen as ChatAppDimens
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,17 +55,20 @@ internal fun ChatsScreenTopBar(
     TopAppBar(
         title = {
             when (screenState) {
-                ScreenState.Chats -> Text(text = "ChatApp")
-                ScreenState.CreateContact -> Text(text = "Create Contact")
-                ScreenState.AddFriend -> Text(text = "Add Friend")
+                ScreenState.Chats -> Text(text = stringResource(id = ChatAppStrings.app_name))
+                ScreenState.CreateContact -> Text(text = stringResource(id = R.string.create_contact))
+                ScreenState.AddFriend -> Text(text = stringResource(id = R.string.add_friend))
                 ScreenState.SelectParticipantsForGroup -> {
-                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                        Text(text = "Create Group")
-                        Text(text = "Add Participant", style = MaterialTheme.typography.labelMedium)
+                    Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimens.padding_2))) {
+                        Text(text = stringResource(id = R.string.create_group))
+                        Text(
+                            text = stringResource(id = R.string.add_participant),
+                            style = MaterialTheme.typography.labelMedium
+                        )
                     }
                 }
 
-                ScreenState.CreateChatGroup -> Text(text = "Create Chat Group")
+                ScreenState.CreateChatGroup -> Text(text = stringResource(id = R.string.create_chat_group))
             }
         },
         actions = {
@@ -95,10 +100,12 @@ internal fun ChatsScreenTopBar(
                 SearchField(
                     searchValue = searchValue,
                     onSearchValueChange = remember { { onEvent(ChatsUiEvent.OnSearchValueChanged(it)) } },
-                    onBackClick = remember { {
-                        showSearchField = false
-                        onEvent(ChatsUiEvent.OnSearchValueChanged(""))
-                    } }
+                    onBackClick = remember {
+                        {
+                            showSearchField = false
+                            onEvent(ChatsUiEvent.OnSearchValueChanged(""))
+                        }
+                    }
                 )
             }
         },
@@ -127,7 +134,7 @@ private fun SearchField(
     BasicTextField(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = dimensionResource(id = ChatAppDimens.padding_16)),
         value = searchValue,
         onValueChange = onSearchValueChange,
         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
@@ -135,7 +142,7 @@ private fun SearchField(
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         decorationBox = { innerTextField ->
             Surface(
-                modifier = Modifier.height(48.dp),
+                modifier = Modifier.height(dimensionResource(id = R.dimen.search_user_field_height)),
                 shape = RoundedCornerShape(50),
                 color = TextFieldDefaults.colors().focusedContainerColor
             ) {
@@ -150,7 +157,7 @@ private fun SearchField(
                     Box(Modifier.fillMaxHeight(), contentAlignment = Alignment.Center) {
                         if (searchValue.isBlank()) {
                             Text(
-                                text = "Search a user",
+                                text = stringResource(id = R.string.search_user),
                                 style = MaterialTheme.typography.labelLarge,
                                 color = TextFieldDefaults.colors().unfocusedPlaceholderColor
                             )

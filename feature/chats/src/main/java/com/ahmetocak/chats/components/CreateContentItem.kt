@@ -16,8 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import com.ahmetocak.designsystem.R.dimen as ChatAppDimens
 
 @Composable
 internal fun CreateContentItem(title: String, icon: ImageVector, onClick: () -> Unit) {
@@ -29,9 +30,12 @@ internal fun CreateContentItem(title: String, icon: ImageVector, onClick: () -> 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp, horizontal = 16.dp),
+                .padding(
+                    vertical = dimensionResource(id = ChatAppDimens.padding_8),
+                    horizontal = dimensionResource(id = ChatAppDimens.padding_16)
+                ),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimens.padding_16))
         ) {
             IconButton(
                 onClick = onClick,

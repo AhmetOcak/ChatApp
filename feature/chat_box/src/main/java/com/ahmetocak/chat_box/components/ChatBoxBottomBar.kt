@@ -31,14 +31,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import com.ahmetocak.chat_box.ChatBoxUiEvent
+import com.ahmetocak.chat_box.R
 import com.ahmetocak.designsystem.components.ChatAppIconButton
 import com.ahmetocak.designsystem.icons.ChatAppIcons
 import com.ahmetocak.model.MessageType
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.ahmetocak.designsystem.R.dimen as ChatAppDimens
 
 @Composable
 internal fun ChatBoxBottomBar(
@@ -49,13 +52,13 @@ internal fun ChatBoxBottomBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 8.dp)
-            .padding(bottom = 8.dp)
+            .padding(start = dimensionResource(id = ChatAppDimens.padding_8))
+            .padding(bottom = dimensionResource(id = ChatAppDimens.padding_8))
             .height(BottomBarHeight)
     ) {
         Surface(modifier = Modifier.weight(5f), shape = CircleShape) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = ChatAppDimens.padding_16)),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 MessageField(
@@ -66,7 +69,7 @@ internal fun ChatBoxBottomBar(
             }
         }
         BottomBarActionButton(
-            messageValue = messageValue,
+            isMessageValueBlank = messageValue.isBlank(),
             onEvent = onEvent,
             isAudioRecording = isAudioRecording
         )
@@ -76,7 +79,7 @@ internal fun ChatBoxBottomBar(
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
 private fun RowScope.BottomBarActionButton(
-    messageValue: String,
+    isMessageValueBlank: Boolean,
     onEvent: (ChatBoxUiEvent) -> Unit,
     isAudioRecording: Boolean
 ) {
@@ -86,9 +89,9 @@ private fun RowScope.BottomBarActionButton(
     val context = LocalContext.current
 
     IconButton(
-        onClick = remember(messageValue) {
+        onClick = remember(isMessageValueBlank) {
             {
-                if (messageValue.isBlank()) {
+                if (isMessageValueBlank) {
                     onEvent(
                         ChatBoxUiEvent.OnMicrophonePress(context = context) {
                             return@OnMicrophonePress if (microphonePermissionState.status.isGranted) {
@@ -107,24 +110,24 @@ private fun RowScope.BottomBarActionButton(
         modifier = Modifier
             .weight(1f)
             .aspectRatio(1f)
-            .padding(8.dp),
+            .padding(dimensionResource(id = ChatAppDimens.padding_8)),
         colors = IconButtonDefaults.iconButtonColors(containerColor = MaterialTheme.colorScheme.primary)
     ) {
-        AnimatedVisibility(visible = messageValue.isNotBlank()) {
+        AnimatedVisibility(visible = !isMessageValueBlank) {
             Icon(
                 imageVector = ChatAppIcons.Default.send,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.background
             )
         }
-        AnimatedVisibility(visible = messageValue.isBlank() && !isAudioRecording) {
+        AnimatedVisibility(visible = isMessageValueBlank && !isAudioRecording) {
             Icon(
                 imageVector = ChatAppIcons.Filled.microphone,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.background
             )
         }
-        AnimatedVisibility(visible = messageValue.isBlank() && isAudioRecording) {
+        AnimatedVisibility(visible = isMessageValueBlank && isAudioRecording) {
             Icon(
                 imageVector = ChatAppIcons.Filled.stop,
                 contentDescription = null,
@@ -169,7 +172,8 @@ private fun MessageField(
         },
         placeholder = {
             Text(
-                text = if (isAudioRecording) "Recording..." else "Message",
+                text = if (isAudioRecording) stringResource(id = R.string.recording)
+                else stringResource(id = R.string.message),
                 color = if (isAudioRecording) animatedColor else Color.Unspecified
             )
         },
@@ -181,4 +185,6 @@ private fun MessageField(
     )
 }
 
-internal val BottomBarHeight = 56.dp
+internal val BottomBarHeight
+    @Composable
+    get() = dimensionResource(id = R.dimen.bottom_bar_height)

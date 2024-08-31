@@ -1,5 +1,6 @@
 package com.ahmetocak.designsystem.components.auth
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -8,6 +9,7 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,6 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
+import com.ahmetocak.designsystem.components.LightDarkPreview
+import com.ahmetocak.designsystem.theme.ChatAppTheme
 
 @Composable
 fun AuthEmailOutlinedTextField(
@@ -81,4 +86,34 @@ fun AuthPasswordOutlinedTextField(
         singleLine = true,
         isError = isError
     )
+}
+
+@LightDarkPreview
+@Composable
+private fun PreviewAuthEmailOutlinedTextField() {
+    ChatAppTheme {
+        Surface {
+            AuthEmailOutlinedTextField(
+                modifier = Modifier.padding(8.dp),
+                value = "",
+                onValueChange = {},
+                labelText = "Label"
+            )
+        }
+    }
+}
+
+@LightDarkPreview
+@Composable
+private fun PreviewAuthPasswordOutlinedTextField() {
+    ChatAppTheme {
+        Surface {
+            AuthPasswordOutlinedTextField(
+                modifier = Modifier.padding(8.dp),
+                value = "",
+                onValueChange = {},
+                labelText = "Label"
+            )
+        }
+    }
 }

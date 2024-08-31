@@ -9,8 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.zIndex
+import com.ahmetocak.designsystem.R
 
 @Composable
 fun ChatAppGreyProgressIndicator(modifier: Modifier = Modifier) {
@@ -50,7 +51,7 @@ fun ChatAppPlaceableProgressIndicator(modifier: Modifier, alignment: Alignment =
 @Composable
 fun ButtonCircularProgressIndicator() {
     CircularProgressIndicator(
-        modifier = Modifier.size(24.dp),
-        strokeWidth = 2.dp
+        modifier = Modifier.size(dimensionResource(id = R.dimen.circular_prog_ind_size)),
+        strokeWidth = dimensionResource(id = R.dimen.padding_2)
     )
 }

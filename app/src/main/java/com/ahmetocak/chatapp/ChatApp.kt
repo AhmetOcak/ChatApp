@@ -13,13 +13,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.dimensionResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmetocak.chatapp.navigation.ChatAppNavHost
 import com.ahmetocak.common.SnackbarManager
 import com.ahmetocak.designsystem.theme.ChatAppTheme
 import kotlinx.coroutines.CoroutineScope
+import com.ahmetocak.designsystem.R.dimen as ChatAppDimens
 
 @Composable
 fun ChatApp(
@@ -34,7 +35,7 @@ fun ChatApp(
                 snackbarHost = {
                     SnackbarHost(
                         hostState = appState.snackbarHostState,
-                        modifier = Modifier.padding(4.dp),
+                        modifier = Modifier.padding(dimensionResource(id = ChatAppDimens.padding_4)),
                         snackbar = { snackbarData -> Snackbar(snackbarData) }
                     )
                 }
