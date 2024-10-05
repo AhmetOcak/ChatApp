@@ -44,9 +44,9 @@ fun ChatAppNavHost(
         )
         chatBoxScreen(
             upPress = navController::navigateUp,
-            navigateChatDetail = {},
+            navigateChatDetail = { /* TODO: Implement chat detail */ },
             navigateCamera = navController::navigateToCamera,
-            navigateChatDocs = {}
+            navigateChatDocs = { /* TODO: Implement chat docs */ },
         )
         loginScreen(
             navigateToChats = {
