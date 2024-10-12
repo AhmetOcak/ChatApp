@@ -3,6 +3,8 @@
 
 The application is a Chat App developed using Jetpack Compose and follows a Modular architecture. To log into the app, users must create an account or sign in directly using a Google account. Authentication processes are handled through Firebase Auth. Users can update their profile picture or username, and if desired, delete their account. The app allows real-time messaging with individuals or creating group chats with friends for instant messaging. It supports text, PDF, image, and voice recording types. Within the app, you can also take photos using the built-in camera feature and share them. The notification feature is provided through Firebase Cloud Messaging. Even when you are not using the app, incoming messages are displayed to you via notifications.
 
+[This](https://github.com/AhmetOcak/ChatApp-Backend) is the GitHub repository for the backend project used by the app.
+
 ## Features
 * <b>Authentication</b>: Allows users to create an account or log in directly with a Google account using Firebase Authentication.
 * <b>Profile Management</b>: Users can update their profile picture or username and delete their account if desired.
